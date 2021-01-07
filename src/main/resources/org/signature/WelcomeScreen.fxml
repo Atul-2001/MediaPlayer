@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXProgressBar?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.paint.LinearGradient?>
+<?import javafx.scene.paint.Stop?>
+<?import javafx.scene.text.Font?>
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
+            prefWidth="640.0" stylesheets="@welcome-screen-style.css" xmlns="http://javafx.com/javafx/11.0.1"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.signature.WelcomeScreenController">
+    <effect>
+        <DropShadow blurType="GAUSSIAN" height="50.0" radius="24.5" width="50.0"/>
+    </effect>
+    <ImageView fitHeight="400.0" fitWidth="640.0" pickOnBounds="true">
+        <Image url="@IMG_Media1.jpeg"/>
+    </ImageView>
+    <JFXProgressBar fx:id="appLoadProgress" layoutY="396.0" maxHeight="-Infinity" maxWidth="-Infinity"
+                    minHeight="-Infinity" minWidth="-Infinity" prefHeight="4.0" prefWidth="640.0" progress="0.0"/>
+    <Label alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+           prefHeight="130.0" prefWidth="640.0" text="Media Player">
+        <font>
+            <Font name="Roboto" size="60.0"/>
+        </font>
+        <textFill>
+            <LinearGradient cycleMethod="REFLECT">
+                <stops>
+                    <Stop color="#21fa00cd"/>
+                    <Stop color="#f6ff00cb" offset="0.52"/>
+                    <Stop color="#02ede7cc" offset="1.0"/>
+                </stops>
+            </LinearGradient>
+        </textFill>
+    </Label>
+</AnchorPane>

@@ -1,0 +1,25 @@
+#dialog-base {
+    -fx-background-color: linear-gradient(to right, #badbf9 0%, #E0C3FC 42%, #f8fbc0 100%);
+}
+
+#btn-close {
+    -fx-background-color: TRANSPARENT;
+}
+
+#btn-close:hover {
+    -fx-background-color: RED;
+}
+
+.scroll-pane {
+    -fx-background-color: TRANSPARENT;
+    -fx-border-width: 0 0 0 0;
+    -fx-border-color: TRANSPARENT TRANSPARENT TRANSPARENT TRANSPARENT;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: TRANSPARENT;
+}
+
+VBox {
+    -fx-background-color: TRANSPARENT;
+}

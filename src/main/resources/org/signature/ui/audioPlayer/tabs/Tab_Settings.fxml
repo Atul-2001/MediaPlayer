@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<VBox xmlns:fx="http://javafx.com/fxml/1" fx:id="tab_settings" maxHeight="1.7976931348623157E308"
+      maxWidth="1.7976931348623157E308"
+      prefHeight="630.0" prefWidth="960.0" stylesheets="@../audio-player-style.css"
+      xmlns="http://javafx.com/javafx/11.0.1" fx:controller="org.signature.ui.audioPlayer.tabs.SettingsTabController">
+    <padding>
+        <Insets bottom="2.0" left="20.0"/>
+    </padding>
+    <children>
+        <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="60.0"
+               text="Settings" VBox.vgrow="NEVER">
+            <font>
+                <Font name="Roboto Medium" size="30.0"/>
+            </font>
+        </Label>
+        <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308"
+                    maxWidth="1.7976931348623157E308" pannable="true" vbarPolicy="NEVER" VBox.vgrow="ALWAYS">
+            <content>
+                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="16.0">
+                    <children>
+                        <VBox alignment="CENTER_LEFT" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="60.0"
+                              spacing="2.0" VBox.vgrow="NEVER">
+                            <children>
+                                <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+                                       prefHeight="30.0" text="Music on this PC" VBox.vgrow="NEVER">
+                                    <font>
+                                        <Font name="Roboto" size="22.0"/>
+                                    </font>
+                                </Label>
+                                <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+                                       prefHeight="20.0" styleClass="link-btn" text="Choose where we look for music"
+                                       textFill="#4885ed" VBox.vgrow="NEVER" onMouseClicked="#handleAddLocalMusic">
+                                    <font>
+                                        <Font name="Roboto" size="14.0"/>
+                                    </font>
+                                    <cursor>
+                                        <Cursor fx:constant="HAND"/>
+                                    </cursor>
+                                </Label>
+                            </children>
+                        </VBox>
+                        <VBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" maxHeight="-Infinity"
+                              minHeight="-Infinity" prefHeight="60.0" spacing="2.0" VBox.vgrow="NEVER">
+                            <children>
+                                <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+                                       prefHeight="30.0" text="Playback" VBox.vgrow="NEVER">
+                                    <font>
+                                        <Font name="Roboto" size="22.0"/>
+                                    </font>
+                                </Label>
+                                <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+                                       prefHeight="20.0" styleClass="link-btn" text="Equalizer" textFill="#4885ed"
+                                       VBox.vgrow="NEVER">
+                                    <font>
+                                        <Font name="Roboto" size="14.0"/>
+                                    </font>
+                                    <cursor>
+                                        <Cursor fx:constant="HAND"/>
+                                    </cursor>
+                                </Label>
+                            </children>
+                        </VBox>
+                        <VBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="90.0" maxHeight="-Infinity"
+                              minHeight="-Infinity" prefHeight="85.0" spacing="2.0" VBox.vgrow="NEVER">
+                            <children>
+                                <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+                                       prefHeight="30.0" text="Media Info" VBox.vgrow="NEVER">
+                                    <font>
+                                        <Font name="Roboto" size="22.0"/>
+                                    </font>
+                                </Label>
+                                <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+                                       prefHeight="20.0"
+                                       text="Automatically retrieve and update missing album art and metadata"
+                                       VBox.vgrow="NEVER">
+                                    <font>
+                                        <Font name="Roboto" size="14.0"/>
+                                    </font>
+                                </Label>
+                                <JFXToggleButton fx:id="updateMediaInfo" alignment="CENTER_LEFT" maxHeight="-Infinity"
+                                                 maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                                                 prefHeight="25.0" prefWidth="100.0" selected="true"
+                                                 style="-fx-border-width: 0; -fx-background-color: TRANSPARENT; -fx-border-image-insets: 0;"
+                                                 text="On" toggleColor="#0a79df" toggleLineColor="#0a79df">
+                                    <VBox.margin>
+                                        <Insets/>
+                                    </VBox.margin>
+                                    <padding>
+                                        <Insets left="-0.8"/>
+                                    </padding>
+                                    <font>
+                                        <Font name="Roboto" size="14.0"/>
+                                    </font>
+                                </JFXToggleButton>
+                            </children>
+                        </VBox>
+                        <VBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="170.0" maxHeight="-Infinity"
+                              minHeight="-Infinity" prefHeight="160.0" spacing="2.0">
+                            <children>
+                                <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+                                       prefHeight="30.0" text="Display artist art" VBox.vgrow="NEVER">
+                                    <font>
+                                        <Font name="Roboto" size="22.0"/>
+                                    </font>
+                                </Label>
+                                <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+                                       prefHeight="20.0" text="Set the Now Playing artist art as my lock screen"
+                                       VBox.vgrow="NEVER">
+                                    <font>
+                                        <Font name="Roboto" size="14.0"/>
+                                    </font>
+                                </Label>
+                                <JFXToggleButton fx:id="lockScreenArt" alignment="CENTER_LEFT" maxHeight="-Infinity"
+                                                 maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                                                 prefHeight="25.0" prefWidth="100.0"
+                                                 style="-fx-border-width: 0; -fx-background-color: TRANSPARENT; -fx-border-image-insets: 0;"
+                                                 text="Off" toggleColor="#0a79df" toggleLineColor="#0a79df">
+                                    <VBox.margin>
+                                        <Insets/>
+                                    </VBox.margin>
+                                    <padding>
+                                        <Insets left="-0.8"/>
+                                    </padding>
+                                    <font>
+                                        <Font name="Roboto" size="14.0"/>
+                                    </font>
+                                    <toggleGroup>
+                                        <ToggleGroup fx:id="displayArtGroup"/>
+                                    </toggleGroup>
+                                </JFXToggleButton>
+                                <Label layoutX="10.0" layoutY="45.0" maxHeight="-Infinity"
+                                       maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="20.0"
+                                       text="Set the Now Playing artist art as my wallpaper">
+                                    <font>
+                                        <Font name="Roboto" size="14.0"/>
+                                    </font>
+                                </Label>
+                                <JFXToggleButton fx:id="wallpaperArt" alignment="CENTER_LEFT" layoutX="10.0"
+                                                 layoutY="65.0" maxHeight="-Infinity" maxWidth="-Infinity"
+                                                 minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0"
+                                                 prefWidth="100.0"
+                                                 style="-fx-border-width: 0; -fx-background-color: TRANSPARENT; -fx-border-image-insets: 0;"
+                                                 text="Off" toggleColor="#0a79df" toggleGroup="$displayArtGroup"
+                                                 toggleLineColor="#0a79df">
+                                    <padding>
+                                        <Insets left="-0.8"/>
+                                    </padding>
+                                    <font>
+                                        <Font name="Roboto" size="14.0"/>
+                                    </font>
+                                </JFXToggleButton>
+                            </children>
+                        </VBox>
+                        <VBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="275.0" maxHeight="-Infinity"
+                              minHeight="-Infinity" prefHeight="80.0" spacing="2.0">
+                            <children>
+                                <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+                                       prefHeight="30.0" text="Mode" VBox.vgrow="NEVER">
+                                    <font>
+                                        <Font name="Roboto" size="22.0"/>
+                                    </font>
+                                </Label>
+                                <JFXRadioButton fx:id="lightMode" maxHeight="-Infinity" maxWidth="-Infinity"
+                                                minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0"
+                                                prefWidth="60.0" selected="true" text="Light">
+                                    <font>
+                                        <Font name="Roboto" size="14.0"/>
+                                    </font>
+                                    <toggleGroup>
+                                        <ToggleGroup fx:id="modeGroup"/>
+                                    </toggleGroup>
+                                </JFXRadioButton>
+                                <JFXRadioButton fx:id="darkMode" maxHeight="-Infinity" maxWidth="-Infinity"
+                                                minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0"
+                                                prefWidth="60.0" text="Dark" toggleGroup="$modeGroup">
+                                    <font>
+                                        <Font name="Roboto" size="14.0"/>
+                                    </font>
+                                </JFXRadioButton>
+                            </children>
+                        </VBox>
+                        <VBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="439.0" maxHeight="-Infinity"
+                              minHeight="-Infinity" prefHeight="100.0" spacing="2.0">
+                            <children>
+                                <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+                                       prefHeight="30.0" text="App" VBox.vgrow="NEVER">
+                                    <font>
+                                        <Font name="Roboto" size="22.0"/>
+                                    </font>
+                                </Label>
+                                <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+                                       prefHeight="20.0" styleClass="link-btn" text="Help" textFill="#4885ed">
+                                    <font>
+                                        <Font name="Roboto" size="14.0"/>
+                                    </font>
+                                    <cursor>
+                                        <Cursor fx:constant="HAND"/>
+                                    </cursor>
+                                </Label>
+                                <Label layoutX="10.0" layoutY="56.0" maxHeight="-Infinity"
+                                       maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="20.0"
+                                       styleClass="link-btn" text="Feedback" textFill="#4885ed">
+                                    <font>
+                                        <Font name="Roboto" size="14.0"/>
+                                    </font>
+                                    <cursor>
+                                        <Cursor fx:constant="HAND"/>
+                                    </cursor>
+                                </Label>
+                                <Label layoutX="10.0" layoutY="67.0" maxHeight="-Infinity"
+                                       maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="20.0"
+                                       styleClass="link-btn" text="About" textFill="#4885ed">
+                                    <font>
+                                        <Font name="Roboto" size="14.0"/>
+                                    </font>
+                                    <cursor>
+                                        <Cursor fx:constant="HAND"/>
+                                    </cursor>
+                                </Label>
+                            </children>
+                        </VBox>
+                    </children>
+                    <padding>
+                        <Insets bottom="100.0" top="10.0"/>
+                    </padding>
+                </VBox>
+            </content>
+        </ScrollPane>
+    </children>
+</VBox>

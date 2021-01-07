@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXProgressBar?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.shape.SVGPath?>
+<?import javafx.scene.text.Font?>
+
+<StackPane fx:id="root" maxHeight="386.0" maxWidth="500.0" minHeight="160.0" minWidth="168.0" prefHeight="300.0" prefWidth="300.0" stylesheets="@audio-player-style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.signature.ui.audioPlayer.MiniPlayerViewController">
+   <children>
+      <Rectangle fx:id="albumArtView" arcHeight="5.0" height="300.0" stroke="BLACK" strokeType="INSIDE" width="300.0" />
+      <BorderPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: TRANSPARENT;">
+         <center>
+            <StackPane fx:id="contentStack" BorderPane.alignment="CENTER">
+               <children>
+                  <VBox alignment="CENTER">
+                     <children>
+                        <HBox alignment="CENTER" spacing="10.0">
+                           <children>
+                              <JFXButton fx:id="skipPrevious" contentDisplay="GRAPHIC_ONLY" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="38.0" prefWidth="38.0" style="-fx-background-radius: 50%;" styleClass="btn-mini- player-control">
+                                 <graphic>
+                                    <SVGPath content="M 8 8 L 10.667969 8 L 10.667969 24 L 8 24 Z M 12.667969 16 L 24 24 L 24 8 Z M 12.667969 16" fill="WHITE" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="Play previous" />
+                                 </tooltip>
+                              </JFXButton>
+                              <JFXButton fx:id="playPause" contentDisplay="GRAPHIC_ONLY" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="40.0" style="-fx-background-radius: 50%;" styleClass="btn-mini- player-control">
+                                 <graphic>
+                                    <SVGPath content="M16 10v28l22-14z" fill="WHITE" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="Play / Pause" />
+                                 </tooltip>
+                              </JFXButton>
+                              <JFXButton fx:id="skipNext" contentDisplay="GRAPHIC_ONLY" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="38.0" prefWidth="38.0" style="-fx-background-radius: 50%;" styleClass="btn-mini- player-control">
+                                 <graphic>
+                                    <SVGPath content="M 8 24 L 19.332031 16 L 8 8 Z M 21.332031 8 L 21.332031 24 L 24 24 L 24 8 Z M 21.332031 8" fill="WHITE" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="Play next" />
+                                 </tooltip>
+                              </JFXButton>
+                           </children>
+                           <VBox.margin>
+                              <Insets top="80.0" />
+                           </VBox.margin>
+                        </HBox>
+                        <VBox alignment="BOTTOM_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="100.0" prefHeight="107.0" VBox.vgrow="ALWAYS">
+                           <children>
+                              <Label fx:id="songName" alignment="CENTER" maxWidth="1.7976931348623157E308" text="Song Name" textFill="WHITE" textOverrun="CLIP" VBox.vgrow="NEVER">
+                                 <font>
+                                    <Font name="Arial Unicode MS" size="22.0" />
+                                 </font>
+                                 <padding>
+                                    <Insets left="14.0" right="14.0" />
+                                 </padding>
+                              </Label>
+                              <Label fx:id="artistName" alignment="CENTER" text="Artist Name" textFill="WHITE" textOverrun="CLIP" VBox.vgrow="NEVER">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                                 <padding>
+                                    <Insets left="14.0" right="14.0" />
+                                 </padding>
+                              </Label>
+                           </children>
+                        </VBox>
+                        <VBox alignment="CENTER_RIGHT" spacing="2.0">
+                           <children>
+                              <JFXButton contentDisplay="GRAPHIC_ONLY" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#handleLeaveMiniView" prefHeight="36.0" prefWidth="36.0" style="-fx-background-radius: 50%;" styleClass="btn-mini- player-control" text="Leave Mini View">
+                                 <graphic>
+                                    <SVGPath content="M19 7h-8v6h8V7zm2-4H3c-1.1 0-2 .9-2 2v14c0 1.1.9 1.98 2 1.98h18c1.1 0 2-.88 2-1.98V5c0-1.1-.9-2-2-2zm0 16.01H3V4.98h18v14.03z" fill="WHITE" />
+                                 </graphic>
+                                 <VBox.margin>
+                                    <Insets right="6.0" />
+                                 </VBox.margin>
+                                 <tooltip>
+                                    <Tooltip text="Leave mini view" />
+                                 </tooltip>
+                              </JFXButton>
+                              <JFXProgressBar fx:id="songSeek" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="5.0" progress="0.0" VBox.vgrow="NEVER" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </VBox>
+                  <VBox prefHeight="200.0" prefWidth="100.0" spacing="18.0" style="-fx-background-color: BLACK;">
+                     <children>
+                        <Label text="This is where you'll see the song you're playing and songs that are coming up." textFill="WHITE" wrapText="true">
+                           <font>
+                              <Font name="System Bold" size="18.0" />
+                           </font>
+                        </Label>
+                        <JFXButton contentDisplay="GRAPHIC_ONLY" maxWidth="260.0" minHeight="-Infinity" minWidth="-Infinity" onAction="#handleShuffleAll" prefHeight="41.0" prefWidth="260.0" ripplerFill="BLACK" styleClass="btn-misc" text="Shuffle" VBox.vgrow="NEVER">
+                           <graphic>
+                              <HBox spacing="10.0">
+                                 <children>
+                                    <SVGPath content="M21.17 18.34L10.83 8 8 10.83l10.34 10.34 2.83-2.83zM29 8l4.09 4.09L8 37.17 10.83 40l25.09-25.09L40 19V8H29zm.66 18.83l-2.83 2.83 6.26 6.26L29 40h11V29l-4.09 4.09-6.25-6.26z" fill="WHITE" scaleX="0.7" scaleY="0.7">
+                                       <HBox.margin>
+                                          <Insets top="4.0" />
+                                       </HBox.margin>
+                                    </SVGPath>
+                                    <VBox maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
+                                       <children>
+                                          <Label text="Shuffle all" textFill="WHITE">
+                                             <font>
+                                                <Font size="15.0" />
+                                             </font>
+                                          </Label>
+                                          <Label text="Shuffle everything in your collection" textFill="#3cba54" wrapText="true" VBox.vgrow="ALWAYS">
+                                             <font>
+                                                <Font size="13.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </HBox>
+                           </graphic>
+                           <padding>
+                              <Insets top="1.0" />
+                           </padding>
+                        </JFXButton>
+                        <JFXButton graphicTextGap="16.0" onAction="#handleLeaveMiniView" ripplerFill="BLACK" styleClass="btn-misc" text="Leave mini view" textFill="WHITE">
+                           <graphic>
+                              <SVGPath content="M19 7h-8v6h8V7zm2-4H3c-1.1 0-2 .9-2 2v14c0 1.1.9 1.98 2 1.98h18c1.1 0 2-.88 2-1.98V5c0-1.1-.9-2-2-2zm0 16.01H3V4.98h18v14.03z" fill="WHITE" />
+                           </graphic>
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </JFXButton>
+                     </children>
+                     <padding>
+                        <Insets left="30.0" right="10.0" top="16.0" />
+                     </padding>
+                  </VBox>
+               </children>
+            </StackPane>
+         </center>
+         <top>
+            <HBox fx:id="topBar" alignment="CENTER_RIGHT" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" BorderPane.alignment="CENTER">
+               <children>
+                  <JFXButton id="btn-close" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#handleCloseOperation" prefHeight="30.0" prefWidth="44.0" ripplerFill="BROWN" stylesheets="@dialogs/dialog-style.css" text="Close" HBox.hgrow="NEVER">
+                     <graphic>
+                        <SVGPath content="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z" fill="WHITE" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="Close" />
+                     </tooltip>
+                  </JFXButton>
+               </children>
+            </HBox>
+         </top>
+      </BorderPane>
+   </children>
+</StackPane>

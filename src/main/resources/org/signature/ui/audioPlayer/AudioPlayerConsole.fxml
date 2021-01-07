@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXSlider?>
+<?import com.jfoenix.controls.JFXSpinner?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ContextMenu?>
+<?import javafx.scene.control.CustomMenuItem?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.SVGPath?>
+<?import javafx.scene.text.Font?>
+
+<StackPane fx:id="console" cache="true" cacheHint="SPEED" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="480.0" prefHeight="100.0" prefWidth="1280.0" style="-fx-background-color: linear-gradient(to top, #FFDEE9 0%, #B5FFFC 100%);" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.signature.ui.audioPlayer.ConsoleController">
+    <children>
+        <HBox alignment="CENTER_LEFT" cache="true" cacheHint="SPEED" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="480.0" prefHeight="100.0" prefWidth="1280.0" style="-fx-background-color: TRANSPARENT;" visible="false">
+            <children>
+                <VBox maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="480.0" prefHeight="100.0" prefWidth="1280.0" HBox.hgrow="ALWAYS">
+                    <children>
+                        <HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="480.0" prefHeight="75.0" prefWidth="1280.0" spacing="10.0">
+                            <children>
+                                <VBox maxHeight="-Infinity" minHeight="-Infinity" prefHeight="75.0" spacing="2.0" style="-fx-background-color: TRANSPARENT;" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Label alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="50.0" style="-fx-background-color: TRANSPARENT;" text="${songName.text}" wrapText="true" VBox.vgrow="ALWAYS">
+                                            <font>
+                                                <Font name="Roboto" size="20.0" />
+                                            </font>
+                                            <padding>
+                                                <Insets left="6.0" />
+                                            </padding>
+                                        </Label>
+                                        <Label alignment="TOP_LEFT" layoutX="10.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="25.0" style="-fx-background-color: TRANSPARENT;" text="${songArtist.text}" wrapText="true" VBox.vgrow="ALWAYS">
+                                            <font>
+                                                <Font name="Roboto Bold" size="16.0" />
+                                            </font>
+                                            <padding>
+                                                <Insets left="6.0" />
+                                            </padding>
+                                        </Label>
+                                    </children>
+                                    <HBox.margin>
+                                        <Insets />
+                                    </HBox.margin>
+                                    <padding>
+                                        <Insets left="6.0" />
+                                    </padding>
+                                </VBox>
+                                <JFXButton alignment="CENTER" contentDisplay="GRAPHIC_ONLY" disable="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="38.0" prefWidth="38.0" style="-fx-background-radius: 5em;" styleClass="btn-player-control" stylesheets="@audio-player-style.css" text="previous" HBox.hgrow="NEVER">
+                                    <graphic>
+                                        <SVGPath content="M 8 8 L 10.667969 8 L 10.667969 24 L 8 24 Z M 12.667969 16 L 24 24 L 24 8 Z M 12.667969 16" />
+                                    </graphic>
+                                </JFXButton>
+                                <JFXButton alignment="CENTER" contentDisplay="GRAPHIC_ONLY" disable="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#handlePlayPauseSong" prefHeight="52.0" prefWidth="52.0" style="-fx-background-radius: 5em;" styleClass="btn-player-control" stylesheets="@audio-player-style.css" text="play pause" HBox.hgrow="NEVER">
+                                    <graphic>
+                                        <SVGPath content="${playPauseIcon.content}" scaleX="0.104" scaleY="0.104" strokeWidth="0.0" />
+                                    </graphic>
+                                    <padding>
+                                        <Insets left="6.0" />
+                                    </padding>
+                                </JFXButton>
+                                <JFXButton alignment="CENTER" contentDisplay="GRAPHIC_ONLY" disable="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="38.0" prefWidth="38.0" style="-fx-background-radius: 5em;" styleClass="btn-player-control" stylesheets="@audio-player-style.css" text="next" HBox.hgrow="NEVER">
+                                    <graphic>
+                                        <SVGPath content="M 8 24 L 19.332031 16 L 8 8 Z M 21.332031 8 L 21.332031 24 L 24 24 L 24 8 Z M 21.332031 8" />
+                                    </graphic>
+                                </JFXButton>
+                                <JFXButton fx:id="moreOptions2" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="38.0" prefWidth="38.0" style="-fx-background-radius: 5em;" styleClass="btn-player-control" stylesheets="@audio-player-style.css" text="more options" HBox.hgrow="NEVER">
+                                    <font>
+                                        <Font name="Roboto Black" size="16.0" />
+                                    </font>
+                                    <contextMenu>
+                                        <ContextMenu style="-fx-background-color: linear-gradient(to top, #FFDEE9 0%, #B5FFFC 100%);">
+                                            <items>
+                                                <CustomMenuItem hideOnClick="false">
+                                                    <content>
+                                                        <ToggleButton id="btn-toggle2" disable="true" graphicTextGap="12.0" onAction="#handleShuffle" text="Shuffle: off">
+                                                            <graphic>
+                                                                <SVGPath content="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z" />
+                                                            </graphic>
+                                                            <font>
+                                                                <Font name="Roboto" size="14.0" />
+                                                            </font>
+                                                        </ToggleButton>
+                                                    </content>
+                                                </CustomMenuItem>
+                                                <CustomMenuItem hideOnClick="false">
+                                                    <content>
+                                                        <ToggleButton id="btn-toggle2" disable="true" graphicTextGap="12.0" onAction="#handleRepeat" text="Repeat: off">
+                                                            <graphic>
+                                                                <SVGPath content="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z" />
+                                                            </graphic>
+                                                            <font>
+                                                                <Font name="Roboto" size="14.0" />
+                                                            </font>
+                                                        </ToggleButton>
+                                                    </content>
+                                                </CustomMenuItem>
+                                                <CustomMenuItem hideOnClick="false">
+                                                    <content>
+                                                        <HBox alignment="CENTER">
+                                                            <children>
+                                                                <JFXButton contentDisplay="GRAPHIC_ONLY" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#handleMute" prefHeight="36.0" prefWidth="36.0" style="-fx-background-radius: 5em;" styleClass="btn-player-control">
+                                                                    <graphic>
+                                                                        <SVGPath content="${volumeIcon.content}" />
+                                                                    </graphic>
+                                                                </JFXButton>
+                                                                <JFXSlider blockIncrement="2.0" prefWidth="120.0" value="80.0" />
+                                                            </children>
+                                                        </HBox>
+                                                    </content>
+                                                </CustomMenuItem>
+                                                <CustomMenuItem hideOnClick="false">
+                                                    <content>
+                                                        <JFXButton buttonType="RAISED" disable="true" graphicTextGap="12.0" onAction="#handleShowNowPlaying" text="Show now playing list">
+                                                            <graphic>
+                                                                <SVGPath content="M19 9H2v2h17V9zm0-4H2v2h17V5zM2 15h13v-2H2v2zm15-2v6l5-3-5-3z" />
+                                                            </graphic>
+                                                            <font>
+                                                                <Font name="Roboto" size="14.0" />
+                                                            </font>
+                                                        </JFXButton>
+                                                    </content>
+                                                </CustomMenuItem>
+                                                <CustomMenuItem hideOnClick="false">
+                                                    <content>
+                                                        <JFXButton buttonType="RAISED" graphicTextGap="12.0" onAction="#handleShowMiniPlayer" text="Play in mini view">
+                                                            <graphic>
+                                                                <SVGPath content="M19 7h-8v6h8V7zm2-4H3c-1.1 0-2 .9-2 2v14c0 1.1.9 1.98 2 1.98h18c1.1 0 2-.88 2-1.98V5c0-1.1-.9-2-2-2zm0 16.01H3V4.98h18v14.03z" />
+                                                            </graphic>
+                                                            <font>
+                                                                <Font name="Roboto" size="14.0" />
+                                                            </font>
+                                                        </JFXButton>
+                                                    </content>
+                                                </CustomMenuItem>
+                                                <CustomMenuItem hideOnClick="false">
+                                                    <content>
+                                                        <JFXButton buttonType="RAISED" disable="true" graphicTextGap="12.0" onAction="#handleClearPlayer" text="Clear Now Playing">
+                                                            <graphic>
+                                                                <SVGPath content="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                                                            </graphic>
+                                                            <font>
+                                                                <Font name="Roboto" size="14.0" />
+                                                            </font>
+                                                        </JFXButton>
+                                                    </content>
+                                                </CustomMenuItem>
+                                            </items>
+                                        </ContextMenu>
+                                    </contextMenu>
+                                    <graphic>
+                                        <SVGPath content="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
+                                    </graphic>
+                                </JFXButton>
+                            </children>
+                        </HBox>
+                        <HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="480.0" prefHeight="25.0" prefWidth="1280.0" spacing="8.0">
+                            <children>
+                                <Label text="${currentDuration.text}">
+                                    <font>
+                                        <Font name="Roboto" size="14.0" />
+                                    </font>
+                                    <HBox.margin>
+                                        <Insets left="10.0" />
+                                    </HBox.margin>
+                                </Label>
+                                <JFXSlider blockIncrement="1.0" disable="true" value="-1.0" HBox.hgrow="ALWAYS" />
+                                <Label text="${totalDuration.text}">
+                                    <font>
+                                        <Font name="Roboto" size="14.0" />
+                                    </font>
+                                    <HBox.margin>
+                                        <Insets right="10.0" />
+                                    </HBox.margin>
+                                </Label>
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+            </children>
+        </HBox>
+        <HBox fx:id="playerControls" alignment="CENTER_LEFT" cache="true" cacheHint="SPEED" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="480.0" prefHeight="100.0" prefWidth="1280.0" spacing="10.0" style="-fx-background-color: TRANSPARENT;">
+            <children>
+                <HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="210.0" prefHeight="100.0" prefWidth="450.0" HBox.hgrow="ALWAYS">
+                    <children>
+                  <StackPane>
+                     <children>
+                              <ImageView fx:id="albumArt" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" />
+                        <JFXSpinner fx:id="playerLoader" radius="36.0" visible="false" />
+                     </children>
+                  </StackPane>
+                        <VBox spacing="2.0" style="-fx-background-color: TRANSPARENT;" HBox.hgrow="ALWAYS">
+                            <children>
+                                <Label fx:id="songName" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="49.0" style="-fx-background-color: TRANSPARENT;" wrapText="true" VBox.vgrow="ALWAYS">
+                                    <font>
+                                        <Font name="Roboto" size="20.0" />
+                                    </font>
+                                    <padding>
+                                        <Insets left="6.0" />
+                                    </padding>
+                                </Label>
+                                <Label fx:id="songArtist" alignment="TOP_LEFT" layoutX="10.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="49.0" style="-fx-background-color: TRANSPARENT;" wrapText="true" VBox.vgrow="ALWAYS">
+                                    <font>
+                                        <Font name="Roboto Bold" size="16.0" />
+                                    </font>
+                                    <padding>
+                                        <Insets left="6.0" />
+                                    </padding>
+                                </Label>
+                            </children>
+                        </VBox>
+                    </children>
+                </HBox>
+                <VBox alignment="CENTER" style="-fx-background-color: TRANSPARENT;" HBox.hgrow="ALWAYS">
+                    <children>
+                        <HBox fx:id="playerMiscControls" alignment="CENTER" prefHeight="60.0" prefWidth="580.0" spacing="4.0">
+                            <children>
+                        <ToggleButton id="btn-toggle" fx:id="shuffle" cache="true" cacheHint="SPEED" contentDisplay="GRAPHIC_ONLY" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#handleShuffle" prefHeight="36.0" prefWidth="36.0" stylesheets="@audio-player-style.css" text="Shuffle">
+                           <graphic>
+                              <SVGPath content="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z" />
+                           </graphic>
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                        </ToggleButton>
+                                <JFXButton fx:id="skipPrevious" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" disable="true" layoutX="269.0" layoutY="27.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#handlePlayPrevious" prefHeight="38.0" prefWidth="38.0" ripplerFill="#00fffd" style="-fx-background-radius: 5em;" styleClass="btn-player-control" stylesheets="@audio-player-style.css" text="previous">
+                                    <graphic>
+                                        <SVGPath content="M 8 8 L 10.667969 8 L 10.667969 24 L 8 24 Z M 12.667969 16 L 24 24 L 24 8 Z M 12.667969 16" />
+                                    </graphic>
+                                </JFXButton>
+                                <JFXButton fx:id="fastRewind" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" disable="true" layoutX="250.0" layoutY="27.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#handleFastRewind" prefHeight="46.0" prefWidth="46.0" ripplerFill="#00fffd" style="-fx-background-radius: 5em;" styleClass="btn-player-control" stylesheets="@audio-player-style.css" text="fast rewind">
+                                    <graphic>
+                                        <SVGPath content="M 16.5 27 L 16.5 9 L 3.75 18 Z M 17.25 18 L 30 27 L 30 9 Z M 17.25 18 " />
+                                    </graphic>
+                                    <padding>
+                                        <Insets right="5.0" />
+                                    </padding>
+                                </JFXButton>
+                                <JFXButton fx:id="playPause" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" disable="true" layoutX="300.0" layoutY="27.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#handlePlayPauseSong" prefHeight="52.0" prefWidth="52.0" ripplerFill="#00fffd" style="-fx-background-radius: 5em;" styleClass="btn-player-control" stylesheets="@audio-player-style.css" text="playPause">
+                                    <graphic>
+                                        <SVGPath fx:id="playPauseIcon" content="M371.7 238l-176-107c-15.8-8.8-35.7 2.5-35.7 21v208c0 18.4 19.8 29.8 35.7 21l176-101c16.4-9.1 16.4-32.8 0-42zM504 256C504 119 393 8 256 8S8 119 8 256s111 248 248 248 248-111 248-248zm-448 0c0-110.5 89.5-200 200-200s200 89.5 200 200-89.5 200-200 200S56 366.5 56 256z" scaleX="0.104" scaleY="0.104" />
+                                    </graphic>
+                           <padding>
+                              <Insets bottom="-1.0" left="-1.0" right="-1.0" top="-1.0" />
+                           </padding>
+                                </JFXButton>
+                                <JFXButton fx:id="fastForward" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" disable="true" layoutX="331.0" layoutY="27.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#handleFastForward" prefHeight="46.0" prefWidth="46.0" ripplerFill="#00fffd" style="-fx-background-radius: 5em;" styleClass="btn-player-control" stylesheets="@audio-player-style.css" text="fast forward">
+                                    <graphic>
+                                        <SVGPath content="M 6 27 L 18.75 18 L 6 9 Z M 19.5 9 L 19.5 27 L 32.25 18 Z M 19.5 9" />
+                                    </graphic>
+                                    <padding>
+                                        <Insets left="5.0" />
+                                    </padding>
+                                </JFXButton>
+                                <JFXButton fx:id="skipNext" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" disable="true" layoutX="362.0" layoutY="27.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#handlePlayNext" prefHeight="38.0" prefWidth="38.0" ripplerFill="#00fffd" style="-fx-background-radius: 5em;" styleClass="btn-player-control" stylesheets="@audio-player-style.css" text="next">
+                                    <graphic>
+                                        <SVGPath content="M 8 24 L 19.332031 16 L 8 8 Z M 21.332031 8 L 21.332031 24 L 24 24 L 24 8 Z M 21.332031 8" />
+                                    </graphic>
+                                </JFXButton>
+                        <ToggleButton id="btn-toggle" fx:id="repeat" contentDisplay="GRAPHIC_ONLY" layoutX="129.0" layoutY="22.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#handleRepeat" prefHeight="36.0" prefWidth="36.0" stylesheets="@audio-player-style.css" text="repeat" textAlignment="CENTER">
+                           <graphic>
+                              <SVGPath content="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z" />
+                           </graphic>
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                        </ToggleButton>
+                            </children>
+                        </HBox>
+                        <HBox spacing="6.0">
+                            <children>
+                                <Label fx:id="currentDuration" layoutX="554.0" layoutY="10.0" text="00:00">
+                                    <font>
+                                        <Font name="Roboto" size="14.0" />
+                                    </font>
+                                </Label>
+                                <JFXSlider fx:id="songSeek" blockIncrement="1.0" disable="true" stylesheets="@audio-player-style.css" value="-1.0" HBox.hgrow="ALWAYS" />
+                                <Label fx:id="totalDuration" text="00:00">
+                                    <font>
+                                        <Font name="Roboto" size="14.0" />
+                                    </font>
+                                </Label>
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+                <HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="100.0" prefWidth="150.0">
+                    <children>
+                        <JFXButton fx:id="volume" contentDisplay="GRAPHIC_ONLY" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#handleMute" prefHeight="36.0" prefWidth="36.0" style="-fx-background-radius: 5em;" styleClass="btn-player-control" stylesheets="@audio-player-style.css" text="volume">
+                            <graphic>
+                                <SVGPath fx:id="volumeIcon" content="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" />
+                            </graphic>
+                        </JFXButton>
+                        <JFXSlider fx:id="volumeSlider" blockIncrement="2.0" stylesheets="@audio-player-style.css" value="80.0" />
+                    </children>
+                </HBox>
+                <JFXButton fx:id="miniPlayer" contentDisplay="GRAPHIC_ONLY" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#handleShowMiniPlayer" prefHeight="40.0" prefWidth="40.0" style="-fx-background-radius: 5em;" styleClass="btn-player-control" stylesheets="@audio-player-style.css" text="mini player">
+                    <HBox.margin>
+                        <Insets />
+                    </HBox.margin>
+                    <graphic>
+                        <SVGPath content="M19 7h-8v6h8V7zm2-4H3c-1.1 0-2 .9-2 2v14c0 1.1.9 1.98 2 1.98h18c1.1 0 2-.88 2-1.98V5c0-1.1-.9-2-2-2zm0 16.01H3V4.98h18v14.03z" fill="#2c3335" />
+                    </graphic>
+                </JFXButton>
+                <JFXButton fx:id="moreOptions" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="38.0" prefWidth="38.0" style="-fx-background-radius: 5em;" styleClass="btn-player-control" stylesheets="@audio-player-style.css" text="more options">
+                    <HBox.margin>
+                        <Insets right="10.0" />
+                    </HBox.margin>
+                    <font>
+                        <Font name="Roboto Black" size="16.0" />
+                    </font>
+                    <contextMenu>
+                        <ContextMenu style="-fx-background-color: linear-gradient(to top, #FFDEE9 0%, #B5FFFC 100%);">
+                            <items>
+                                <CustomMenuItem fx:id="contextMenuShuffle" visible="false">
+                                    <content>
+                                        <ToggleButton id="btn-toggle2" disable="true" graphicTextGap="12.0" onAction="#handleShuffle" text="Shuffle: off">
+                                            <graphic>
+                                                <SVGPath content="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z" />
+                                            </graphic>
+                                            <font>
+                                                <Font name="Roboto" size="14.0" />
+                                            </font>
+                                        </ToggleButton>
+                                    </content>
+                                </CustomMenuItem>
+                                <CustomMenuItem fx:id="contextMenuRepeat" visible="false">
+                                    <content>
+                                        <ToggleButton id="btn-toggle2" disable="true" graphicTextGap="12.0" onAction="#handleRepeat" text="Repeat: off">
+                                            <graphic>
+                                                <SVGPath content="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z" />
+                                            </graphic>
+                                            <font>
+                                                <Font name="Roboto" size="14.0" />
+                                            </font>
+                                        </ToggleButton>
+                                    </content>
+                                </CustomMenuItem>
+                                <CustomMenuItem>
+                                    <content>
+                                        <JFXButton fx:id="nowPlaying" buttonType="RAISED" disable="true" graphicTextGap="12.0" onAction="#handleShowNowPlaying" text="Show now playing list">
+                                            <graphic>
+                                                <SVGPath content="M19 9H2v2h17V9zm0-4H2v2h17V5zM2 15h13v-2H2v2zm15-2v6l5-3-5-3z" />
+                                            </graphic>
+                                            <font>
+                                                <Font name="Roboto" size="14.0" />
+                                            </font>
+                                        </JFXButton>
+                                    </content>
+                                </CustomMenuItem>
+                                <CustomMenuItem fx:id="contextMenuMiniPlayer" visible="false">
+                                    <content>
+                                        <JFXButton buttonType="RAISED" graphicTextGap="12.0" onAction="#handleShowMiniPlayer" text="Play in mini view">
+                                            <graphic>
+                                                <SVGPath content="M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16h-9v-6h9v6z" />
+                                            </graphic>
+                                            <font>
+                                                <Font name="Roboto" size="14.0" />
+                                            </font>
+                                        </JFXButton>
+                                    </content>
+                                </CustomMenuItem>
+                                <CustomMenuItem>
+                                    <content>
+                                        <JFXButton fx:id="clearPlayer" buttonType="RAISED" disable="true" graphicTextGap="12.0" onAction="#handleClearPlayer" text="Clear Now Playing">
+                                            <graphic>
+                                                <SVGPath content="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                                            </graphic>
+                                            <font>
+                                                <Font name="Roboto" size="14.0" />
+                                            </font>
+                                        </JFXButton>
+                                    </content>
+                                </CustomMenuItem>
+                            </items>
+                        </ContextMenu>
+                    </contextMenu>
+                    <graphic>
+                        <SVGPath content="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
+                    </graphic>
+                </JFXButton>
+            </children>
+        </HBox>
+    </children>
+</StackPane>

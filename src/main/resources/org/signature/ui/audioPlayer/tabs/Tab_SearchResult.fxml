@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.SVGPath?>
+<?import javafx.scene.text.Font?>
+
+<StackPane fx:id="tab_searchResult" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="630.0" prefWidth="960.0" stylesheets="@../audio-player-style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.signature.ui.audioPlayer.tabs.SearchResultTabController">
+    <children>
+        <VBox fx:id="tab_resultPlaylist" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" opacity="0.0" prefHeight="630.0" prefWidth="960.0" spacing="2.0">
+            <padding>
+                <Insets bottom="2.0" left="20.0" />
+            </padding>
+            <children>
+                <HBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="60.0" spacing="10.0">
+                    <children>
+                        <JFXButton alignment="CENTER" contentDisplay="GRAPHIC_ONLY" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#handleBackOperation" prefHeight="40.0" prefWidth="40.0" styleClass="back-btn">
+                            <graphic>
+                                <SVGPath content="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
+                            </graphic>
+                        </JFXButton>
+                        <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Playlist results for" HBox.hgrow="NEVER">
+                            <font>
+                                <Font name="Roboto Medium" size="30.0" />
+                            </font>
+                        </Label>
+                        <Label layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="${searchKey.text}" HBox.hgrow="ALWAYS">
+                            <font>
+                                <Font name="Roboto" size="30.0" />
+                            </font>
+                        </Label>
+                    </children>
+                </HBox>
+                <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" vbarPolicy="ALWAYS" VBox.vgrow="ALWAYS">
+                    <content>
+                        <FlowPane fx:id="mirror_list_playlists" hgap="12.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" vgap="6.0" />
+                    </content>
+                    <padding>
+                        <Insets right="4.0" />
+                    </padding>
+                </ScrollPane>
+            </children>
+        </VBox>
+        <VBox fx:id="tab_resultSong" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" opacity="0.0" prefHeight="630.0" prefWidth="960.0" spacing="2.0">
+            <padding>
+                <Insets bottom="2.0" left="20.0" />
+            </padding>
+            <children>
+                <HBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="60.0" spacing="10.0">
+                    <children>
+                        <JFXButton alignment="CENTER" contentDisplay="GRAPHIC_ONLY" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#handleBackOperation" prefHeight="40.0" prefWidth="40.0" styleClass="back-btn">
+                            <graphic>
+                                <SVGPath content="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
+                            </graphic>
+                        </JFXButton>
+                        <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Song results for" HBox.hgrow="NEVER">
+                            <font>
+                                <Font name="Roboto Medium" size="30.0" />
+                            </font>
+                        </Label>
+                        <Label layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="${searchKey.text}" HBox.hgrow="ALWAYS">
+                            <font>
+                                <Font name="Roboto" size="30.0" />
+                            </font>
+                        </Label>
+                    </children>
+                </HBox>
+                <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" vbarPolicy="ALWAYS" VBox.vgrow="ALWAYS">
+                    <content>
+                        <VBox fx:id="mirror_list_songs" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+                    </content>
+                    <padding>
+                        <Insets right="8.0" />
+                    </padding>
+                </ScrollPane>
+            </children>
+        </VBox>
+        <VBox fx:id="tab_resultAlbum" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" opacity="0.0" prefHeight="630.0" prefWidth="960.0" spacing="2.0">
+            <padding>
+                <Insets bottom="2.0" left="20.0" />
+            </padding>
+            <children>
+                <HBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="60.0" spacing="10.0">
+                    <children>
+                        <JFXButton alignment="CENTER" contentDisplay="GRAPHIC_ONLY" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#handleBackOperation" prefHeight="40.0" prefWidth="40.0" styleClass="back-btn">
+                            <graphic>
+                                <SVGPath content="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
+                            </graphic>
+                        </JFXButton>
+                        <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Album results for" HBox.hgrow="NEVER">
+                            <font>
+                                <Font name="Roboto Medium" size="30.0" />
+                            </font>
+                        </Label>
+                        <Label layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="${searchKey.text}" HBox.hgrow="ALWAYS">
+                            <font>
+                                <Font name="Roboto" size="30.0" />
+                            </font>
+                        </Label>
+                    </children>
+                </HBox>
+                <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" vbarPolicy="ALWAYS" VBox.vgrow="ALWAYS">
+                    <content>
+                        <FlowPane fx:id="mirror_list_albums" hgap="12.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" vgap="6.0" />
+                    </content>
+                    <padding>
+                        <Insets right="4.0" />
+                    </padding>
+                </ScrollPane>
+            </children>
+        </VBox>
+        <VBox fx:id="tab_resultArtist" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" opacity="0.0" prefHeight="630.0" prefWidth="960.0" spacing="2.0">
+            <padding>
+                <Insets bottom="2.0" left="20.0" />
+            </padding>
+            <children>
+                <HBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="60.0" spacing="10.0">
+                    <children>
+                        <JFXButton alignment="CENTER" contentDisplay="GRAPHIC_ONLY" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#handleBackOperation" prefHeight="40.0" prefWidth="40.0" styleClass="back-btn">
+                            <graphic>
+                                <SVGPath content="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
+                            </graphic>
+                        </JFXButton>
+                        <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Artist results for" HBox.hgrow="NEVER">
+                            <font>
+                                <Font name="Roboto Medium" size="30.0" />
+                            </font>
+                        </Label>
+                        <Label layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="${searchKey.text}" HBox.hgrow="ALWAYS">
+                            <font>
+                                <Font name="Roboto" size="30.0" />
+                            </font>
+                        </Label>
+                    </children>
+                </HBox>
+                <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" vbarPolicy="ALWAYS" VBox.vgrow="ALWAYS">
+                    <content>
+                        <FlowPane fx:id="mirror_list_artists" hgap="12.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" vgap="6.0" />
+                    </content>
+                    <padding>
+                        <Insets right="4.0" />
+                    </padding>
+                </ScrollPane>
+            </children>
+        </VBox>
+        <VBox fx:id="tab_result" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="630.0" prefWidth="960.0" spacing="2.0">
+            <padding>
+                <Insets bottom="2.0" left="20.0" />
+            </padding>
+            <children>
+                <HBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="60.0" spacing="10.0" VBox.vgrow="NEVER">
+                    <children>
+                        <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Results for" HBox.hgrow="NEVER">
+                            <font>
+                                <Font name="Roboto Medium" size="30.0" />
+                            </font>
+                        </Label>
+                        <Label fx:id="searchKey" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
+                            <font>
+                                <Font name="Roboto" size="30.0" />
+                            </font>
+                        </Label>
+                    </children>
+                </HBox>
+                <StackPane fx:id="contentStack" alignment="TOP_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                    <children>
+                        <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" vbarPolicy="ALWAYS" visible="false">
+                            <padding>
+                                <Insets right="10.0" />
+                            </padding>
+                            <content>
+                                <VBox fx:id="tabsPreviewList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
+                                    <children>
+                                        <VBox fx:id="preview_resultArtist" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="260.0" spacing="4.0" VBox.vgrow="ALWAYS">
+                                            <children>
+                                                <HBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="30.0" VBox.vgrow="NEVER">
+                                                    <children>
+                                                        <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Artists" HBox.hgrow="ALWAYS">
+                                                            <font>
+                                                                <Font name="Roboto" size="20.0" />
+                                                            </font>
+                                                        </Label>
+                                                        <JFXButton graphicTextGap="8.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#handleShowAllArtists" ripplerFill="#4885ed" text="Show all" textFill="#085ce0" HBox.hgrow="NEVER">
+                                                            <graphic>
+                                                                <SVGPath content="M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z" fill="#4885ed" />
+                                                            </graphic>
+                                                            <font>
+                                                                <Font name="Roboto" size="14.0" />
+                                                            </font>
+                                                        </JFXButton>
+                                                    </children>
+                                                </HBox>
+                                                <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" maxWidth="1.7976931348623157E308" minHeight="-Infinity" pannable="true" prefHeight="224.0" vbarPolicy="NEVER" VBox.vgrow="ALWAYS">
+                                                    <content>
+                                                        <HBox fx:id="list_artists" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="224.0" spacing="12.0" />
+                                                    </content>
+                                                </ScrollPane>
+                                            </children>
+                                            <VBox.margin>
+                                                <Insets />
+                                            </VBox.margin>
+                                        </VBox>
+                                        <VBox fx:id="preview_resultAlbum" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="268.0" spacing="4.0" VBox.vgrow="ALWAYS">
+                                            <children>
+                                                <HBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="30.0" VBox.vgrow="NEVER">
+                                                    <children>
+                                                        <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Albums" HBox.hgrow="ALWAYS">
+                                                            <font>
+                                                                <Font name="Roboto" size="20.0" />
+                                                            </font>
+                                                        </Label>
+                                                        <JFXButton graphicTextGap="8.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#handleShowAllAlbums" ripplerFill="#4885ed" text="Show all" textFill="#085ce0" HBox.hgrow="NEVER">
+                                                            <graphic>
+                                                                <SVGPath content="M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z" fill="#4885ed" />
+                                                            </graphic>
+                                                            <font>
+                                                                <Font name="Roboto" size="14.0" />
+                                                            </font>
+                                                        </JFXButton>
+                                                    </children>
+                                                </HBox>
+                                                <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" maxWidth="1.7976931348623157E308" minHeight="-Infinity" pannable="true" prefHeight="232.0" vbarPolicy="NEVER" VBox.vgrow="ALWAYS">
+                                                    <content>
+                                                        <HBox fx:id="list_albums" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="232.0" spacing="12.0" />
+                                                    </content>
+                                                </ScrollPane>
+                                            </children>
+                                        </VBox>
+                                        <VBox fx:id="preview_resultSong" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="268.0" spacing="4.0" VBox.vgrow="ALWAYS">
+                                            <children>
+                                                <HBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="30.0" VBox.vgrow="NEVER">
+                                                    <children>
+                                                        <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Songs" HBox.hgrow="ALWAYS">
+                                                            <font>
+                                                                <Font name="Roboto" size="20.0" />
+                                                            </font>
+                                                        </Label>
+                                                        <JFXButton graphicTextGap="8.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#handleShowAllSongs" ripplerFill="#4885ed" text="Show all" textFill="#085ce0" HBox.hgrow="NEVER">
+                                                            <graphic>
+                                                                <SVGPath content="M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z" fill="#4885ed" />
+                                                            </graphic>
+                                                            <font>
+                                                                <Font name="Roboto" size="14.0" />
+                                                            </font>
+                                                        </JFXButton>
+                                                    </children>
+                                                </HBox>
+                                                <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" vbarPolicy="ALWAYS" VBox.vgrow="ALWAYS">
+                                                    <content>
+                                                        <VBox fx:id="list_songs" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+                                                    </content>
+                                                </ScrollPane>
+                                            </children>
+                                        </VBox>
+                                        <VBox fx:id="preview_resultPlaylist" layoutX="10.0" layoutY="270.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="268.0" spacing="4.0" VBox.vgrow="ALWAYS">
+                                            <children>
+                                                <HBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="30.0" VBox.vgrow="NEVER">
+                                                    <children>
+                                                        <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Playlists" HBox.hgrow="ALWAYS">
+                                                            <font>
+                                                                <Font name="Roboto" size="20.0" />
+                                                            </font>
+                                                        </Label>
+                                                        <JFXButton graphicTextGap="8.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#handleShowAllPlaylists" ripplerFill="#4885ed" text="Show all" textFill="#085ce0" HBox.hgrow="NEVER">
+                                                            <graphic>
+                                                                <SVGPath content="M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z" fill="#4885ed" />
+                                                            </graphic>
+                                                            <font>
+                                                                <Font name="Roboto" size="14.0" />
+                                                            </font>
+                                                        </JFXButton>
+                                                    </children>
+                                                </HBox>
+                                                <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" maxWidth="1.7976931348623157E308" minHeight="-Infinity" pannable="true" prefHeight="232.0" vbarPolicy="NEVER" VBox.vgrow="ALWAYS">
+                                                    <content>
+                                                        <HBox fx:id="list_playlists" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="232.0" spacing="12.0" />
+                                                    </content>
+                                                </ScrollPane>
+                                            </children>
+                                        </VBox>
+                                    </children>
+                                </VBox>
+                            </content>
+                        </ScrollPane>
+                        <VBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="20.0">
+                            <children>
+                                <ImageView fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" VBox.vgrow="NEVER">
+                                    <image>
+                                        <Image url="@ic_search_black_48dp.png" />
+                                    </image>
+                                </ImageView>
+                                <Label alignment="CENTER" text="Check your spelling, or search for something else" textAlignment="CENTER" wrapText="true" VBox.vgrow="ALWAYS">
+                                    <font>
+                                        <Font name="Roboto" size="40.0" />
+                                    </font>
+                                </Label>
+                                <Label text="Try searching for something else." VBox.vgrow="NEVER">
+                                    <font>
+                                        <Font name="Roboto" size="20.0" />
+                                    </font>
+                                </Label>
+                            </children>
+                        </VBox>
+                    </children>
+                    <VBox.margin>
+                        <Insets top="10.0" />
+                    </VBox.margin>
+                </StackPane>
+            </children>
+        </VBox>
+    </children>
+</StackPane>

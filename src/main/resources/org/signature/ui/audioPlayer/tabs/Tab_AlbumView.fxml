@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.SVGPath?>
+<?import javafx.scene.text.Font?>
+
+<VBox fx:id="album_view" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="630.0" prefWidth="960.0" stylesheets="@../audio-player-style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.signature.ui.audioPlayer.tabs.AlbumViewTabController">
+   <children>
+      <HBox fx:id="albumViewHeader" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="96.0" prefHeight="274.0" style="-fx-background-color: rgba(218, 224, 226, 1.0);" VBox.vgrow="ALWAYS">
+         <children>
+            <JFXButton contentDisplay="GRAPHIC_ONLY" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#handleBackOperation" prefHeight="30.0" prefWidth="40.0">
+               <graphic>
+                  <SVGPath content="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
+               </graphic>
+            </JFXButton>
+            <ImageView fx:id="albumArtView" fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" HBox.hgrow="NEVER">
+               <image>
+                  <Image url="@../model/playlist_white.png" />
+               </image>
+               <HBox.margin>
+                  <Insets bottom="30.0" right="15.0" top="30.0" />
+               </HBox.margin>
+            </ImageView>
+            <VBox fx:id="info_and_controls_pane" spacing="2.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <TextField fx:id="albumName" editable="false" focusTraversable="false" maxWidth="1.7976931348623157E308" style="-fx-background-color: TRANSPARENT;" VBox.vgrow="NEVER">
+                     <font>
+                        <Font name="Roboto" size="44.0" />
+                     </font>
+                     <padding>
+                        <Insets left="2.0" />
+                     </padding>
+                  </TextField>
+                  <Label fx:id="artistName" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="20.0">
+                     <padding>
+                        <Insets left="6.0" />
+                     </padding>
+                     <font>
+                        <Font name="Roboto" size="14.0" />
+                     </font>
+                  </Label>
+                  <HBox fx:id="albumInfoPane" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="20.0" spacing="6.0" VBox.vgrow="NEVER">
+                     <children>
+                        <Label fx:id="albumReleaseYear" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="20.0">
+                           <font>
+                              <Font name="Roboto" size="14.0" />
+                           </font>
+                        </Label>
+                        <Label alignment="CENTER" contentDisplay="GRAPHIC_ONLY" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="20.0">
+                           <font>
+                              <Font name="Roboto" size="16.0" />
+                           </font>
+                           <graphic>
+                              <SVGPath content="M 18 18 m -3, 0 a 3,3 0 1,0 6,0 a 3,3 0 1,0 -6,0" translateY="0.8" />
+                           </graphic>
+                        </Label>
+                        <Label fx:id="albumCategory" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="20.0">
+                           <font>
+                              <Font name="Roboto" size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                     <padding>
+                        <Insets left="6.0" />
+                     </padding>
+                  </HBox>
+                  <HBox alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="20.0" VBox.vgrow="ALWAYS">
+                     <children>
+                        <JFXButton onAction="#handlePlayAllSongs" text="Play all" HBox.hgrow="NEVER">
+                           <font>
+                              <Font name="Roboto" size="14.0" />
+                           </font>
+                           <graphic>
+                              <SVGPath content="M8 5v14l11-7z" />
+                           </graphic>
+                        </JFXButton>
+                        <JFXButton layoutX="10.0" layoutY="104.0" onAction="#handleAddTo" text="Add to" HBox.hgrow="NEVER">
+                           <font>
+                              <Font name="Roboto" size="14.0" />
+                           </font>
+                           <graphic>
+                              <SVGPath content="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                           </graphic>
+                        </JFXButton>
+                        <JFXButton layoutX="110.0" layoutY="82.0" onAction="#handleShowArtist" text="Show artist">
+                           <font>
+                              <Font name="Roboto" size="14.0" />
+                           </font>
+                           <graphic>
+                              <SVGPath content="M12 5.9c1.16 0 2.1.94 2.1 2.1s-.94 2.1-2.1 2.1S9.9 9.16 9.9 8s.94-2.1 2.1-2.1m0 9c2.97 0 6.1 1.46 6.1 2.1v1.1H5.9V17c0-.64 3.13-2.1 6.1-2.1M12 4C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 9c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z" />
+                           </graphic>
+                        </JFXButton>
+                        <JFXButton layoutX="72.0" layoutY="104.0" onAction="#handleEditAlbumInfo" text="Edit info" HBox.hgrow="NEVER">
+                           <font>
+                              <Font name="Roboto" size="14.0" />
+                           </font>
+                           <graphic>
+                              <SVGPath content="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                           </graphic>
+                        </JFXButton>
+                        <JFXButton layoutX="196.0" layoutY="104.0" onAction="#handleDeleteAlbum" text="Delete" HBox.hgrow="NEVER">
+                           <font>
+                              <Font name="Roboto" size="14.0" />
+                           </font>
+                           <graphic>
+                              <SVGPath content="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                           </graphic>
+                        </JFXButton>
+                     </children>
+                  </HBox>
+               </children>
+               <padding>
+                  <Insets bottom="14.0" />
+               </padding>
+               <HBox.margin>
+                  <Insets bottom="30.0" left="15.0" top="30.0" />
+               </HBox.margin>
+            </VBox>
+         </children>
+      </HBox>
+      <StackPane fx:id="contentStack" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+         <children>
+            <ScrollPane fx:id="albumViewContentPane" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" vbarPolicy="ALWAYS" visible="false">
+               <padding>
+                  <Insets left="20.0" right="10.0" top="20.0" />
+               </padding>
+               <content>
+                  <VBox fx:id="albumSongsList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+               </content>
+            </ScrollPane>
+            <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+               <padding>
+                  <Insets left="40.0" top="20.0" />
+               </padding>
+               <children>
+                  <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="60.0" text="What's a album without music?" VBox.vgrow="NEVER">
+                     <font>
+                        <Font name="Roboto" size="18.0" />
+                     </font>
+                  </Label>
+                  <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" prefHeight="38.0" prefWidth="930.0" spacing="10.0">
+                     <children>
+                        <ImageView fitHeight="26.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@ic_storage_black_48dp.png" />
+                           </image>
+                        </ImageView>
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="22.0" text="Add songs from my collections" VBox.vgrow="NEVER">
+                                 <font>
+                                    <Font name="Roboto" size="16.0" />
+                                 </font>
+                              </Label>
+                              <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" onMouseClicked="#handleShowMyMusic" prefHeight="16.0" styleClass="link-btn" text="Go to Songs" textFill="#0a79df" VBox.vgrow="NEVER">
+                                 <font>
+                                    <Font size="12.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </children>
+      </StackPane>
+   </children>
+</VBox>

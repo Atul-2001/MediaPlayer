@@ -1,0 +1,277 @@
+* {
+    -fx-focus-color: rgba(234, 240, 241, 0.8);
+    -fx-google-green: #3cba54; /*RGB: 60, 186, 84*/
+    -fx-google-yellow: #f4c20d; /*RGB: 244, 194, 13*/
+    -fx-google-red: #db3236; /*RGB: 219, 50, 54*/
+    -fx-google-blue: #4885ed; /*RGB: 72, 133, 237*/
+    -fx-background-fill: linear-gradient(to right, #badbf9 0%, #E0C3FC 42%, #f8fbc0 100%);
+}
+
+#audio-player-base {
+    -fx-background-color: -fx-background-fill;
+}
+
+#sideMenuBar {
+    -fx-background-color: rgba(218, 224, 226, 0.6);
+    /* top | right | bottom | left */
+    -fx-border-width: 0 1px 0 0;
+    /* top | right | bottom | left */
+    -fx-border-color: TRANSPARENT #DAE0E2 TRANSPARENT TRANSPARENT;
+}
+
+#sideMenuDrawer {
+    -fx-background-color: rgba(218, 224, 226, 1.0);
+}
+
+.jfx-button:hover {
+    -fx-background-color: -fx-focus-color;
+}
+
+#search-box {
+    -fx-background-color: #ced4da;
+    -fx-background-radius: 8%;
+    -fx-border-color: #adb5bd;
+    -fx-border-radius: 2%;
+}
+
+#search-box > .text-field {
+    -fx-background-color: TRANSPARENT;
+    -fx-background-radius: 8%;
+    -fx-text-fill: BLACK;
+    -fx-prompt-text-fill: #747474;
+}
+
+.toggle-button {
+    -fx-background-color: TRANSPARENT;
+    -fx-border-width: 0 0 0 5px;
+    -fx-border-color: TRANSPARENT;
+}
+
+.toggle-button:hover {
+    -fx-background-color: -fx-focus-color;
+    -fx-border-color: #0A79DF;
+}
+
+.toggle-button:selected {
+    -fx-border-color: #0A79DF;
+}
+
+#btn-search {
+    -fx-background-color: TRANSPARENT;
+}
+
+#btn-search:hover {
+    -fx-background-color: #0adfb4;
+}
+
+.scroll-pane {
+    -fx-background-color: TRANSPARENT;
+    -fx-border-width: 0 0 0 0;
+    -fx-border-color: TRANSPARENT TRANSPARENT TRANSPARENT TRANSPARENT;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: TRANSPARENT;
+}
+
+StackPane {
+    -fx-background-color: TRANSPARENT;
+}
+
+VBox {
+    -fx-background-color: TRANSPARENT;
+}
+
+HBox {
+    -fx-background-color: TRANSPARENT;
+}
+
+FlowPane {
+    -fx-background-color: TRANSPARENT;
+}
+
+.separator {
+    -fx-background-color:  DARKGRAY;
+}
+
+.jfx-radio-button {
+    -jfx-selected-color: #0A79DF;
+    -jfx-unselected-color: #5A5A5A;
+}
+
+.link-btn:hover {
+    -fx-text-fill: -fx-google-green;
+}
+
+.link-btn:pressed {
+    -fx-text-fill: GREEN;
+}
+
+.back-btn {
+    -fx-background-color: rgba(218, 224, 226, 0.8);
+    -fx-background-radius: 50%;
+}
+
+.back-btn:hover {
+    -fx-effect: dropshadow(two-pass-box, DARKGRAY, 10, 0, 0, 0);
+}
+
+#addMusicDialog {
+    -fx-background-color: -fx-background-fill;
+}
+
+#addPlaylistDialog {
+    -fx-background-color: -fx-background-fill;
+}
+
+#aboutSongDialog {
+    -fx-background-color: -fx-background-fill;
+    -fx-border-color: #20ee20;
+    -fx-border-width: 2px;
+}
+
+.dialog-buttons {
+    -fx-background-color: #b4b4b4;
+}
+
+.dialog-buttons:hover {
+    -fx-background-color: #8c8c8c;
+}
+
+.dialog-text-field {
+    -fx-background-color: TRANSPARENT;
+    -fx-border-color: GRAY;
+}
+
+.dialog-text-field:focused {
+    -fx-background-color: WHITE;
+    -fx-highlight-fill: #20ee20;
+}
+
+/****************************************************************************/
+.jfx-slider {
+    -jfx-default-thumb: #0F9D58;
+    -jfx-default-track: #CCCCCC;
+}
+
+.jfx-slider .track,
+.jfx-slider:vertical .track {
+    -fx-background-color: -jfx-default-track;
+    -fx-background-radius: 5;
+    -fx-background-insets: 0;
+    -fx-pref-width: 2px;
+    -fx-pref-height: 2px;
+}
+
+.jfx-slider .thumb,
+.jfx-slider:focused .thumb {
+    -fx-background-color: -jfx-default-thumb;
+    -fx-background-radius: 20;
+    -fx-background-insets: 0;
+}
+
+.jfx-slider .colored-track {
+    -fx-background-color: -jfx-default-thumb;
+    -fx-background-radius: 5;
+    -fx-background-insets: 0;
+}
+
+.jfx-slider .slider-value {
+    -fx-stroke: WHITE;
+    -fx-font-size: 10;
+}
+
+.jfx-slider .animated-thumb {
+    -fx-pref-width: 30px;
+    -fx-pref-height: 30px;
+    -fx-background-color: -jfx-default-thumb;
+    -fx-background-radius: 50% 50% 50% 0%;
+    -fx-background-insets: 0;
+}
+
+.jfx-slider:min .thumb,
+.jfx-slider:min:focused .thumb {
+    -fx-background-color: -jfx-default-track;
+    -fx-background-radius: 20;
+    -fx-background-insets: 0;
+}
+
+.jfx-slider:min .animated-thumb {
+    -fx-background-color: -jfx-default-track;
+    -fx-background-radius: 50% 50% 50% 0%;
+    -fx-background-insets: 0;
+}
+
+/**********************************************************************************************************************/
+.btn-player-control:hover {
+    -fx-border-radius: 5em;
+    -fx-border-color: #00fffd;
+    -fx-background-color: #FFDEE9;
+}
+
+#btn-toggle {
+    -fx-background-radius: 5em;
+    -fx-background-color: TRANSPARENT;
+    -fx-border-width: 1;
+    -fx-border-color: TRANSPARENT;
+}
+
+#btn-toggle:hover {
+    -fx-border-radius: 5em;
+    -fx-border-color: #00fffd;
+    -fx-background-color: #FFDEE9;
+}
+
+#btn-toggle:selected {
+    -fx-background-color: #92faf8;
+}
+
+#btn-toggle2 {
+    -fx-background-color: TRANSPARENT;
+    -fx-border-width: 1;
+    -fx-border-color: TRANSPARENT;
+}
+
+#btn-toggle2:hover {
+    -fx-border-color: #00fffd;
+    -fx-background-color: #FFDEE9;
+}
+
+#btn-toggle2:selected {
+    -fx-background-color: #92faf8;
+}
+
+/**********************************************************************************************************************/
+.btn-mini-player-control:hover {
+    -fx-border-color: DARKGRAY;
+    -fx-background-color: rgba(180, 250, 248, 0.2);
+}
+
+.btn-misc:hover {
+    -fx-background-color: TRANSPARENT;
+}
+
+.btn-misc:pressed {
+    -fx-background-color: -fx-focus-color;
+}
+
+.jfx-progress-bar > .track{
+    -fx-background-color: rgba(224, 224, 244, 0.6);
+}
+
+.jfx-progress-bar > .bar,
+.jfx-progress-bar:indeterminate > .bar{
+    -fx-background-color: -fx-google-green;
+    -fx-padding: 1.5;
+}
+
+.jfx-progress-bar > .secondary-bar,
+.jfx-progress-bar:indeterminate > .secondary-bar{
+    -fx-background-color: #CDE1B7;
+}
+
+.jfx-progress-bar > .track,
+.jfx-progress-bar > .bar {
+    -fx-background-radius: 0;
+    -fx-background-insets: 0;
+}

@@ -1,0 +1,49 @@
+VBox {
+    -fx-background-color: WHITE;
+}
+
+.jfx-tab-pane {
+    -fx-tab-min-width: 640;
+    -fx-tab-min-height: 40;
+    -fx-background-color: TRANSPARENT;
+}
+
+.jfx-tab-pane .depth-container {
+    -fx-effect: null;
+}
+
+.jfx-tab-pane .tab-header-background {
+    -fx-opacity: 0;
+}
+
+.jfx-tab-pane .tab-header-area .control-buttons-tab {
+    -fx-min-width: 0;
+    -fx-pref-width: 0;
+}
+
+.jfx-tab-pane .tab-header-area .tab-down-button {
+    -fx-shape: null;
+    -fx-min-width: 0;
+    -fx-pref-width: 0;
+}
+
+.jfx-tab-pane .headers-region .tab .tab-container .tab-label {
+    -fx-font-family: "Roboto Light";
+    /*-fx-font-weight: BOLD;*/
+    -fx-font-size: 22;
+    -fx-text-fill: BLACK;
+    -fx-padding: 6 10 6 10;
+}
+
+.jfx-tab-pane .headers-region .tab:selected .tab-container .tab-label {
+    -fx-text-fill: rgb(72,133,237);
+}
+
+.jfx-tab-pane .tab-selected-line {
+    -fx-background-color: rgb(72,133,237);
+    -fx-stroke: rgb(72,133,237);
+}
+
+.jfx-tab-pane .headers-region > .tab > .jfx-rippler {
+    -jfx-rippler-fill: rgb(72,133,237);
+}

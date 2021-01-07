@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXComboBox?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.SVGPath?>
+<?import javafx.scene.text.Font?>
+<?import java.lang.String?>
+<VBox fx:id="tab_playlists" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="630.0"
+      prefWidth="960.0" stylesheets="@../audio-player-style.css" xmlns="http://javafx.com/javafx/11.0.1"
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.signature.ui.audioPlayer.tabs.PlaylistTabController">
+    <padding>
+        <Insets bottom="2.0" left="20.0" right="10.0"/>
+    </padding>
+    <children>
+        <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="60.0"
+               text="Playlists">
+            <font>
+                <Font name="Roboto Medium" size="30.0"/>
+            </font>
+        </Label>
+        <HBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+              prefHeight="30.0" spacing="20.0" VBox.vgrow="NEVER">
+            <children>
+                <JFXButton graphicTextGap="8.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                           minWidth="-Infinity" onAction="#handleAddPlaylist" prefHeight="28.0" prefWidth="118.0"
+                           ripplerFill="#0a79df" style="-fx-background-color: TRANSPARENT;" text="New playlist">
+                    <font>
+                        <Font name="Roboto" size="14.0"/>
+                    </font>
+                    <graphic>
+                        <SVGPath content="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                    </graphic>
+                    <HBox.margin>
+                        <Insets/>
+                    </HBox.margin>
+                    <padding>
+                        <Insets left="-14.0"/>
+                    </padding>
+                </JFXButton>
+                <HBox alignment="CENTER_LEFT" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="40.0">
+                    <children>
+                        <Label text="Sort by:">
+                            <font>
+                                <Font name="Roboto" size="14.0"/>
+                            </font>
+                        </Label>
+                        <JFXComboBox value="A to Z">
+                            <items>
+                                <FXCollections fx:factory="observableArrayList">
+                                    <String fx:value="Date added"/>
+                                    <String fx:value="A to Z"/>
+                                    <String fx:value="Artists"/>
+                                    <String fx:value="Album"/>
+                                </FXCollections>
+                            </items>
+                        </JFXComboBox>
+                    </children>
+                </HBox>
+            </children>
+        </HBox>
+        <StackPane fx:id="contentStack" alignment="TOP_LEFT" maxHeight="1.7976931348623157E308"
+                   maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+            <children>
+                <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308"
+                            maxWidth="1.7976931348623157E308" pannable="true" vbarPolicy="ALWAYS" visible="false">
+                    <padding>
+                        <Insets right="10.0"/>
+                    </padding>
+                    <content>
+                        <FlowPane fx:id="list_playlists" hgap="12" maxHeight="1.7976931348623157E308"
+                                  maxWidth="1.7976931348623157E308" vgap="6"/>
+                    </content>
+                </ScrollPane>
+                <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="80.0"
+                       text="Nothing to show here. Try a different filter." wrapText="true">
+                    <font>
+                        <Font name="Roboto" size="26.0"/>
+                    </font>
+                </Label>
+            </children>
+            <VBox.margin>
+                <Insets top="10.0"/>
+            </VBox.margin>
+        </StackPane>
+    </children>
+</VBox>

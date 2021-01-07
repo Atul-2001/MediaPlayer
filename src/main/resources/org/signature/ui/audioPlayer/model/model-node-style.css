@@ -1,0 +1,30 @@
+VBox {
+    -fx-background-color: TRANSPARENT;
+}
+
+.songNodeEVEN {
+    -fx-background-color: rgba(218, 224, 226, 0.6);
+}
+
+.songNodeODD {
+    -fx-background-color: TRANSPARENT;
+}
+
+.songNodeEVEN:hover, .songNodeODD:hover {
+    -fx-background-color: rgba(222, 224, 226, 0.4);
+    -fx-effect: dropshadow(one-pass-box, rgba(60, 60, 60, 0.4), 10, 0.0, 0, 2);
+}
+
+/*.songNodeEVEN:pressed, .songNodeODD:pressed {
+    -fx-background-color: rgba(72, 133, 237, 0.4);
+}*/
+
+.btn-controls {
+    -fx-background-color: rgba(218, 224, 226, 0.8);
+    -fx-background-radius: 50%;
+}
+
+.btn-controls:hover {
+    -fx-effect: dropshadow(two-pass-box, DARKGRAY, 10, 0, 0, 0);
+}
+

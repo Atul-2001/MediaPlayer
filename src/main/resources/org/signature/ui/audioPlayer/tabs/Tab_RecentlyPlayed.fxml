@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.SVGPath?>
+<?import javafx.scene.text.*?>
+<VBox xmlns:fx="http://javafx.com/fxml/1" fx:id="tab_recentlyPlayed" maxHeight="1.7976931348623157E308"
+      maxWidth="1.7976931348623157E308"
+      prefHeight="630.0" prefWidth="960.0" stylesheets="@../audio-player-style.css"
+      xmlns="http://javafx.com/javafx/11.0.1"
+      fx:controller="org.signature.ui.audioPlayer.tabs.RecentlyPlayedTabController">
+    <padding>
+        <Insets bottom="2.0" left="20.0" right="10.0"/>
+    </padding>
+    <children>
+        <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="60.0"
+               text="Recently plays">
+            <font>
+                <Font name="Roboto Medium" size="30.0"/>
+            </font>
+        </Label>
+        <JFXButton graphicTextGap="8.0" onAction="#handleShuffleMusic" ripplerFill="#0a79df"
+                   style="-fx-background-color: TRANSPARENT;" text="Shuffle all music">
+            <font>
+                <Font name="Roboto" size="14.0"/>
+            </font>
+            <graphic>
+                <SVGPath
+                        content="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/>
+            </graphic>
+        </JFXButton>
+        <StackPane fx:id="contentStack" alignment="TOP_LEFT" maxHeight="1.7976931348623157E308"
+                   maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+            <children>
+                <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308"
+                            maxWidth="1.7976931348623157E308" pannable="true" vbarPolicy="ALWAYS" visible="false">
+                    <content>
+                        <FlowPane fx:id="list_played_albums" maxHeight="1.7976931348623157E308"
+                                  maxWidth="1.7976931348623157E308" hgap="12" vgap="6" />
+                    </content>
+                    <padding>
+                        <Insets right="10.0"/>
+                    </padding>
+                </ScrollPane>
+                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                    <children>
+                        <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+                               prefHeight="60.0" text="Things you listen to will show up here." wrapText="true"
+                               VBox.vgrow="SOMETIMES">
+                            <font>
+                                <Font name="Roboto" size="22.0"/>
+                            </font>
+                        </Label>
+                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" prefHeight="38.0"
+                              prefWidth="930.0" spacing="10.0" VBox.vgrow="NEVER">
+                            <children>
+                                <ImageView fitHeight="26.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@ic_storage_black_48dp.png"/>
+                                    </image>
+                                </ImageView>
+                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                                      HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308"
+                                               minHeight="-Infinity" prefHeight="22.0" text="Play your own music"
+                                               VBox.vgrow="NEVER">
+                                            <font>
+                                                <Font name="Roboto" size="16.0"/>
+                                            </font>
+                                        </Label>
+                                        <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308"
+                                               minHeight="-Infinity" onMouseClicked="#handleShowMyMusic"
+                                               prefHeight="16.0" styleClass="link-btn" text="Show my music"
+                                               textFill="#0a79df" VBox.vgrow="NEVER">
+                                            <font>
+                                                <Font size="12.0"/>
+                                            </font>
+                                        </Label>
+                                    </children>
+                                </VBox>
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+            </children>
+            <VBox.margin>
+                <Insets top="10.0"/>
+            </VBox.margin>
+        </StackPane>
+    </children>
+</VBox>

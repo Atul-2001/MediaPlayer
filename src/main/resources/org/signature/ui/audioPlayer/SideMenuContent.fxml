@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
+<VBox xmlns:fx="http://javafx.com/fxml/1" id="sideMenuDrawer" maxHeight="1.7976931348623157E308" maxWidth="-Infinity"
+      minHeight="330.0"
+      minWidth="-Infinity" prefHeight="750.0" prefWidth="320.0" stylesheets="@audio-player-style.css"
+      xmlns="http://javafx.com/javafx/11.0.1" fx:controller="org.signature.ui.audioPlayer.DrawerWindowController">
+    <children>
+        <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308"
+                    maxWidth="-Infinity" minWidth="-Infinity" pannable="true" prefWidth="320.0" vbarPolicy="NEVER"
+                    VBox.vgrow="ALWAYS">
+            <content>
+                <VBox maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="320.0">
+                    <children>
+                        <ToggleButton fx:id="btnRecentlyPlayed" alignment="CENTER_LEFT" graphicTextGap="16.0"
+                                      maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+                                      minWidth="-Infinity" mnemonicParsing="false" prefHeight="50.0"
+                                      text="Recently Played">
+                            <font>
+                                <Font name="Roboto" size="18.0"/>
+                            </font>
+                            <padding>
+                                <Insets left="10.0"/>
+                            </padding>
+                            <graphic>
+                                <SVGPath
+                                        content="M 9.304688 0.0234375 C 7.195312 0.175781 5.242188 0.964844 3.59375 2.324219 C 3.289062 2.570312 2.570312 3.289062 2.324219 3.59375 C 1.234375 4.914062 0.527344 6.390625 0.195312 8.039062 C -0.332031 10.675781 0.234375 13.445312 1.75 15.648438 C 2.3125 16.46875 3.03125 17.234375 3.828125 17.867188 C 5.722656 19.371094 8.214844 20.140625 10.636719 19.980469 C 13.53125 19.785156 16.144531 18.394531 17.921875 16.101562 C 18.992188 14.714844 19.695312 13.019531 19.917969 11.277344 C 20.164062 9.300781 19.84375 7.355469 18.96875 5.582031 C 18.488281 4.605469 17.925781 3.808594 17.144531 3.011719 C 15.484375 1.320312 13.394531 0.308594 11.019531 0.0507812 C 10.664062 0.0117188 9.664062 -0.00390625 9.304688 0.0234375 Z M 11.039062 1.050781 C 12.476562 1.230469 13.773438 1.703125 14.929688 2.460938 C 15.933594 3.117188 16.84375 4.019531 17.496094 5.003906 C 17.8125 5.480469 18.175781 6.171875 18.375 6.675781 C 18.601562 7.246094 18.777344 7.875 18.878906 8.480469 C 18.972656 9.054688 18.988281 9.261719 18.988281 10 C 18.988281 10.738281 18.972656 10.945312 18.878906 11.519531 C 18.320312 14.796875 15.984375 17.511719 12.808594 18.558594 C 12.261719 18.742188 11.539062 18.894531 10.929688 18.964844 C 10.550781 19.003906 9.351562 18.996094 8.988281 18.953125 C 7.03125 18.710938 5.382812 17.960938 3.917969 16.644531 C 2.960938 15.78125 2.113281 14.558594 1.625 13.324219 C 1.335938 12.589844 1.125 11.742188 1.035156 10.929688 C 1 10.601562 1 9.398438 1.035156 9.070312 C 1.265625 6.984375 2.167969 5.101562 3.632812 3.632812 C 4.949219 2.3125 6.652344 1.429688 8.480469 1.121094 C 8.671875 1.09375 8.9375 1.054688 9.070312 1.042969 C 9.207031 1.03125 9.34375 1.015625 9.378906 1.011719 C 9.539062 0.988281 10.800781 1.019531 11.039062 1.050781 Z M 11.039062 1.050781 M 9.070312 3.332031 C 9.066406 3.34375 9.0625 5.074219 9.066406 7.171875 L 9.070312 10.988281 L 11.648438 10.996094 L 14.222656 11 L 14.222656 10 L 10.0625 10 L 10.0625 3.304688 L 9.570312 3.304688 C 9.199219 3.304688 9.078125 3.3125 9.070312 3.332031 Z M 9.070312 3.332031"/>
+                            </graphic>
+                            <toggleGroup>
+                                <ToggleGroup fx:id="menuButtonGroup"/>
+                            </toggleGroup>
+                        </ToggleButton>
+                        <ToggleButton fx:id="btnSongs" alignment="CENTER_LEFT" graphicTextGap="16.0"
+                                      maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+                                      minWidth="-Infinity" mnemonicParsing="false" prefHeight="50.0" text="Songs"
+                                      toggleGroup="$menuButtonGroup">
+                            <font>
+                                <Font name="Roboto" size="18.0"/>
+                            </font>
+                            <padding>
+                                <Insets left="10.0"/>
+                            </padding>
+                            <graphic>
+                                <SVGPath
+                                        content="M 19.761719 0.183594 C 19.609375 0.046875 19.410156 -0.015625 19.207031 0.00390625 L 6.351562 1.433594 C 5.988281 1.472656 5.714844 1.777344 5.714844 2.144531 L 5.714844 14.871094 C 5.066406 14.484375 4.324219 14.28125 3.570312 14.285156 C 1.601562 14.285156 0 15.566406 0 17.144531 C 0 18.71875 1.601562 20 3.570312 20 C 5.539062 20 7.144531 18.71875 7.144531 17.144531 L 7.144531 6.355469 L 18.570312 5.085938 L 18.570312 13.441406 C 17.921875 13.054688 17.183594 12.851562 16.429688 12.855469 C 14.460938 12.855469 12.855469 14.136719 12.855469 15.714844 C 12.855469 17.289062 14.460938 18.570312 16.429688 18.570312 C 18.398438 18.570312 20 17.289062 20 15.714844 L 20 0.714844 C 20 0.511719 19.914062 0.316406 19.761719 0.183594 Z M 19.761719 0.183594"/>
+                            </graphic>
+                        </ToggleButton>
+                        <ToggleButton fx:id="btnAlbums" alignment="CENTER_LEFT" graphicTextGap="16.0"
+                                      maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+                                      minWidth="-Infinity" mnemonicParsing="false" prefHeight="50.0" text="Albums"
+                                      toggleGroup="$menuButtonGroup">
+                            <font>
+                                <Font name="Roboto" size="18.0"/>
+                            </font>
+                            <padding>
+                                <Insets left="10.0"/>
+                            </padding>
+                            <graphic>
+                                <SVGPath
+                                        content="M 13.375 7.125 L 8.6875 8.296875 C 8.425781 8.363281 8.242188 8.597656 8.242188 8.867188 L 8.242188 11.898438 C 8.058594 11.832031 7.863281 11.796875 7.65625 11.796875 C 6.6875 11.796875 5.898438 12.585938 5.898438 13.554688 C 5.898438 14.523438 6.6875 15.3125 7.65625 15.3125 C 8.625 15.3125 9.414062 14.523438 9.414062 13.554688 L 9.414062 9.324219 L 12.929688 8.445312 L 12.929688 10.726562 C 12.746094 10.660156 12.550781 10.625 12.34375 10.625 C 11.375 10.625 10.585938 11.414062 10.585938 12.382812 C 10.585938 13.351562 11.375 14.140625 12.34375 14.140625 C 13.3125 14.140625 14.101562 13.351562 14.101562 12.382812 L 14.101562 7.695312 C 14.101562 7.316406 13.742188 7.035156 13.375 7.125 Z M 7.65625 14.140625 C 7.332031 14.140625 7.070312 13.878906 7.070312 13.554688 C 7.070312 13.230469 7.332031 12.96875 7.65625 12.96875 C 7.980469 12.96875 8.242188 13.230469 8.242188 13.554688 C 8.242188 13.878906 7.980469 14.140625 7.65625 14.140625 Z M 12.34375 12.96875 C 12.019531 12.96875 11.757812 12.707031 11.757812 12.382812 C 11.757812 12.058594 12.019531 11.796875 12.34375 11.796875 C 12.667969 11.796875 12.929688 12.058594 12.929688 12.382812 C 12.929688 12.707031 12.667969 12.96875 12.34375 12.96875 Z M 12.34375 12.96875 M 19.414062 14.140625 L 17.617188 14.140625 L 17.617188 5.273438 C 17.617188 4.949219 17.355469 4.6875 17.03125 4.6875 L 16.445312 4.6875 L 16.445312 2.929688 C 16.445312 2.605469 16.183594 2.34375 15.859375 2.34375 L 15.273438 2.34375 L 15.273438 0.585938 C 15.273438 0.261719 15.011719 0 14.6875 0 L 5.3125 0 C 4.988281 0 4.726562 0.261719 4.726562 0.585938 L 4.726562 2.34375 L 4.140625 2.34375 C 3.816406 2.34375 3.554688 2.605469 3.554688 2.929688 L 3.554688 4.6875 L 2.96875 4.6875 C 2.644531 4.6875 2.382812 4.949219 2.382812 5.273438 L 2.382812 14.140625 L 0.585938 14.140625 C 0.261719 14.140625 0 14.402344 0 14.726562 L 0 19.414062 C 0 19.738281 0.261719 20 0.585938 20 L 19.414062 20 C 19.738281 20 20 19.738281 20 19.414062 L 20 14.726562 C 20 14.402344 19.738281 14.140625 19.414062 14.140625 Z M 5.898438 1.171875 L 14.101562 1.171875 L 14.101562 2.34375 L 5.898438 2.34375 Z M 4.726562 3.515625 L 15.273438 3.515625 L 15.273438 4.6875 L 4.726562 4.6875 Z M 3.554688 5.859375 L 16.445312 5.859375 C 16.445312 6.34375 16.445312 16.046875 16.445312 16.484375 L 3.554688 16.484375 C 3.554688 16.046875 3.554688 6.339844 3.554688 5.859375 Z M 18.828125 18.828125 L 1.171875 18.828125 L 1.171875 15.3125 L 2.382812 15.3125 L 2.382812 17.070312 C 2.382812 17.394531 2.644531 17.65625 2.96875 17.65625 L 17.03125 17.65625 C 17.355469 17.65625 17.617188 17.394531 17.617188 17.070312 L 17.617188 15.3125 L 18.828125 15.3125 Z M 18.828125 18.828125"/>
+                            </graphic>
+                        </ToggleButton>
+                        <ToggleButton fx:id="btnArtists" alignment="CENTER_LEFT" graphicTextGap="16.0"
+                                      maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+                                      minWidth="-Infinity" mnemonicParsing="false" prefHeight="50.0" text="Artists"
+                                      toggleGroup="$menuButtonGroup">
+                            <font>
+                                <Font name="Roboto" size="18.0"/>
+                            </font>
+                            <padding>
+                                <Insets left="10.0"/>
+                            </padding>
+                            <graphic>
+                                <SVGPath
+                                        content="M12 5.9c1.16 0 2.1.94 2.1 2.1s-.94 2.1-2.1 2.1S9.9 9.16 9.9 8s.94-2.1 2.1-2.1m0 9c2.97 0 6.1 1.46 6.1 2.1v1.1H5.9V17c0-.64 3.13-2.1 6.1-2.1M12 4C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 9c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z"/>
+                            </graphic>
+                        </ToggleButton>
+                        <ToggleButton fx:id="btnFavourite" alignment="CENTER_LEFT" graphicTextGap="16.0"
+                                      maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+                                      minWidth="-Infinity" mnemonicParsing="false" prefHeight="50.0" text="Favourite"
+                                      toggleGroup="$menuButtonGroup">
+                            <font>
+                                <Font name="Roboto" size="18.0"/>
+                            </font>
+                            <padding>
+                                <Insets left="10.0"/>
+                            </padding>
+                            <graphic>
+                                <SVGPath
+                                        content="M16.5 3c-1.74 0-3.41.81-4.5 2.09C10.91 3.81 9.24 3 7.5 3 4.42 3 2 5.42 2 8.5c0 3.78 3.4 6.86 8.55 11.54L12 21.35l1.45-1.32C18.6 15.36 22 12.28 22 8.5 22 5.42 19.58 3 16.5 3zm-4.4 15.55l-.1.1-.1-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04.99 3.57 2.36h1.87C13.46 5.99 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.9 10.05z"/>
+                            </graphic>
+                        </ToggleButton>
+                        <Separator fx:id="separator" maxHeight="2.0" minHeight="2.0"
+                                   style="-fx-background-color: DARKGRAY;"/>
+                        <ToggleButton fx:id="btnShowPlaylist" alignment="CENTER_LEFT" graphicTextGap="16.0"
+                                      maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+                                      minWidth="-Infinity" mnemonicParsing="false" prefHeight="50.0" text="Playlist">
+                            <toggleGroup>
+                                <ToggleGroup fx:id="menuTabGroup1"/>
+                            </toggleGroup>
+                            <font>
+                                <Font name="Roboto" size="18.0"/>
+                            </font>
+                            <padding>
+                                <Insets left="10.0"/>
+                            </padding>
+                            <graphic>
+                                <SVGPath content="M19 9H2v2h17V9zm0-4H2v2h17V5zM2 15h13v-2H2v2zm15-2v6l5-3-5-3z"/>
+                            </graphic>
+                        </ToggleButton>
+                        <VBox fx:id="addedPlaylists" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308"
+                              maxWidth="-Infinity" minWidth="-Infinity" prefWidth="320.0" VBox.vgrow="ALWAYS"/>
+                    </children>
+                </VBox>
+            </content>
+        </ScrollPane>
+        <ToggleButton fx:id="btnSettings" alignment="CENTER_LEFT" graphicTextGap="16.0" maxHeight="-Infinity"
+                      maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity"
+                      mnemonicParsing="false" prefHeight="50.0" text="Settings" toggleGroup="$menuButtonGroup">
+            <font>
+                <Font name="Roboto" size="18.0"/>
+            </font>
+            <padding>
+                <Insets left="10.0"/>
+            </padding>
+            <graphic>
+                <SVGPath
+                        content="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/>
+            </graphic>
+        </ToggleButton>
+    </children>
+    <padding>
+        <Insets top="50.0"/>
+    </padding>
+</VBox>
