@@ -8,8 +8,10 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.signature.ui.audioPlayer.AudioPlayer;
 
@@ -49,8 +51,17 @@ public class WelcomeScreenController implements Initializable {
                 Thread.sleep(600);
 
                 WelcomeScreenController.updateProgress(10.0);
+
+                Screen screen = Screen.getPrimary();
+                Rectangle2D bounds = screen.getVisualBounds();
+                stage.setX(bounds.getMinX());
+                stage.setY(bounds.getMinY());
+                stage.setMinWidth(bounds.getWidth());
+                stage.setMinHeight(bounds.getHeight());
+                stage.setWidth(bounds.getWidth());
+                stage.setHeight(bounds.getHeight());
                 stage.setMaximized(true);
-                stage.setResizable(false);
+
                 stage.setTitle("Media Player");
                 WelcomeScreenController.updateProgress(5.0);
                 Thread.sleep(600);

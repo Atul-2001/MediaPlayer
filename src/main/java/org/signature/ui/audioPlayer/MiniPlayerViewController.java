@@ -68,8 +68,10 @@ public class MiniPlayerViewController implements Initializable {
         ConsoleController.getInstance().playingProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {
                 ((SVGPath) playPause.getGraphic()).setContent(PAUSE_ICON);
+                playPause.getTooltip().setText("Pause");
             } else {
                 ((SVGPath) playPause.getGraphic()).setContent(PLAY_ICON);
+                playPause.getTooltip().setText("Play");
             }
         });
 

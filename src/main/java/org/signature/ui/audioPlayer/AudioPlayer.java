@@ -63,7 +63,7 @@ public class AudioPlayer {
                     .addAnnotatedClass(Artist.class)
                     .addAnnotatedClass(Album.class)
                     .addAnnotatedClass(Song.class)
-                    .addAnnotatedClass(RecentlyPlayed.class);
+                    .addAnnotatedClass(RecentlyPlays.class);
 
             registry = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build();
             factory = configuration.buildSessionFactory(registry);
@@ -287,16 +287,29 @@ public class AudioPlayer {
                     }
                 }
             }
-            System.out.println(Inventory.getCachedSongs().size());
         }
     }
 
     public void loadRecentlyPlayed() {
-        List<RecentlyPlayed> recentlyPlayedList = session.createQuery("from RecentlyPlayed").list();
-        for (RecentlyPlayed recentlyPlayed : recentlyPlayedList) {
-            Album album = Inventory.getAlbum(recentlyPlayed);
-            if (album != null) {
-                Inventory.addRecentlyPlayed(album);
+        List<RecentlyPlays> recentlyPlaysList = session.createQuery("from RecentlyPlays ").list();
+        for (RecentlyPlays recentlyPlays : recentlyPlaysList) {
+            if (recentlyPlays.getAlbumName() != null) {
+                if (!recentlyPlays.getAlbumName().isEmpty()) {
+                    Album album = Inventory.getAlbum(recentlyPlays);
+                    if (album != null) {
+                        Inventory.addRecentlyPlayed(album);
+                    }
+                    continue;
+                }
+            }
+
+            if (recentlyPlays.getArtist() != null) {
+                if (!recentlyPlays.getArtist().isEmpty()) {
+                    Artist artist = Inventory.getArtist(recentlyPlays);
+                    if (artist != null) {
+                        Inventory.addRecentlyPlayed(artist);
+                    }
+                }
             }
         }
     }

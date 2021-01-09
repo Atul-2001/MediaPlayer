@@ -1,8 +1,10 @@
 package org.signature.ui.audioPlayer.tabs;
 
+import com.jfoenix.controls.JFXButton;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -16,6 +18,7 @@ import org.apache.logging.log4j.Logger;
 import org.signature.WelcomeScreenController;
 import org.signature.dataModel.audioPlayer.Artist;
 import org.signature.ui.audioPlayer.BaseController;
+import org.signature.ui.audioPlayer.ConsoleController;
 import org.signature.ui.audioPlayer.Inventory;
 import org.signature.ui.audioPlayer.model.ArtistPane;
 import org.signature.util.Utils;
@@ -31,6 +34,8 @@ public class ArtistTabController implements Initializable {
 
     @FXML
     private VBox tab_artist;
+    @FXML
+    private JFXButton btn_shuffle;
     @FXML
     private StackPane contentStack;
     @FXML
@@ -54,6 +59,8 @@ public class ArtistTabController implements Initializable {
             } else if (artistsList.getChildren().size() > 0 && contentStack.getChildren().get(1).toString().contains("Label")) {
                 Utils.flipStackPane(contentStack);
             }
+
+            btn_shuffle.setText("Shuffle all(" + artistsList.getChildren().size() + ")");
         });
 
         btn_song.setOnMouseClicked(event -> BaseController.getInstance().getBtnSongs().fire());
@@ -99,5 +106,10 @@ public class ArtistTabController implements Initializable {
                 LOGGER.log(Level.ERROR, "Failed to load artist node! " + e.getLocalizedMessage(), e);
             }
         }
+    }
+
+    @FXML
+    private void handleShuffleAll(ActionEvent actionEvent) {
+        ConsoleController.getInstance().handleShuffleAll();
     }
 }

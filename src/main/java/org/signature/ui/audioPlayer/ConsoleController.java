@@ -36,6 +36,7 @@ import org.signature.dataModel.audioPlayer.Artist;
 import org.signature.dataModel.audioPlayer.Song;
 import org.signature.ui.audioPlayer.dialogs.PlayingListDialogController;
 import org.signature.ui.audioPlayer.model.AlbumPane;
+import org.signature.ui.audioPlayer.tabs.RecentlyPlayedTabController;
 import org.signature.util.Utils;
 
 import javax.imageio.ImageIO;
@@ -211,6 +212,12 @@ public class ConsoleController implements Initializable {
 
     @FXML
     private void handleShuffle(ActionEvent actionEvent) {
+        if (shuffle.isSelected()) {
+            shuffle.getTooltip().setText("Shuffle: on");
+        } else {
+            shuffle.getTooltip().setText("Shuffle: off");
+        }
+
         if (!playingList.isEmpty() && previousSong != null) {
             playingList.remove(previousSong);
             Collections.shuffle(playingList);
@@ -228,11 +235,33 @@ public class ConsoleController implements Initializable {
     }
 
     public void handleShuffleAll() {
-        if (!isActive.get()) {
-            playingList.clear();
-            playingList.addAll(Inventory.getCachedSongs());
+        playingList.clear();
+        playingList.addAll(Inventory.getCachedSongs());
+        Collections.shuffle(playingList);
+        if (isActive.get()) {
+            playingList.remove(previousSong);
+            playingList.add(0, previousSong);
+        }
+        PlayingListDialogController.getInstance().loadData(playingList);
+        playingListIterator = playingList.listIterator();
+        goingForward = true;
+        handlePlayNext(null);
+    }
+
+    public void handleShuffleRecentlyPlays() {
+        playingList.clear();
+        for (Object recentlyPlays : Inventory.getCachedRecentlyPlayed()) {
+            if (recentlyPlays instanceof Album) {
+                playingList.addAll(Inventory.getSongs(((Album) recentlyPlays).getId()));
+            } else {
+                for (Album album : Inventory.getAlbums(((Artist) recentlyPlays).getId())) {
+                    playingList.addAll(Inventory.getSongs(album.getId()));
+                }
+            }
             Collections.shuffle(playingList);
+            PlayingListDialogController.getInstance().loadData(playingList);
             playingListIterator = playingList.listIterator();
+            goingForward = true;
             handlePlayNext(null);
         }
     }
@@ -254,7 +283,7 @@ public class ConsoleController implements Initializable {
     @FXML
     private void handleFastRewind(ActionEvent actionEvent) {
         if (isPlaying.get()) {
-            mediaPlayer.seek(mediaPlayer.getCurrentTime().subtract(Duration.seconds(4)));
+            mediaPlayer.seek(mediaPlayer.getCurrentTime().subtract(Duration.seconds(5)));
         }
     }
 
@@ -265,11 +294,17 @@ public class ConsoleController implements Initializable {
                 @Override
                 protected Void call() throws Exception {
                     if (isPlaying.get()) {
-                        Platform.runLater(() -> playPauseIcon.setContent(PLAY_ICON));
+                        Platform.runLater(() -> {
+                            playPauseIcon.setContent(PLAY_ICON);
+                            playPause.getTooltip().setText("Play");
+                        });
                         mediaPlayer.pause();
                         isPlaying.set(false);
                     } else {
-                        Platform.runLater(() -> playPauseIcon.setContent(PAUSE_ICON));
+                        Platform.runLater(() -> {
+                            playPauseIcon.setContent(PAUSE_ICON);
+                            playPause.getTooltip().setText("Pause");
+                        });
                         mediaPlayer.play();
                         isPlaying.set(true);
                     }
@@ -282,7 +317,7 @@ public class ConsoleController implements Initializable {
     @FXML
     private void handleFastForward(ActionEvent actionEvent) {
         if (isPlaying.get()) {
-            mediaPlayer.seek(mediaPlayer.getCurrentTime().add(Duration.seconds(4)));
+            mediaPlayer.seek(mediaPlayer.getCurrentTime().add(Duration.seconds(10)));
         }
     }
 
@@ -306,16 +341,19 @@ public class ConsoleController implements Initializable {
             if (repeat.isSelected()) {
                 isRepeat = true;
                 isRepeatOnce = false;
+                repeat.getTooltip().setText("Repeat: on");
             } else {
                 ((SVGPath) repeat.getGraphic()).setContent(REPEAT_ONCE_ICON);
                 isRepeat = false;
                 isRepeatOnce = true;
                 repeat.setSelected(true);
+                repeat.getTooltip().setText("Repeat: one");
             }
         } else if (((SVGPath) repeat.getGraphic()).getContent().equals(REPEAT_ONCE_ICON)) {
             ((SVGPath) repeat.getGraphic()).setContent(REPEAT_ICON);
             isRepeat = false;
             isRepeatOnce = false;
+            repeat.getTooltip().setText("Repeat: off");
         }
     }
 
@@ -327,10 +365,12 @@ public class ConsoleController implements Initializable {
                 if (isMute) {
                     Platform.runLater(() -> volumeIcon.setContent(UNMUTE_ICON));
                     if (isActive.get()) mediaPlayer.setMute(false);
+                    volume.getTooltip().setText("Mute: off");
                     isMute = false;
                 } else {
                     Platform.runLater(() -> volumeIcon.setContent(MUTE_ICON));
                     if (isActive.get()) mediaPlayer.setMute(true);
+                    volume.getTooltip().setText("Mute: on");
                     isMute = true;
                 }
                 return null;
@@ -551,6 +591,7 @@ public class ConsoleController implements Initializable {
 
                             song.setPlaying(true);
                             isActive.set(true);
+                            RecentlyPlayedTabController.getInstance().addRecentlyPlayed(album);
 
                             if (song.getId() != songID) {
                                 playValue = -1;

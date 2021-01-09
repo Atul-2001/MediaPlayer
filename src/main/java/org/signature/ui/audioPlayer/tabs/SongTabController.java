@@ -1,5 +1,6 @@
 package org.signature.ui.audioPlayer.tabs;
 
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -18,6 +19,7 @@ import org.apache.logging.log4j.Logger;
 import org.signature.WelcomeScreenController;
 import org.signature.dataModel.audioPlayer.Song;
 import org.signature.ui.audioPlayer.BaseController;
+import org.signature.ui.audioPlayer.ConsoleController;
 import org.signature.ui.audioPlayer.Inventory;
 import org.signature.ui.audioPlayer.model.SongPane;
 import org.signature.util.Utils;
@@ -35,6 +37,8 @@ public class SongTabController implements Initializable {
     private VBox tab_song;
     @FXML
     private Label btn_artist, btn_album;
+    @FXML
+    private JFXButton btn_shuffle;
     @FXML
     private JFXComboBox<String> sortCriteria, genreList;
     @FXML
@@ -68,6 +72,7 @@ public class SongTabController implements Initializable {
             } else if (songsList.getChildren().size() > 0 && contentStack.getChildren().get(1).toString().contains("Label")) {
                 Utils.flipStackPane(contentStack);
             }
+            btn_shuffle.setText("Shuffle all(" + songsList.getChildren().size() + ")");
         });
 
         btn_artist.setOnMouseClicked(event -> BaseController.getInstance().getBtnArtists().fire());
@@ -101,6 +106,7 @@ public class SongTabController implements Initializable {
                     }
             );
             songsList.getChildren().setAll(songs);
+            sortCriteria.getTooltip().setText(sortCriteria.getItems().get(newValue.intValue()));
         });
 
         genreList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -112,6 +118,7 @@ public class SongTabController implements Initializable {
                     return newValue.equalsIgnoreCase(songPane.getGenre());
                 }
             }));
+            genreList.getTooltip().setText(newValue);
         });
 
         loadSongs();
@@ -178,6 +185,11 @@ public class SongTabController implements Initializable {
                 LOGGER.log(Level.ERROR, "Failed to load song node! " + e.getLocalizedMessage(), e);
             }
         }
+    }
+
+    @FXML
+    private void handleShuffleAll(ActionEvent actionEvent) {
+        ConsoleController.getInstance().handleShuffleAll();
     }
 
     @FXML

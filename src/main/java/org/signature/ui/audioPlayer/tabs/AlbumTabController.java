@@ -1,9 +1,11 @@
 package org.signature.ui.audioPlayer.tabs;
 
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -17,6 +19,7 @@ import org.apache.logging.log4j.Logger;
 import org.signature.WelcomeScreenController;
 import org.signature.dataModel.audioPlayer.Album;
 import org.signature.ui.audioPlayer.BaseController;
+import org.signature.ui.audioPlayer.ConsoleController;
 import org.signature.ui.audioPlayer.Inventory;
 import org.signature.ui.audioPlayer.model.AlbumPane;
 import org.signature.util.Utils;
@@ -34,6 +37,8 @@ public class AlbumTabController implements Initializable {
     private VBox tab_album;
     @FXML
     private FlowPane albumsList;
+    @FXML
+    private JFXButton btn_shuffle;
     @FXML
     private JFXComboBox<String> sortCriteria, genreList;
     @FXML
@@ -57,6 +62,7 @@ public class AlbumTabController implements Initializable {
             } else if (albumsList.getChildren().size() > 0 && contentStack.getChildren().get(1).toString().contains("Label")) {
                 Utils.flipStackPane(contentStack);
             }
+            btn_shuffle.setText("Shuffle all(" + albumsList.getChildren().size() + ")");
         });
 
         btn_song.setOnMouseClicked(event -> BaseController.getInstance().getBtnSongs().fire());
@@ -81,6 +87,7 @@ public class AlbumTabController implements Initializable {
                }
            });
            albumsList.getChildren().setAll(albums);
+           sortCriteria.getTooltip().setText(sortCriteria.getItems().get(newValue.intValue()));
         });
 
         genreList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -92,6 +99,7 @@ public class AlbumTabController implements Initializable {
                     return newValue.equalsIgnoreCase(albumPane.getGenre());
                 }
             }));
+            genreList.getTooltip().setText(newValue);
         });
 
         loadAlbums();
@@ -131,5 +139,10 @@ public class AlbumTabController implements Initializable {
                 LOGGER.log(Level.ERROR, "Failed to load album node! " + e.getLocalizedMessage(), e);
             }
         }
+    }
+
+    @FXML
+    private void handleShuffleAll(ActionEvent actionEvent) {
+        ConsoleController.getInstance().handleShuffleAll();
     }
 }

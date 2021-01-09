@@ -178,12 +178,12 @@ public class Inventory {
         return CACHED_ALBUMS.filtered(album -> album.getArtist() == artistID);
     }
 
-    public static Album getAlbum(RecentlyPlayed recentlyPlayed) {
-        if (recentlyPlayed != null) {
+    public static Album getAlbum(RecentlyPlays recentlyPlays) {
+        if (recentlyPlays != null) {
             for (Album album : CACHED_ALBUMS) {
-                if (album.getAlbumName().equalsIgnoreCase(recentlyPlayed.getAlbumName())) {
+                if (album.getAlbumName().equalsIgnoreCase(recentlyPlays.getAlbumName())) {
                     Artist artist = getArtist(album.getArtist());
-                    if (artist.getName().equalsIgnoreCase(recentlyPlayed.getArtist())) {
+                    if (artist.getName().equalsIgnoreCase(recentlyPlays.getArtist())) {
                         return album;
                     }
                 }
@@ -250,6 +250,17 @@ public class Inventory {
         return CACHED_ARTISTS.filtered(artist -> artist.getName().startsWith(artistName));
     }
 
+    public static Artist getArtist(RecentlyPlays recentlyPlays) {
+        if (recentlyPlays != null) {
+            for (Artist artist : CACHED_ARTISTS) {
+                if (artist.getName().equals(recentlyPlays.getArtist())) {
+                    return artist;
+                }
+            }
+        }
+        return null;
+    }
+
     public static Artist checkArtist(Artist artist) {
         if (artist != null) {
             for (Artist cachedArtist : CACHED_ARTISTS) {
@@ -277,26 +288,29 @@ public class Inventory {
         return CACHED_GENRES.get(key);
     }
 
-    private static final ObservableList<Album> CACHED_RECENTLY_PLAYED = FXCollections.observableArrayList();
+    private static final ObservableList<Object> CACHED_RECENTLY_PLAYED = FXCollections.observableArrayList();
 
-    public static void addRecentlyPlayed(Album album) {
+    public static void addRecentlyPlayed(Object object) {
+        assert object instanceof Album || object instanceof Artist;
         try {
-            if (!CACHED_RECENTLY_PLAYED.contains(album)) {
-                CACHED_RECENTLY_PLAYED.add(album);
+            if (!CACHED_RECENTLY_PLAYED.contains(object)) {
+                CACHED_RECENTLY_PLAYED.add(object);
             }
         } catch (NullPointerException ignored) {
         }
     }
 
-    public static ObservableList<Album> getCachedRecentlyPlayed() {
-        CACHED_RECENTLY_PLAYED.addListener((ListChangeListener<Album>) c -> {
+    public static ObservableList<Object> getCachedRecentlyPlayed() {
+        CACHED_RECENTLY_PLAYED.addListener((ListChangeListener<Object>) c -> {
             c.next();
             if (c.wasAdded()) {
                 new Thread(() -> {
                     Transaction transaction = startTransaction();
                     try {
-                        for (Album album : c.getAddedSubList()) {
-                            session.save(new RecentlyPlayed(album));
+                        for (Object object : c.getAddedSubList()) {
+                            if (object instanceof Album || object instanceof Artist) {
+                                session.save(new RecentlyPlays(object));
+                            }
                         }
                     } catch (Exception ex) {
                         ex.printStackTrace();

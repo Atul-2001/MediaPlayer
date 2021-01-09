@@ -20,13 +20,14 @@ import javafx.scene.text.TextAlignment;
 import org.signature.dataModel.audioPlayer.Artist;
 import org.signature.ui.audioPlayer.ConsoleController;
 import org.signature.ui.audioPlayer.tabs.FavouriteTabController;
+import org.signature.ui.audioPlayer.tabs.RecentlyPlayedTabController;
 import org.signature.util.Utils;
 
 public class ArtistPane extends VBox {
 
     private final Artist artist;
-    private final String DEFAULT_STYLESHEET = "model-node-style.css";
-    private final String DEFAULT_ARTIST_PROFILE = "artist_white.png";
+    private static final String DEFAULT_STYLESHEET = "model-node-style.css";
+    private static final String DEFAULT_ARTIST_PROFILE = "artist_white.png";
 
     private final AnchorPane profilePane = new AnchorPane();
     private final Circle artistProfile = new Circle();
@@ -164,7 +165,10 @@ public class ArtistPane extends VBox {
             }
         });
 
-        this.btn_play.setOnAction(event -> ConsoleController.getInstance().load(artist));
+        this.btn_play.setOnAction(event -> {
+            ConsoleController.getInstance().load(artist);
+            RecentlyPlayedTabController.getInstance().addRecentlyPlayed(artist);
+        });
     }
 
     private void handleSetFavourite(ActionEvent actionEvent) {
@@ -183,12 +187,12 @@ public class ArtistPane extends VBox {
         return artist;
     }
 
-    public String getStylesheet() {
+    public static String getStylesheet() {
         return DEFAULT_STYLESHEET;
     }
 
-    public Image getDefaultArtistProfile() {
-        return new Image(Artist.class.getResourceAsStream(DEFAULT_ARTIST_PROFILE));
+    public static Image getDefaultArtistProfile() {
+        return new Image(ArtistPane.class.getResourceAsStream(DEFAULT_ARTIST_PROFILE));
     }
 
     public String getArtistName() {

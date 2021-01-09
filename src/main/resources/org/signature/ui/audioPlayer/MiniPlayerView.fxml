@@ -127,6 +127,9 @@
                            <padding>
                               <Insets top="1.0" />
                            </padding>
+                           <tooltip>
+                              <Tooltip text="Shuffle: all" />
+                           </tooltip>
                         </JFXButton>
                         <JFXButton graphicTextGap="16.0" onAction="#handleLeaveMiniView" ripplerFill="BLACK" styleClass="btn-misc" text="Leave mini view" textFill="WHITE">
                            <graphic>
@@ -135,6 +138,9 @@
                            <font>
                               <Font size="14.0" />
                            </font>
+                           <tooltip>
+                              <Tooltip text="Leave mini view" />
+                           </tooltip>
                         </JFXButton>
                      </children>
                      <padding>

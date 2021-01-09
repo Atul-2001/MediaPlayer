@@ -8,6 +8,7 @@
 <?import javafx.scene.control.CustomMenuItem?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
@@ -53,6 +54,9 @@
                                     <graphic>
                                         <SVGPath content="M 8 8 L 10.667969 8 L 10.667969 24 L 8 24 Z M 12.667969 16 L 24 24 L 24 8 Z M 12.667969 16" />
                                     </graphic>
+                           <tooltip>
+                              <Tooltip text="Previous" />
+                           </tooltip>
                                 </JFXButton>
                                 <JFXButton alignment="CENTER" contentDisplay="GRAPHIC_ONLY" disable="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#handlePlayPauseSong" prefHeight="52.0" prefWidth="52.0" style="-fx-background-radius: 5em;" styleClass="btn-player-control" stylesheets="@audio-player-style.css" text="play pause" HBox.hgrow="NEVER">
                                     <graphic>
@@ -61,11 +65,17 @@
                                     <padding>
                                         <Insets left="6.0" />
                                     </padding>
+                           <tooltip>
+                              <Tooltip text="Play" />
+                           </tooltip>
                                 </JFXButton>
                                 <JFXButton alignment="CENTER" contentDisplay="GRAPHIC_ONLY" disable="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="38.0" prefWidth="38.0" style="-fx-background-radius: 5em;" styleClass="btn-player-control" stylesheets="@audio-player-style.css" text="next" HBox.hgrow="NEVER">
                                     <graphic>
                                         <SVGPath content="M 8 24 L 19.332031 16 L 8 8 Z M 21.332031 8 L 21.332031 24 L 24 24 L 24 8 Z M 21.332031 8" />
                                     </graphic>
+                           <tooltip>
+                              <Tooltip text="Next" />
+                           </tooltip>
                                 </JFXButton>
                                 <JFXButton fx:id="moreOptions2" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="38.0" prefWidth="38.0" style="-fx-background-radius: 5em;" styleClass="btn-player-control" stylesheets="@audio-player-style.css" text="more options" HBox.hgrow="NEVER">
                                     <font>
@@ -154,6 +164,9 @@
                                     <graphic>
                                         <SVGPath content="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
                                     </graphic>
+                           <tooltip>
+                              <Tooltip text="More actions" />
+                           </tooltip>
                                 </JFXButton>
                             </children>
                         </HBox>
@@ -225,11 +238,17 @@
                            <HBox.margin>
                               <Insets />
                            </HBox.margin>
+                           <tooltip>
+                              <Tooltip text="Shuffle: off" />
+                           </tooltip>
                         </ToggleButton>
                                 <JFXButton fx:id="skipPrevious" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" disable="true" layoutX="269.0" layoutY="27.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#handlePlayPrevious" prefHeight="38.0" prefWidth="38.0" ripplerFill="#00fffd" style="-fx-background-radius: 5em;" styleClass="btn-player-control" stylesheets="@audio-player-style.css" text="previous">
                                     <graphic>
                                         <SVGPath content="M 8 8 L 10.667969 8 L 10.667969 24 L 8 24 Z M 12.667969 16 L 24 24 L 24 8 Z M 12.667969 16" />
                                     </graphic>
+                           <tooltip>
+                              <Tooltip text="Previous" />
+                           </tooltip>
                                 </JFXButton>
                                 <JFXButton fx:id="fastRewind" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" disable="true" layoutX="250.0" layoutY="27.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#handleFastRewind" prefHeight="46.0" prefWidth="46.0" ripplerFill="#00fffd" style="-fx-background-radius: 5em;" styleClass="btn-player-control" stylesheets="@audio-player-style.css" text="fast rewind">
                                     <graphic>
@@ -238,6 +257,9 @@
                                     <padding>
                                         <Insets right="5.0" />
                                     </padding>
+                           <tooltip>
+                              <Tooltip text="Fast rewind" />
+                           </tooltip>
                                 </JFXButton>
                                 <JFXButton fx:id="playPause" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" disable="true" layoutX="300.0" layoutY="27.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#handlePlayPauseSong" prefHeight="52.0" prefWidth="52.0" ripplerFill="#00fffd" style="-fx-background-radius: 5em;" styleClass="btn-player-control" stylesheets="@audio-player-style.css" text="playPause">
                                     <graphic>
@@ -246,6 +268,9 @@
                            <padding>
                               <Insets bottom="-1.0" left="-1.0" right="-1.0" top="-1.0" />
                            </padding>
+                           <tooltip>
+                              <Tooltip text="Play" />
+                           </tooltip>
                                 </JFXButton>
                                 <JFXButton fx:id="fastForward" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" disable="true" layoutX="331.0" layoutY="27.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#handleFastForward" prefHeight="46.0" prefWidth="46.0" ripplerFill="#00fffd" style="-fx-background-radius: 5em;" styleClass="btn-player-control" stylesheets="@audio-player-style.css" text="fast forward">
                                     <graphic>
@@ -254,11 +279,17 @@
                                     <padding>
                                         <Insets left="5.0" />
                                     </padding>
+                           <tooltip>
+                              <Tooltip text="Fast forward" />
+                           </tooltip>
                                 </JFXButton>
                                 <JFXButton fx:id="skipNext" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" disable="true" layoutX="362.0" layoutY="27.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#handlePlayNext" prefHeight="38.0" prefWidth="38.0" ripplerFill="#00fffd" style="-fx-background-radius: 5em;" styleClass="btn-player-control" stylesheets="@audio-player-style.css" text="next">
                                     <graphic>
                                         <SVGPath content="M 8 24 L 19.332031 16 L 8 8 Z M 21.332031 8 L 21.332031 24 L 24 24 L 24 8 Z M 21.332031 8" />
                                     </graphic>
+                           <tooltip>
+                              <Tooltip text="Next" />
+                           </tooltip>
                                 </JFXButton>
                         <ToggleButton id="btn-toggle" fx:id="repeat" contentDisplay="GRAPHIC_ONLY" layoutX="129.0" layoutY="22.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#handleRepeat" prefHeight="36.0" prefWidth="36.0" stylesheets="@audio-player-style.css" text="repeat" textAlignment="CENTER">
                            <graphic>
@@ -267,6 +298,9 @@
                            <HBox.margin>
                               <Insets />
                            </HBox.margin>
+                           <tooltip>
+                              <Tooltip text="Repeat: off" />
+                           </tooltip>
                         </ToggleButton>
                             </children>
                         </HBox>
@@ -293,6 +327,9 @@
                             <graphic>
                                 <SVGPath fx:id="volumeIcon" content="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" />
                             </graphic>
+                     <tooltip>
+                        <Tooltip text="Mute: off" />
+                     </tooltip>
                         </JFXButton>
                         <JFXSlider fx:id="volumeSlider" blockIncrement="2.0" stylesheets="@audio-player-style.css" value="80.0" />
                     </children>
@@ -304,6 +341,9 @@
                     <graphic>
                         <SVGPath content="M19 7h-8v6h8V7zm2-4H3c-1.1 0-2 .9-2 2v14c0 1.1.9 1.98 2 1.98h18c1.1 0 2-.88 2-1.98V5c0-1.1-.9-2-2-2zm0 16.01H3V4.98h18v14.03z" fill="#2c3335" />
                     </graphic>
+               <tooltip>
+                  <Tooltip text="Play in mini view" />
+               </tooltip>
                 </JFXButton>
                 <JFXButton fx:id="moreOptions" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="38.0" prefWidth="38.0" style="-fx-background-radius: 5em;" styleClass="btn-player-control" stylesheets="@audio-player-style.css" text="more options">
                     <HBox.margin>
@@ -381,6 +421,9 @@
                     <graphic>
                         <SVGPath content="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
                     </graphic>
+               <tooltip>
+                  <Tooltip text="More actions" />
+               </tooltip>
                 </JFXButton>
             </children>
         </HBox>

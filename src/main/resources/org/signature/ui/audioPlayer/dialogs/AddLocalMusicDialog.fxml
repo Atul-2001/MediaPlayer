@@ -7,6 +7,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.SVGPath?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.control.Tooltip?>
 <BorderPane xmlns:fx="http://javafx.com/fxml/1" id="addMusicDialog" fx:id="root" maxWidth="-Infinity"
             minHeight="-Infinity"
             minWidth="-Infinity" prefHeight="260.0" prefWidth="460.0"
@@ -72,6 +73,9 @@
                             <graphic>
                                 <SVGPath content="M38 26H26v12h-4V26H10v-4h12V10h4v12h12v4z"/>
                             </graphic>
+                            <tooltip>
+                                <Tooltip text="Add folder"/>
+                            </tooltip>
                         </JFXButton>
                     </children>
                 </VBox>

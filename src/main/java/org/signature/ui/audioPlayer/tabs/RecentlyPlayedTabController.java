@@ -14,9 +14,11 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.signature.dataModel.audioPlayer.Album;
+import org.signature.dataModel.audioPlayer.Artist;
 import org.signature.ui.audioPlayer.BaseController;
+import org.signature.ui.audioPlayer.ConsoleController;
 import org.signature.ui.audioPlayer.Inventory;
-import org.signature.ui.audioPlayer.model.AlbumPane;
+import org.signature.ui.audioPlayer.model.RecentPane;
 import org.signature.util.Utils;
 
 import java.net.URL;
@@ -36,7 +38,7 @@ public class RecentlyPlayedTabController implements Initializable {
     @FXML
     private FlowPane list_played_albums;
 
-    private final ObservableList<Album> recentlyPlayed = FXCollections.observableArrayList();
+    private final ObservableList<Object> recentlyPlayed = FXCollections.observableArrayList();
     private boolean isCachedListLoaded = false;
 
     @Override
@@ -45,18 +47,13 @@ public class RecentlyPlayedTabController implements Initializable {
             instance = this;
         }
 
-        recentlyPlayed.addListener((ListChangeListener<Album>) c -> {
+        recentlyPlayed.addListener((ListChangeListener<Object>) c -> {
             c.next();
             if (c.wasAdded()) {
-                for (Album album : c.getAddedSubList()) {
-                    if (album.getAlbumName().isEmpty()) {
-                        continue;
-                    }
-
-                    list_played_albums.getChildren().add(new AlbumPane(album));
+                for (Object object : c.getAddedSubList()) {
+                    list_played_albums.getChildren().add(new RecentPane(object));
                     if (isCachedListLoaded) {
-                        System.out.println("Adding to db");
-                        Inventory.addRecentlyPlayed(album);
+                        Inventory.addRecentlyPlayed(object);
                     }
                 }
             }
@@ -89,6 +86,7 @@ public class RecentlyPlayedTabController implements Initializable {
 
     @FXML
     private void handleShuffleMusic(ActionEvent actionEvent) {
+        ConsoleController.getInstance().handleShuffleRecentlyPlays();
     }
 
     @FXML
@@ -96,14 +94,15 @@ public class RecentlyPlayedTabController implements Initializable {
         BaseController.getInstance().getBtnSongs().fire();
     }
 
-    public void setRecentlyPlayed(List<Album> albums) {
+    public void setRecentlyPlayed(List<Object> recentPlays) {
         list_played_albums.getChildren().clear();
-        recentlyPlayed.setAll(albums);
+        recentlyPlayed.setAll(recentPlays);
     }
 
-    public void addRecentlyPlayed(Album album) {
-        if (!recentlyPlayed.contains(album)) {
-            recentlyPlayed.add(album);
+    public void addRecentlyPlayed(Object recentPlayed) {
+        assert recentPlayed instanceof Album || recentPlayed instanceof Artist;
+        if (!recentlyPlayed.contains(recentPlayed)) {
+            recentlyPlayed.add(recentPlayed);
         }
     }
 }

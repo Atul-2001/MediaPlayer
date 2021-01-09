@@ -21,6 +21,7 @@ import org.signature.ui.audioPlayer.ConsoleController;
 import org.signature.ui.audioPlayer.Inventory;
 import org.signature.ui.audioPlayer.tabs.AlbumViewTabController;
 import org.signature.ui.audioPlayer.tabs.FavouriteTabController;
+import org.signature.ui.audioPlayer.tabs.RecentlyPlayedTabController;
 import org.signature.util.Utils;
 
 import javax.imageio.ImageIO;
@@ -207,7 +208,10 @@ public class AlbumPane extends VBox {
             }
         });
 
-        this.btn_play.setOnAction(event -> ConsoleController.getInstance().load(album));
+        this.btn_play.setOnAction(event -> {
+            ConsoleController.getInstance().load(album);
+            RecentlyPlayedTabController.getInstance().addRecentlyPlayed(album);
+        });
     }
 
     private void handleSetFavourite(ActionEvent actionEvent) {

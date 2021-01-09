@@ -42,7 +42,7 @@
                         <Insets top="40.0" />
                     </VBox.margin>
                 </AnchorPane>
-                <TextField fx:id="playlistName" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="46.0" prefWidth="360.0" style="-fx-background-color: WHITE;" VBox.vgrow="NEVER">
+                <TextField fx:id="playlistName" promptText="Name this playlist" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="46.0" prefWidth="360.0" style="-fx-background-color: WHITE;" VBox.vgrow="NEVER">
                     <font>
                         <Font name="Roboto" size="20.0" />
                     </font>

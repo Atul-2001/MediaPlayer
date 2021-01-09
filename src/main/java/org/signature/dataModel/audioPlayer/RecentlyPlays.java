@@ -5,7 +5,7 @@ import org.signature.ui.audioPlayer.Inventory;
 import javax.persistence.*;
 
 @Entity
-public class RecentlyPlayed {
+public class RecentlyPlays {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "recently_played_generator")
@@ -15,16 +15,23 @@ public class RecentlyPlayed {
     private String albumArtist;
     private String artist;
 
-    public RecentlyPlayed() {
+    public RecentlyPlays() {
     }
 
-    public RecentlyPlayed(Album album) {
-        assert album != null;
-        Artist artist = Inventory.getArtist(album.getArtist());
+    public RecentlyPlays(Object object) {
+        assert object instanceof Album || object instanceof Artist;
 
-        this.albumName = album.getAlbumName();
-        this.albumArtist = album.getAlbumArtist();
-        this.artist = artist.getName();
+        if (object instanceof Album) {
+            Artist artist = Inventory.getArtist(((Album) object).getArtist());
+
+            this.albumName = ((Album) object).getAlbumName();
+            this.albumArtist = ((Album) object).getAlbumArtist();
+            this.artist = artist.getName();
+        } else {
+            this.albumName = null;
+            this.albumArtist = null;
+            this.artist = ((Artist) object).getName();
+        }
     }
 
     public int getId() {
