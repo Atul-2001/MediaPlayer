@@ -14,8 +14,14 @@ import java.util.Map;
 
 public class Inventory {
 
+    private static final String DEFAULT_MUSIC_FOLDER = System.getProperty("user.home").concat(File.separator).concat("Music");
+
     private static final String DB_URL = "jdbc:h2:file:".concat(System.getProperty("user.dir")).concat(File.separator).concat("music");
     private static Session session = AudioPlayer.getInstance().getSession();
+
+    public static String getDefaultMusicFolder() {
+        return DEFAULT_MUSIC_FOLDER;
+    }
 
     public static String getDBUrl() {
         return DB_URL;
@@ -25,7 +31,12 @@ public class Inventory {
         while (session == null) {
             session = AudioPlayer.getInstance().getSession();
         }
-        return session.beginTransaction();
+
+        if (session.getTransaction().isActive()) {
+            return session.getTransaction();
+        } else {
+            return session.beginTransaction();
+        }
     }
 
     private static final ObservableList<MusicLibrary> LIBRARIES = FXCollections.observableArrayList();
@@ -110,19 +121,23 @@ public class Inventory {
         }
     }
 
-    public static List<Song> getSongs(int albumID) {
-        return CACHED_SONGS.filtered(song -> song.getAlbum() == albumID);
-    }
-
     public static List<Song> getSongs(String songTitle) {
         return CACHED_SONGS.filtered(song -> song.getTitle().startsWith(songTitle));
+    }
+
+    public static List<Song> getSongs(Album album) {
+        return CACHED_SONGS.filtered(song -> song.getAlbum().equals(album.getAlbumName()));
+    }
+
+    public static List<Song> getSongs(Artist artist) {
+        return CACHED_SONGS.filtered(song -> song.getArtist().equals(artist.getName()));
     }
 
     public static Song checkSong(Song song) {
         if (song != null) {
             for (Song cachedSong : CACHED_SONGS) {
-                if (cachedSong.getTitle().equalsIgnoreCase(song.getTitle())) {
-                    if (cachedSong.getLocation().equalsIgnoreCase(song.getLocation())) {
+                if (cachedSong.getTitle().equals(song.getTitle())) {
+                    if (cachedSong.getLocation().equals(song.getLocation())) {
                         return cachedSong;
                     }
                 }
@@ -150,40 +165,35 @@ public class Inventory {
         }
     }
 
-    public static int getAlbumID(String albumName) {
-        if (albumName != null) {
-            for (Album album : CACHED_ALBUMS) {
-                if (album.getAlbumName().equalsIgnoreCase(albumName)) {
-                    return album.getId();
-                }
-            }
+    public static void removeAlbum(Album album) {
+        try {
+            CACHED_ALBUMS.remove(album);
+        } catch (NullPointerException ignored) {
         }
-        return -1;
     }
 
-    public static Album getAlbum(int albumID) {
+    public static Album getAlbum(String albumName) {
         for (Album album : CACHED_ALBUMS) {
-            if (album.getId() == albumID) {
+            if (album.getAlbumName().equalsIgnoreCase(albumName)) {
                 return album;
             }
         }
-        return CACHED_ALBUMS.get(0);
+        return null;
     }
 
     public static List<Album> getAlbums(String albumName) {
         return CACHED_ALBUMS.filtered(album -> album.getAlbumName().startsWith(albumName));
     }
 
-    public static List<Album> getAlbums(int artistID) {
-        return CACHED_ALBUMS.filtered(album -> album.getArtist() == artistID);
+    public static List<Album> getAlbums(Artist artist) {
+        return CACHED_ALBUMS.filtered(album -> album.getArtist().equals(artist.getName()));
     }
 
     public static Album getAlbum(RecentlyPlays recentlyPlays) {
         if (recentlyPlays != null) {
             for (Album album : CACHED_ALBUMS) {
-                if (album.getAlbumName().equalsIgnoreCase(recentlyPlays.getAlbumName())) {
-                    Artist artist = getArtist(album.getArtist());
-                    if (artist.getName().equalsIgnoreCase(recentlyPlays.getArtist())) {
+                if (album.getAlbumName().equals(recentlyPlays.getAlbumName())) {
+                    if (album.getArtist().equals(recentlyPlays.getArtist())) {
                         return album;
                     }
                 }
@@ -195,9 +205,9 @@ public class Inventory {
     public static Album checkAlbum(Album album) {
         if (album != null) {
             for (Album cachedAlbum : CACHED_ALBUMS) {
-                if (cachedAlbum.getAlbumName().equalsIgnoreCase(album.getAlbumName())) {
-                    if (cachedAlbum.getAlbumArtist().equalsIgnoreCase(album.getAlbumArtist())) {
-                        if (cachedAlbum.getReleaseYear().equalsIgnoreCase(album.getReleaseYear())) {
+                if (cachedAlbum.getAlbumName().equals(album.getAlbumName())) {
+                    if (cachedAlbum.getAlbumArtist().equals(album.getAlbumArtist())) {
+                        if (cachedAlbum.getReleaseYear().equals(album.getReleaseYear())) {
                             return album;
                         }
                     }
@@ -226,24 +236,13 @@ public class Inventory {
         }
     }
 
-    public static int getArtistID(String artistName) {
-        if (artistName != null) {
-            for (Artist artist : CACHED_ARTISTS) {
-                if (artist.getName().equalsIgnoreCase(artistName)) {
-                    return artist.getId();
-                }
-            }
-        }
-        return -1;
-    }
-
-    public static Artist getArtist(int artistID) {
+    public static Artist getArtist(String artistName) {
         for (Artist artist : CACHED_ARTISTS) {
-            if (artist.getId() == artistID) {
+            if (artist.getName().equalsIgnoreCase(artistName)) {
                 return artist;
             }
         }
-        return CACHED_ARTISTS.get(0);
+        return null;
     }
 
     public static List<Artist> getArtists(String artistName) {
@@ -264,7 +263,7 @@ public class Inventory {
     public static Artist checkArtist(Artist artist) {
         if (artist != null) {
             for (Artist cachedArtist : CACHED_ARTISTS) {
-                if (cachedArtist.getName().equalsIgnoreCase(artist.getName())) {
+                if (cachedArtist.getName().equals(artist.getName())) {
                     return cachedArtist;
                 }
             }
@@ -285,16 +284,112 @@ public class Inventory {
     }
 
     public static String getGenreDescription(int key) {
-        return CACHED_GENRES.get(key);
+        if (key == 0) {
+            return "Unknown Genre";
+        } else {
+            return CACHED_GENRES.get(key);
+        }
+    }
+
+    private static final ObservableList<Playlist> CACHED_PLAYLISTS = FXCollections.observableArrayList();
+
+    public static List<Playlist> getCachedPlaylist() {
+        CACHED_PLAYLISTS.addListener((ListChangeListener<Playlist>) c -> {
+            c.next();
+            if (c.wasAdded()) {
+                new Thread(() -> {
+                    Transaction transaction = startTransaction();
+                    try {
+                        for (Playlist playlist : c.getAddedSubList()) {
+                            session.save(playlist);
+                        }
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        if (transaction.isActive()) {
+                            transaction.rollback();
+                        }
+                    } finally {
+                        if (transaction.isActive()) {
+                            transaction.commit();
+                        }
+                    }
+                }).start();
+            } else if (c.wasRemoved()) {
+                new Thread(() -> {
+                    Transaction transaction = startTransaction();
+                    try {
+                        for (Playlist playlist : c.getRemoved()) {
+                            session.delete(playlist);
+                        }
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        if (transaction.isActive()) {
+                            transaction.rollback();
+                        }
+                    } finally {
+                        if (transaction.isActive()) {
+                            transaction.commit();
+                        }
+                    }
+                }).start();
+            }
+        });
+
+        return CACHED_PLAYLISTS;
+    }
+
+    public static Playlist getPlaylist(String playlistName) {
+        for (Playlist playlist : CACHED_PLAYLISTS) {
+            if (playlist.getPlaylistName().equalsIgnoreCase(playlistName)) {
+                return playlist;
+            }
+        }
+        return null;
+    }
+
+    public static void addPlaylist(Playlist playlist) {
+        try {
+            if (!CACHED_PLAYLISTS.contains(playlist)) {
+                CACHED_PLAYLISTS.add(playlist);
+            }
+        } catch (NullPointerException ignored) {
+        }
+    }
+
+    public static void removePlaylist(Playlist playlist) {
+        try {
+            CACHED_PLAYLISTS.remove(playlist);
+        } catch (NullPointerException ignored) {
+        }
+    }
+
+    public static void removePlaylist(int index) {
+        if (index > -1) {
+            try {
+                CACHED_PLAYLISTS.remove(index);
+            } catch (IndexOutOfBoundsException e) {
+                CACHED_PLAYLISTS.remove(index - 1);
+            }
+        }
     }
 
     private static final ObservableList<Object> CACHED_RECENTLY_PLAYED = FXCollections.observableArrayList();
 
     public static void addRecentlyPlayed(Object object) {
-        assert object instanceof Album || object instanceof Artist;
+        assert object instanceof Album || object instanceof Artist || object instanceof OnlineSong;
         try {
             if (!CACHED_RECENTLY_PLAYED.contains(object)) {
                 CACHED_RECENTLY_PLAYED.add(object);
+            }
+        } catch (NullPointerException ignored) {
+        }
+    }
+
+    public static void insertRecentlyPlayed(Object object, int index) {
+        assert object instanceof OnlineSong;
+        try {
+            if (!CACHED_RECENTLY_PLAYED.contains(object)) {
+                CACHED_RECENTLY_PLAYED.add(index, object);
             }
         } catch (NullPointerException ignored) {
         }
@@ -310,6 +405,8 @@ public class Inventory {
                         for (Object object : c.getAddedSubList()) {
                             if (object instanceof Album || object instanceof Artist) {
                                 session.save(new RecentlyPlays(object));
+                            } else {
+                                session.save((OnlineSong) object);
                             }
                         }
                     } catch (Exception ex) {
@@ -329,231 +426,12 @@ public class Inventory {
         return CACHED_RECENTLY_PLAYED;
     }
 
-    private static final ObservableList<Song> CACHED_FAVOURITE_SONGS = FXCollections.observableArrayList();
-
-    public static void addFavouriteSong(Song song) {
-        try {
-            if (!CACHED_FAVOURITE_SONGS.contains(song)) {
-                CACHED_FAVOURITE_SONGS.add(song);
-            }
-        } catch (NullPointerException ignored) {
-        }
-    }
-
-    public static void removeFavouriteSong(Song song) {
-        try {
-            CACHED_FAVOURITE_SONGS.remove(song);
-        } catch (NullPointerException ignored) {
-        }
-    }
-
-    public static void removeFavouriteSong(int index) {
-        if (index > -1) {
-            try {
-                CACHED_FAVOURITE_SONGS.remove(index);
-            } catch (IndexOutOfBoundsException e) {
-                CACHED_FAVOURITE_SONGS.remove(index - 1);
-            }
-        }
-    }
-
-    public static ObservableList<Song> getCachedFavouriteSongs() {
-        CACHED_FAVOURITE_SONGS.addListener((ListChangeListener<Song>) c -> {
-            c.next();
-            if (c.wasAdded()) {
-                new Thread(() -> {
-                    Transaction transaction = startTransaction();
-                    try {
-                        for (Song song : c.getAddedSubList()) {
-                            session.save(song);
-                        }
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                        if (transaction.isActive()) {
-                            transaction.rollback();
-                        }
-                    } finally {
-                        if (transaction.isActive()) {
-                            transaction.commit();
-                        }
-                    }
-                }).start();
-            } else if (c.wasRemoved()) {
-                new Thread(() -> {
-                    Transaction transaction = startTransaction();
-                    try {
-                        for (Song song : c.getRemoved()) {
-                            session.delete(song);
-                        }
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                        if (transaction.isActive()) {
-                            transaction.rollback();
-                        }
-                    } finally {
-                        if (transaction.isActive()) {
-                            transaction.commit();
-                        }
-                    }
-                }).start();
-            }
-        });
-        return CACHED_FAVOURITE_SONGS;
-    }
-
-    private static final ObservableList<Album> CACHED_FAVOURITE_ALBUMS = FXCollections.observableArrayList();
-
-    public static void addFavouriteAlbum(Album album) {
-        try {
-            if (!CACHED_FAVOURITE_ALBUMS.contains(album)) {
-                CACHED_FAVOURITE_ALBUMS.add(album);
-            }
-        } catch (NullPointerException ignored) {
-        }
-    }
-
-    public static void removeFavouriteAlbum(Album album) {
-        try {
-            CACHED_FAVOURITE_ALBUMS.remove(album);
-        } catch (NullPointerException ignored) {
-        }
-    }
-
-    public static void removeFavouriteAlbum(int index) {
-        if (index > -1) {
-            try {
-                CACHED_FAVOURITE_ALBUMS.remove(index);
-            } catch (IndexOutOfBoundsException ex) {
-                CACHED_FAVOURITE_ALBUMS.remove(index - 1);
-            }
-        }
-    }
-
-    public static ObservableList<Album> getCachedFavouriteAlbums() {
-        CACHED_FAVOURITE_ALBUMS.addListener((ListChangeListener<Album>) c -> {
-            c.next();
-            if (c.wasAdded()) {
-                new Thread(() -> {
-                    Transaction transaction = startTransaction();
-                    try {
-                        for (Album album : c.getAddedSubList()) {
-                            session.save(album);
-                        }
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                        if (transaction.isActive()) {
-                            transaction.rollback();
-                        }
-                    } finally {
-                        if (transaction.isActive()) {
-                            transaction.commit();
-                        }
-                    }
-                }).start();
-            } else if (c.wasRemoved()) {
-                new Thread(() -> {
-                    Transaction transaction = startTransaction();
-                    try {
-                        for (Album album : c.getRemoved()) {
-                            session.delete(album);
-                        }
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                        if (transaction.isActive()) {
-                            transaction.rollback();
-                        }
-                    } finally {
-                        if (transaction.isActive()) {
-                            transaction.commit();
-                        }
-                    }
-                }).start();
-            }
-        });
-        return CACHED_FAVOURITE_ALBUMS;
-    }
-
-    private static final ObservableList<Artist> CACHED_FAVOURITE_ARTISTS = FXCollections.observableArrayList();
-
-    public static void addFavouriteArtist(Artist artist) {
-        try {
-            if (!CACHED_FAVOURITE_ARTISTS.contains(artist)) {
-                CACHED_FAVOURITE_ARTISTS.add(artist);
-            }
-        } catch (NullPointerException ignored) {
-        }
-    }
-
-    public static void removeFavouriteArtist(Artist artist) {
-        try {
-            CACHED_FAVOURITE_ARTISTS.remove(artist);
-        } catch (NullPointerException ignored) {
-        }
-    }
-
-    public static void removeFavouriteArtist(int index) {
-        if (index > -1) {
-            try {
-                CACHED_FAVOURITE_ARTISTS.remove(index);
-            } catch (IndexOutOfBoundsException ex) {
-                CACHED_FAVOURITE_ARTISTS.remove(index - 1);
-            }
-        }
-    }
-
-    public static ObservableList<Artist> getCachedFavouriteArtists() {
-        CACHED_FAVOURITE_ARTISTS.addListener((ListChangeListener<Artist>) c -> {
-            c.next();
-            if (c.wasAdded()) {
-                new Thread(() -> {
-                    Transaction transaction = startTransaction();
-                    try {
-                        for (Artist artist : c.getAddedSubList()) {
-                            session.save(artist);
-                        }
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                        if (transaction.isActive()) {
-                            transaction.rollback();
-                        }
-                    } finally {
-                        if (transaction.isActive()) {
-                            transaction.commit();
-                        }
-                    }
-                }).start();
-            } else if (c.wasRemoved()) {
-                new Thread(() -> {
-                    Transaction transaction = startTransaction();
-                    try {
-                        for (Artist artist : c.getRemoved()) {
-                            session.delete(artist);
-                        }
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                        if (transaction.isActive()) {
-                            transaction.rollback();
-                        }
-                    } finally {
-                        if (transaction.isActive()) {
-                            transaction.commit();
-                        }
-                    }
-                }).start();
-            }
-        });
-        return CACHED_FAVOURITE_ARTISTS;
-    }
-
     public static void getReady() {
         CACHED_SONGS.clear();
         CACHED_ALBUMS.clear();
         CACHED_ARTISTS.clear();
         CACHED_GENRES.clear();
         CACHED_RECENTLY_PLAYED.clear();
-        CACHED_FAVOURITE_SONGS.clear();
-        CACHED_FAVOURITE_ALBUMS.clear();
-        CACHED_FAVOURITE_ARTISTS.clear();
     }
 
     public static void rollbackTransaction() {

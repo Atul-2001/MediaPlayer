@@ -11,6 +11,7 @@ import javafx.scene.layout.*;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.signature.dataModel.audioPlayer.Playlist;
 import org.signature.ui.audioPlayer.dialogs.AddPlaylistDialogController;
 import org.signature.ui.audioPlayer.model.PlaylistPane;
 import org.signature.util.Utils;
@@ -72,7 +73,7 @@ public class PlaylistTabController implements Initializable {
             try {
                 list_playlists.getChildren().clear();
                 for (int i = 0; i < 10; i++) {
-                    PlaylistPane playlist = new PlaylistPane(String.valueOf(i+1), (i+1)*10);
+                    PlaylistPane playlist = new PlaylistPane(new Playlist(String.valueOf(i+1), (i+1)*10));
                     list_playlists.getChildren().add(playlist);
                 }
                 isPlaylistsLoaded = true;

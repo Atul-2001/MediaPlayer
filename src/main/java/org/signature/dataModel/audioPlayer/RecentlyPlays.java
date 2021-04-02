@@ -1,7 +1,5 @@
 package org.signature.dataModel.audioPlayer;
 
-import org.signature.ui.audioPlayer.Inventory;
-
 import javax.persistence.*;
 
 @Entity
@@ -22,11 +20,9 @@ public class RecentlyPlays {
         assert object instanceof Album || object instanceof Artist;
 
         if (object instanceof Album) {
-            Artist artist = Inventory.getArtist(((Album) object).getArtist());
-
             this.albumName = ((Album) object).getAlbumName();
             this.albumArtist = ((Album) object).getAlbumArtist();
-            this.artist = artist.getName();
+            this.artist = ((Album) object).getArtist();
         } else {
             this.albumName = null;
             this.albumArtist = null;

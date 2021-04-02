@@ -60,16 +60,15 @@ public class AudioPlayer {
             configuration.setProperty("hibernate.connection.url", Inventory.getDBUrl());
             configuration.setProperty("hibernate.hbm2ddl.auto", "update");
             configuration = configuration.addAnnotatedClass(MusicLibrary.class)
-                    .addAnnotatedClass(Artist.class)
-                    .addAnnotatedClass(Album.class)
-                    .addAnnotatedClass(Song.class)
-                    .addAnnotatedClass(RecentlyPlays.class);
+                    .addAnnotatedClass(RecentlyPlays.class)
+                    .addAnnotatedClass(OnlineSong.class);
 
             registry = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build();
             factory = configuration.buildSessionFactory(registry);
             session = factory.openSession();
         } catch (Exception ex) {
             LOGGER.log(Level.ERROR, "Failed to start Audio Player session!, ", ex);
+            System.out.println("It looks like media player is already running!");
             Platform.exit();
         }
     }
@@ -117,10 +116,10 @@ public class AudioPlayer {
             ExecutorService mediaPool = Executors.newCachedThreadPool();
 
             Artist unknownArtist = new Artist("Unknown Artist");
-            Inventory.getCachedArtists().add(unknownArtist);
+            Inventory.addArtist(unknownArtist);
 
-            Album unknownAlbum = new Album("Unknown Album", unknownArtist.getId(), String.valueOf(LocalDateTime.now().getYear()), String.valueOf(FileTime.from(Instant.now()).toMillis()));
-            Inventory.getCachedAlbums().add(unknownAlbum);
+            Album unknownAlbum = new Album("Unknown Album", unknownArtist.getName(), String.valueOf(LocalDateTime.now().getYear()), String.valueOf(FileTime.from(Instant.now()).toMillis()));
+            Inventory.addAlbum(unknownAlbum);
 
             for (MusicLibrary library : Inventory.getLibraries()) {
                 Path musicLibrary = Path.of(library.getFolderLocation());
@@ -139,8 +138,10 @@ public class AudioPlayer {
                                     try {
                                         Mp3File mp3File = new Mp3File(file);
                                         Song song = new Song();
-                                        Album album;
-                                        Artist artist;
+                                        Album album = new Album();
+                                        Artist artist = new Artist();
+
+                                        song.setMusicLibraryId(library.getId());
 
                                         ID3v2 id3v2Tag = mp3File.getId3v2Tag();
                                         if (id3v2Tag != null) {
@@ -152,45 +153,21 @@ public class AudioPlayer {
                                             }
 
                                             song.setTrack(id3v2Tag.getTrack());
+                                            if (id3v2Tag.getAlbum() == null) {
+                                                song.setAlbum(unknownAlbum.getAlbumName());
+                                            } else {
+                                                song.setAlbum(id3v2Tag.getAlbum());
+                                            }
 
+                                            if (id3v2Tag.getArtist() == null) {
+                                                song.setArtist(unknownArtist.getName());
+                                            } else {
+                                                song.setArtist(id3v2Tag.getArtist());
+                                            }
                                             song.setYearOfRelease(id3v2Tag.getYear());
 
                                             song.setGenre(id3v2Tag.getGenre());
                                             Inventory.addGenreDescription(id3v2Tag.getGenre(), id3v2Tag.getGenreDescription());
-
-                                            if (id3v2Tag.getAlbum() == null) {
-                                                song.setAlbum(unknownAlbum.getId());
-                                            } else {
-                                                int albumID = Inventory.getAlbumID(id3v2Tag.getAlbum());
-                                                if (albumID != -1) {
-                                                    song.setAlbum(albumID);
-                                                } else {
-                                                    album = new Album();
-                                                    album.setAlbumName(id3v2Tag.getAlbum());
-                                                    album.setAlbumArtist(id3v2Tag.getAlbumArtist());
-                                                    album.setAlbumImage(id3v2Tag.getAlbumImage());
-                                                    album.setAlbumImageMimeType(id3v2Tag.getAlbumImageMimeType());
-                                                    album.setGenre(id3v2Tag.getGenre());
-                                                    album.setReleaseYear(id3v2Tag.getYear());
-                                                    album.setCreationTime(String.valueOf(attrs.creationTime().toMillis()));
-
-                                                    if (id3v2Tag.getArtist() == null) {
-                                                        album.setArtist(unknownArtist.getId());
-                                                    } else {
-                                                        int artistID = Inventory.getArtistID(id3v2Tag.getArtist());
-                                                        if (artistID != -1) {
-                                                            album.setArtist(artistID);
-                                                        } else {
-                                                            artist = new Artist(id3v2Tag.getArtist());
-                                                            Inventory.addArtist(artist);
-
-                                                            album.setArtist(artist.getId());
-                                                        }
-                                                    }
-                                                    Inventory.addAlbum(album);
-                                                    song.setAlbum(album.getId());
-                                                }
-                                            }
 
                                             song.setLocation(file.toAbsolutePath().toString());
                                             song.setCreationTime(String.valueOf(attrs.creationTime().toMillis()));
@@ -204,6 +181,36 @@ public class AudioPlayer {
                                                     mediaPlayer.dispose();
                                                 });
                                             });
+
+                                            if (id3v2Tag.getAlbum() != null) {
+                                                if (Inventory.getAlbum(id3v2Tag.getAlbum()) == null) {
+                                                    album = new Album();
+                                                    album.setAlbumName(id3v2Tag.getAlbum());
+                                                    album.setAlbumArtist(id3v2Tag.getAlbumArtist());
+                                                    if (id3v2Tag.getArtist() != null) {
+                                                        Artist tmpArtist = Inventory.getArtist(id3v2Tag.getArtist());
+                                                        if (tmpArtist != null) {
+                                                            album.setArtist(tmpArtist.getName());
+                                                        } else {
+                                                            album.setArtist(id3v2Tag.getArtist());
+                                                        }
+                                                    }
+                                                    album.setAlbumImage(id3v2Tag.getAlbumImage());
+                                                    album.setAlbumImageMimeType(id3v2Tag.getAlbumImageMimeType());
+                                                    album.setGenre(id3v2Tag.getGenre());
+                                                    album.setReleaseYear(id3v2Tag.getYear());
+                                                    album.setCreationTime(String.valueOf(attrs.creationTime().toMillis()));
+                                                    Inventory.addAlbum(album);
+                                                }
+                                            }
+
+                                            if (id3v2Tag.getArtist() != null) {
+                                                if (Inventory.getArtist(id3v2Tag.getArtist()) == null) {
+                                                    artist = new Artist(id3v2Tag.getArtist());
+                                                    Inventory.addArtist(artist);
+                                                }
+                                            }
+
                                         } else {
                                             ID3v1 id3v1Tag = mp3File.getId3v1Tag();
                                             if (id3v1Tag != null) {
@@ -215,41 +222,21 @@ public class AudioPlayer {
                                                 }
 
                                                 song.setTrack(id3v1Tag.getTrack());
+                                                if (id3v1Tag.getAlbum() == null) {
+                                                    song.setAlbum(unknownAlbum.getAlbumName());
+                                                } else {
+                                                    song.setAlbum(id3v1Tag.getAlbum());
+                                                }
 
+                                                if (id3v1Tag.getArtist() == null) {
+                                                    song.setArtist(unknownArtist.getName());
+                                                } else {
+                                                    song.setArtist(id3v1Tag.getArtist());
+                                                }
                                                 song.setYearOfRelease(id3v1Tag.getYear());
 
                                                 song.setGenre(id3v1Tag.getGenre());
                                                 Inventory.addGenreDescription(id3v1Tag.getGenre(), id3v1Tag.getGenreDescription());
-
-                                                if (id3v1Tag.getAlbum() == null) {
-                                                    song.setAlbum(unknownAlbum.getId());
-                                                } else {
-                                                    int albumID = Inventory.getAlbumID(id3v1Tag.getAlbum());
-                                                    if (albumID != -1) {
-                                                        song.setAlbum(albumID);
-                                                    } else {
-                                                        album = new Album();
-                                                        album.setAlbumName(id3v1Tag.getAlbum());
-                                                        album.setGenre(id3v1Tag.getGenre());
-                                                        album.setCreationTime(String.valueOf(attrs.creationTime().toMillis()));
-
-                                                        if (id3v1Tag.getArtist() == null) {
-                                                            album.setArtist(unknownArtist.getId());
-                                                        } else {
-                                                            int artistID = Inventory.getArtistID(id3v1Tag.getArtist());
-                                                            if (artistID != -1) {
-                                                                album.setArtist(artistID);
-                                                            } else {
-                                                                artist = new Artist(id3v1Tag.getArtist());
-                                                                Inventory.addArtist(artist);
-
-                                                                album.setArtist(artist.getId());
-                                                            }
-                                                        }
-                                                        Inventory.addAlbum(album);
-                                                        song.setAlbum(album.getId());
-                                                    }
-                                                }
 
                                                 song.setLocation(file.toAbsolutePath().toString());
                                                 song.setCreationTime(String.valueOf(attrs.creationTime().toMillis()));
@@ -263,8 +250,35 @@ public class AudioPlayer {
                                                         mediaPlayer.dispose();
                                                     });
                                                 });
+
+                                                if (id3v1Tag.getAlbum() != null) {
+                                                    if (Inventory.getAlbum(id3v1Tag.getAlbum()) == null) {
+                                                        album = new Album();
+                                                        album.setAlbumName(id3v1Tag.getAlbum());
+                                                        if (id3v1Tag.getArtist() != null) {
+                                                            Artist tmpArtist = Inventory.getArtist(id3v1Tag.getArtist());
+                                                            if (tmpArtist != null) {
+                                                                album.setArtist(tmpArtist.getName());
+                                                            } else {
+                                                                album.setArtist(id3v1Tag.getArtist());
+                                                            }
+                                                        }
+                                                        album.setGenre(id3v1Tag.getGenre());
+                                                        album.setReleaseYear(id3v1Tag.getYear());
+                                                        album.setCreationTime(String.valueOf(attrs.creationTime().toMillis()));
+                                                        Inventory.addAlbum(album);
+                                                    }
+                                                }
+
+                                                if (id3v1Tag.getArtist() != null) {
+                                                    if (Inventory.getArtist(id3v1Tag.getArtist()) == null) {
+                                                        artist = new Artist(id3v1Tag.getArtist());
+                                                        Inventory.addArtist(artist);
+                                                    }
+                                                }
                                             }
                                         }
+
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                     }
@@ -312,34 +326,10 @@ public class AudioPlayer {
                 }
             }
         }
-    }
 
-    public void loadFavourites() {
-        List<Artist> favouriteArtists = session.createQuery("from Artist ").list();
-        for (Artist artist : favouriteArtists) {
-            Artist cachedArtist = Inventory.checkArtist(artist);
-            if (cachedArtist != null) {
-                cachedArtist.setFavourite(true);
-                Inventory.addFavouriteArtist(cachedArtist);
-            }
-        }
-
-        List<Album> favouriteAlbums = session.createQuery("from Album ").list();
-        for (Album album : favouriteAlbums) {
-            Album cachedAlbum = Inventory.checkAlbum(album);
-            if (cachedAlbum != null) {
-                cachedAlbum.setFavourite(true);
-                Inventory.addFavouriteAlbum(cachedAlbum);
-            }
-        }
-
-        List<Song> favouriteSongs = session.createQuery("from Song ").list();
-        for (Song song : favouriteSongs) {
-            Song cachedSong = Inventory.checkSong(song);
-            if (cachedSong != null) {
-                cachedSong.setFavourite(true);
-                Inventory.addFavouriteSong(cachedSong);
-            }
+        List<OnlineSong> recentOnlineOnlineSongs = session.createQuery("from OnlineSong ").list();
+        for (OnlineSong onlineSong : recentOnlineOnlineSongs) {
+            Inventory.insertRecentlyPlayed(onlineSong, onlineSong.getSNO());
         }
     }
 }

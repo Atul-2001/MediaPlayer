@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
-<VBox xmlns:fx="http://javafx.com/fxml/1" fx:id="tab_settings" maxHeight="1.7976931348623157E308"
-      maxWidth="1.7976931348623157E308"
-      prefHeight="630.0" prefWidth="960.0" stylesheets="@../audio-player-style.css"
-      xmlns="http://javafx.com/javafx/11.0.1" fx:controller="org.signature.ui.audioPlayer.tabs.SettingsTabController">
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXRadioButton?>
+<?import com.jfoenix.controls.JFXToggleButton?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox fx:id="tab_settings" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="630.0"
+      prefWidth="960.0" stylesheets="@../audio-player-style.css" xmlns="http://javafx.com/javafx/11.0.1"
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.signature.ui.audioPlayer.tabs.SettingsTabController">
     <padding>
         <Insets bottom="2.0" left="20.0"/>
     </padding>
@@ -35,8 +39,8 @@
                                     </font>
                                 </Label>
                                 <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
-                                       prefHeight="20.0" styleClass="link-btn" text="Choose where we look for music"
-                                       textFill="#4885ed" VBox.vgrow="NEVER" onMouseClicked="#handleAddLocalMusic">
+                                       onMouseClicked="#handleAddLocalMusic" prefHeight="20.0" styleClass="link-btn"
+                                       text="Choose where we look for music" textFill="#4885ed" VBox.vgrow="NEVER">
                                     <font>
                                         <Font name="Roboto" size="14.0"/>
                                     </font>
@@ -44,6 +48,25 @@
                                         <Cursor fx:constant="HAND"/>
                                     </cursor>
                                 </Label>
+                            </children>
+                        </VBox>
+                        <VBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="20.0" maxHeight="-Infinity"
+                              minHeight="-Infinity" prefHeight="60.0" spacing="2.0">
+                            <children>
+                                <Label cache="true" cacheHint="SPEED" maxHeight="-Infinity"
+                                       maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="30.0"
+                                       text="Downloads" VBox.vgrow="NEVER">
+                                    <font>
+                                        <Font name="Roboto" size="22.0"/>
+                                    </font>
+                                </Label>
+                                <JFXButton onAction="#handleShowDownloads" ripplerFill="#3cba54"
+                                           style="-fx-border-color: #4885ed;" styleClass="link-btn"
+                                           text="Open Downloads" textFill="#4885ed">
+                                    <font>
+                                        <Font name="Roboto" size="14.0"/>
+                                    </font>
+                                </JFXButton>
                             </children>
                         </VBox>
                         <VBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" maxHeight="-Infinity"

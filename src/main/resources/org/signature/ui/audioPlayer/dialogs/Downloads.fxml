@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox fx:id="downloads_dialog" focusTraversable="true" maxHeight="1.7976931348623157E308"
+      maxWidth="1.7976931348623157E308" prefHeight="630.0" prefWidth="960.0" stylesheets="@dialog-style.css"
+      xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.signature.ui.audioPlayer.dialogs.DownloadsController" id="dialog-base">
+    <padding>
+        <Insets bottom="2.0" left="20.0"/>
+    </padding>
+    <children>
+        <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="60.0"
+               text="Downloads" VBox.vgrow="NEVER">
+            <font>
+                <Font name="Roboto Medium" size="30.0"/>
+            </font>
+        </Label>
+        <Separator maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="2.0">
+            <VBox.margin>
+                <Insets right="10.0"/>
+            </VBox.margin>
+        </Separator>
+        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308"
+                    maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+            <VBox.margin>
+                <Insets right="10.0"/>
+            </VBox.margin>
+            <content>
+                <VBox fx:id="downloadsList" spacing="10.0"/>
+            </content>
+        </ScrollPane>
+    </children>
+</VBox>

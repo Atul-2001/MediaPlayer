@@ -2,7 +2,6 @@ package org.signature.ui.audioPlayer.model;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXCheckBox;
-import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.ContentDisplay;
@@ -16,11 +15,9 @@ import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Font;
 import org.signature.App;
 import org.signature.dataModel.audioPlayer.Album;
-import org.signature.dataModel.audioPlayer.Artist;
 import org.signature.dataModel.audioPlayer.Song;
 import org.signature.ui.audioPlayer.ConsoleController;
 import org.signature.ui.audioPlayer.Inventory;
-import org.signature.ui.audioPlayer.tabs.FavouriteTabController;
 import org.signature.ui.audioPlayer.tabs.RecentlyPlayedTabController;
 import org.signature.ui.audioPlayer.tabs.SongTabController;
 import org.signature.util.Utils;
@@ -32,7 +29,6 @@ public class SongPane extends HBox {
     private final String DEFAULT_STYLESHEET = "model-node-style.css";
 
     private final JFXCheckBox selectSong = new JFXCheckBox();
-    private final JFXButton btn_favourite = new JFXButton();
     private final HBox songInfoAndControlPane = new HBox();
     private final VBox songInfoPane = new VBox();
     private final Label songName = new Label();
@@ -49,14 +45,13 @@ public class SongPane extends HBox {
 
     private final String creationTime; // creation time of file (in millis);
 
-    private boolean isBind = false, isFavourite = false, resizedStage1 = false, resizedStage2 = false, resizedStage3 = false;
+    private boolean isBind = false, resizedStage1 = false, resizedStage2 = false, resizedStage3 = false;
     private final double songTabWidth = App.getScreenWidth()-320;
 
     public SongPane(Song song) {
         assert song != null;
         this.song = song;
         this.album = Inventory.getAlbum(song.getAlbum());
-        Artist artist = Inventory.getArtist(album.getArtist());
 
         setAlignment(Pos.CENTER_LEFT);
         setMinSize(914.0, 50.0);
@@ -71,16 +66,6 @@ public class SongPane extends HBox {
         selectSong.setMaxSize(20.0, 20.0);
         selectSong.setVisible(false);
         SongPane.setMargin(selectSong, new Insets(0, 10, 0, 12));
-
-        btn_favourite.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-        btn_favourite.setAlignment(Pos.CENTER);
-        btn_favourite.setMinSize(40.0, 40.0);
-        btn_favourite.setPrefSize(40.0, 40.0);
-        btn_favourite.setMaxSize(40.0, 40.0);
-        SVGPath btn_favourite_icon = new SVGPath();
-        btn_favourite_icon.setContent("M16.5 3c-1.74 0-3.41.81-4.5 2.09C10.91 3.81 9.24 3 7.5 3 4.42 3 2 5.42 2 8.5c0 3.78 3.4 6.86 8.55 11.54L12 21.35l1.45-1.32C18.6 15.36 22 12.28 22 8.5 22 5.42 19.58 3 16.5 3zm-4.4 15.55l-.1.1-.1-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04.99 3.57 2.36h1.87C13.46 5.99 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.9 10.05z");
-        btn_favourite.setGraphic(btn_favourite_icon);
-        SongPane.setMargin(btn_favourite, new Insets(0, 2.0, 0, 0));
 
     /*----------------------------------------------------------------------------------------------------------------*/
         songInfoAndControlPane.setAlignment(Pos.CENTER_LEFT);
@@ -136,7 +121,7 @@ public class SongPane extends HBox {
         this.songArtist.setMaxHeight(Double.MAX_VALUE);
         this.songArtist.setFont(Font.font("Roboto", 12.0));
         this.songArtist.setTextFill(Color.GREY);
-        this.songArtist.setText(artist.getName() == null || artist.getName().isEmpty() ? "Unknown Artist" : artist.getName());
+        this.songArtist.setText(this.album.getArtist() == null || this.album.getArtist().isEmpty() ? "Unknown Artist" : this.album.getArtist());
         HBox.setHgrow(this.songArtist, Priority.ALWAYS);
 
         artistAlbumInfo.getChildren().addAll(this.songAlbum, dotSeparator, this.songArtist);
@@ -174,7 +159,7 @@ public class SongPane extends HBox {
         this.songArtistName.setMaxSize(Double.MAX_VALUE, 50.0);
         this.songArtistName.setFont(Font.font("Roboto", 14.0));
         this.songArtistName.setTextOverrun(OverrunStyle.CLIP);
-        this.songArtistName.setText(artist.getName() == null || artist.getName().isEmpty() ? "Unknown Artist" : artist.getName());
+        this.songArtistName.setText(this.album.getArtist() == null || this.album.getArtist().isEmpty() ? "Unknown Artist" : this.album.getArtist());
         SongPane.setHgrow(this.songArtistName, Priority.ALWAYS);
         SongPane.setMargin(this.songArtistName, new Insets(0, 12.0, 0, 0));
 
@@ -215,7 +200,7 @@ public class SongPane extends HBox {
         SongPane.setHgrow(this.songLength, Priority.NEVER);
         SongPane.setMargin(this.songLength, new Insets(0, 12.0, 0, 0));
 
-        getChildren().addAll(this.selectSong, this.btn_favourite, this.songInfoAndControlPane, this.songArtistName, this.songAlbumName, this.songReleaseDate, this.songGenre, this.songLength);
+        getChildren().addAll(this.selectSong, this.songInfoAndControlPane, this.songArtistName, this.songAlbumName, this.songReleaseDate, this.songGenre, this.songLength);
 
         this.creationTime = song.getCreationTime() == null ? "" : song.getCreationTime();
         init();
@@ -239,6 +224,8 @@ public class SongPane extends HBox {
             ConsoleController.getInstance().load(Inventory.getCachedSongs(), song);
             RecentlyPlayedTabController.getInstance().addRecentlyPlayed(album);
         });
+
+        btn_addToPlaylist.setOnAction(event -> ConsoleController.getInstance().addToNowPlaying(song));
 
         selectSong.selectedProperty().addListener((observable, oldValue, newValue) -> {
             if (!SongTabController.getInstance().getShowSelectionBox().get()) {
@@ -303,27 +290,6 @@ public class SongPane extends HBox {
         songGenre.widthProperty().addListener((observable, oldValue, newValue) -> SongTabController.getInstance().setGenreFieldWidth(newValue.intValue()));
         songGenre.prefWidthProperty().bind(SongTabController.getInstance().genreFieldWidthProperty());
 
-        if (song.getFavourite().get()) {
-            SVGPath yFavourite = new SVGPath();
-            yFavourite.setContent("M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z");
-            yFavourite.setFill(Color.rgb(219, 50, 54, 0.8));
-            btn_favourite.setGraphic(yFavourite);
-            isFavourite = true;
-        }
-        btn_favourite.setOnAction(this::handleSetFavourite);
-        song.getFavourite().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                SVGPath yFavourite = new SVGPath();
-                yFavourite.setContent("M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z");
-                yFavourite.setFill(Color.rgb(219, 50, 54, 0.8));
-                btn_favourite.setGraphic(yFavourite);
-            } else {
-                SVGPath nFavourite = new SVGPath();
-                nFavourite.setContent("M16.5 3c-1.74 0-3.41.81-4.5 2.09C10.91 3.81 9.24 3 7.5 3 4.42 3 2 5.42 2 8.5c0 3.78 3.4 6.86 8.55 11.54L12 21.35l1.45-1.32C18.6 15.36 22 12.28 22 8.5 22 5.42 19.58 3 16.5 3zm-4.4 15.55l-.1.1-.1-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04.99 3.57 2.36h1.87C13.46 5.99 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.9 10.05z");
-                btn_favourite.setGraphic(nFavourite);
-            }
-        });
-
         if (song.isPlayingProperty().get()) {
             setStyle("-fx-background-color: rgba(72, 133, 237, 0.4);");
         }
@@ -334,18 +300,6 @@ public class SongPane extends HBox {
                 setStyle(null);
             }
         });
-    }
-
-    private void handleSetFavourite(ActionEvent actionEvent) {
-        if (isFavourite) {
-            song.setFavourite(false);
-            FavouriteTabController.getInstance().removeSong(song);
-            isFavourite = false;
-        } else {
-            song.setFavourite(true);
-            FavouriteTabController.getInstance().addSong(song);
-            isFavourite = true;
-        }
     }
 
     public Song getSong() {

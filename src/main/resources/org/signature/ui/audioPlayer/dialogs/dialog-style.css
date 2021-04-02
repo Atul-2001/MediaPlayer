@@ -23,3 +23,14 @@
 VBox {
     -fx-background-color: TRANSPARENT;
 }
+
+.card {
+    -fx-background-color : linear-gradient(to top, #FFDEE9 0%, #B5FFFC 100%);
+    -fx-background-radius: 10;
+    -fx-background-insets: 5;
+    -fx-effect: dropshadow(three-pass-box, #383838, 10, 0, 0, 0);
+}
+
+.dialog_style {
+    -fx-background-color: linear-gradient(to right, #badbf9 0%, #E0C3FC 42%, #f8fbc0 100%);
+}

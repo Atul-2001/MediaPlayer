@@ -22,6 +22,7 @@ import org.signature.dataModel.audioPlayer.Album;
 import org.signature.dataModel.audioPlayer.Artist;
 import org.signature.dataModel.audioPlayer.Song;
 import org.signature.ui.audioPlayer.BaseController;
+import org.signature.ui.audioPlayer.ConsoleController;
 import org.signature.ui.audioPlayer.Inventory;
 import org.signature.ui.audioPlayer.model.AlbumPane;
 import org.signature.ui.audioPlayer.model.SongPane;
@@ -31,14 +32,20 @@ import javax.imageio.ImageIO;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class AlbumViewTabController implements Initializable {
 
     private final Logger LOGGER = LogManager.getLogger(AlbumViewTabController.class);
 
     private static AlbumViewTabController instance = null;
+
+    private final double ALBUM_VIEW_HEADER_MIN_HEIGHT = 196.0;
+    private final double ALBUM_VIEW_HEADER_MAX_HEIGHT = 274.0;
 
     @FXML
     private VBox album_view;
@@ -68,6 +75,9 @@ public class AlbumViewTabController implements Initializable {
     private final ObservableList<Song> songs = FXCollections.observableArrayList();
     private Album album;
     private Artist artist;
+
+    private boolean isViewRequestedFromArtist = false;
+    private Artist requesterArtist = null;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -103,6 +113,23 @@ public class AlbumViewTabController implements Initializable {
             }
         });
 
+        AtomicBoolean isViewChanged = new AtomicBoolean(false);
+        albumSongsList.setOnScroll(event -> {
+            if (event.getDeltaY() < 0 && !isViewChanged.get()) {
+                info_and_controls_pane.getChildren().remove(albumInfoPane);
+                albumViewHeader.setPrefHeight(ALBUM_VIEW_HEADER_MIN_HEIGHT);
+                albumArtView.setFitWidth(ALBUM_VIEW_HEADER_MIN_HEIGHT * 0.73);
+                albumArtView.setFitHeight(ALBUM_VIEW_HEADER_MIN_HEIGHT * 0.73);
+                isViewChanged.set(true);
+            } else if (event.getDeltaY() > 0 && isViewChanged.get()){
+                albumViewHeader.setPrefHeight(ALBUM_VIEW_HEADER_MAX_HEIGHT);
+                albumArtView.setFitWidth(ALBUM_VIEW_HEADER_MAX_HEIGHT * 0.73);
+                albumArtView.setFitHeight(ALBUM_VIEW_HEADER_MAX_HEIGHT * 0.73);
+                info_and_controls_pane.getChildren().add(2, albumInfoPane);
+                isViewChanged.set(false);
+            }
+        });
+
         LOGGER.log(Level.INFO, "Tab Album View Loaded!");
     }
 
@@ -116,11 +143,22 @@ public class AlbumViewTabController implements Initializable {
 
     @FXML
     private void handleBackOperation(ActionEvent actionEvent) {
-        BaseController.getInstance().getBtnAlbums().fire();
+        if (isViewRequestedFromArtist) {
+            if (requesterArtist != null) {
+                if (ArtistViewTabController.getInstance().loadArtist(this.requesterArtist, false, null)) {
+                    this.isViewRequestedFromArtist = false;
+                    this.requesterArtist = null;
+                    BaseController.getInstance().handleShowArtistView();
+                }
+            }
+        } else {
+            BaseController.getInstance().getBtnAlbums().fire();
+        }
     }
 
     @FXML
     private void handlePlayAllSongs(ActionEvent actionEvent) {
+        ConsoleController.getInstance().load(this.album);
     }
 
     @FXML
@@ -129,6 +167,9 @@ public class AlbumViewTabController implements Initializable {
 
     @FXML
     private void handleShowArtist(ActionEvent actionEvent) {
+        if (ArtistViewTabController.getInstance().loadArtist(this.artist, true, this.album)) {
+            BaseController.getInstance().handleShowArtistView();
+        }
     }
 
     @FXML
@@ -162,7 +203,12 @@ public class AlbumViewTabController implements Initializable {
 
         Optional<ButtonType> result = dialog.showAndWait();
         if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-            System.out.println("Removing album....");
+            for (Song song : songs) {
+                try {
+                    Files.deleteIfExists(Path.of(song.getLocation()));
+                } catch (IOException ignored) {}
+            }
+            Inventory.removeAlbum(this.album);
         }
     }
 
@@ -171,13 +217,17 @@ public class AlbumViewTabController implements Initializable {
         BaseController.getInstance().getBtnSongs().fire();
     }
 
-    public boolean loadAlbum(Album album) {
+    public boolean loadAlbum(Album album, boolean isViewRequestedFromArtist, Artist requesterArtist) {
         try {
             this.album = album;
-            this.artist = Inventory.getArtist(album.getArtist());
+            this.isViewRequestedFromArtist = isViewRequestedFromArtist;
+            this.requesterArtist = requesterArtist;
+
+            this.artist = Inventory.getArtist(this.album.getArtist());
 
             this.songs.clear();
-            this.songs.setAll(Inventory.getSongs(album.getId()));
+            this.albumSongsList.getChildren().clear();
+            this.songs.setAll(Inventory.getSongs(album));
 
             byte[] albumArt = album.getAlbumImage();
             if (albumArt == null || albumArt.length == 0) {
@@ -191,7 +241,7 @@ public class AlbumViewTabController implements Initializable {
             }
 
             albumName.setText(album.getAlbumName());
-            artistName.setText(artist.getName());
+            artistName.setText(album.getArtist());
             albumReleaseYear.setText(album.getReleaseYear());
             albumCategory.setText(Inventory.getGenreDescription(album.getGenre()));
 

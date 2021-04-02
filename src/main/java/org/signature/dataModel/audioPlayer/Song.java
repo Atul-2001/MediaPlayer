@@ -3,51 +3,36 @@ package org.signature.dataModel.audioPlayer;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 
-import javax.persistence.*;
-
-@Entity
-@Table(name = "Favourite_Song")
 public class Song {
 
-    @Transient
     private static int sequence = 0;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "fav_song_generator")
-    @SequenceGenerator(name = "fav_song_generator", sequenceName = "fav_song_seq", allocationSize = 1)
-    private long S_NO;
-    @Transient
     private final int id;
+    private int musicLibraryId;
     private String track;
     private String title;
+    private String album;
+    private String artist;
     private String yearOfRelease;
-    @Transient
     private int genre;
     private double length;
-    @Transient
-    private int album;
     private String location;
-    @Transient
     private String creationTime; //creation time of file (in millis);
-    @Transient
-    private final BooleanProperty favourite, isPlaying;
+    private final BooleanProperty isPlaying;
 
     public Song() {
         this.id = sequence;
         this.track = "0";
         this.title = "Unknown Song " + id;
+        this.album = "Unknown Album";
+        this.artist = "Unknown Artist";
         this.yearOfRelease = "";
         this.genre = Integer.MIN_VALUE;
         this.length = 0.0;
-        this.album = Integer.MIN_VALUE;
         this.location = "";
-        favourite = new SimpleBooleanProperty(false);
-        isPlaying = new SimpleBooleanProperty(false);
+        this.musicLibraryId = 0;
+        this.isPlaying = new SimpleBooleanProperty(false);
         ++sequence;
-    }
-
-    public long getS_NO() {
-        return S_NO;
     }
 
     public int getId() {
@@ -68,6 +53,22 @@ public class Song {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getAlbum() {
+        return this.album;
+    }
+
+    public void setAlbum(String album) {
+        this.album = album;
+    }
+
+    public String getArtist() {
+        return artist;
+    }
+
+    public void setArtist(String artist) {
+        this.artist = artist;
     }
 
     public String getYearOfRelease() {
@@ -94,14 +95,6 @@ public class Song {
         this.length = length;
     }
 
-    public int getAlbum() {
-        return album;
-    }
-
-    public void setAlbum(int album) {
-        this.album = album;
-    }
-
     public String getLocation() {
         return location;
     }
@@ -118,12 +111,12 @@ public class Song {
         this.creationTime = creationTime;
     }
 
-    public void setFavourite(boolean isFavourite) {
-        favourite.set(isFavourite);
+    public int getMusicLibraryId() {
+        return musicLibraryId;
     }
 
-    public BooleanProperty getFavourite() {
-        return favourite;
+    public void setMusicLibraryId(int musicLibraryId) {
+        this.musicLibraryId = musicLibraryId;
     }
 
     public BooleanProperty isPlayingProperty() {

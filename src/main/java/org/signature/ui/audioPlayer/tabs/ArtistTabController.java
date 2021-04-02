@@ -102,6 +102,43 @@ public class ArtistTabController implements Initializable {
                 artists.sort((o1, o2) -> o1.getArtistName().compareToIgnoreCase(o2.getArtistName()));
 
                 artistsLoaded = true;
+
+                Inventory.getCachedArtists().addListener((ListChangeListener<Artist>) c -> {
+                    c.next();
+                    if (c.wasAdded()) {
+
+                        for (Artist artist : c.getAddedSubList()) {
+                            if (artist.getName().isEmpty()) {
+                                continue;
+                            }
+
+                            ArtistPane artistPane = new ArtistPane(artist);
+                            artists.add(artistPane);
+                        }
+
+                        artists.sort((o1, o2) -> o1.getArtistName().compareToIgnoreCase(o2.getArtistName()));
+
+                        artistsList.getChildren().clear();
+                        artistsList.getChildren().setAll(artists);
+
+                    } else if (c.wasRemoved()) {
+
+                        if (Inventory.getCachedArtists().size() == 0) {
+                            artists.clear();
+                            artistsList.getChildren().clear();
+                        } else {
+                            for (Artist artist : c.getRemoved()) {
+                                artists.removeIf(artistPane -> artistPane.getArtistName().equals(artist.getName()));
+                                artistsList.getChildren().removeIf(node -> ((ArtistPane) node).getArtistName().equals(artist.getName()));
+                            }
+
+                            artists.sort((o1, o2) -> o1.getArtistName().compareToIgnoreCase(o2.getArtistName()));
+
+                            artistsList.getChildren().clear();
+                            artistsList.getChildren().setAll(artists);
+                        }
+                    }
+                });
             } catch (NullPointerException | IllegalStateException | UnsupportedOperationException | IllegalArgumentException e) {
                 LOGGER.log(Level.ERROR, "Failed to load artist node! " + e.getLocalizedMessage(), e);
             }

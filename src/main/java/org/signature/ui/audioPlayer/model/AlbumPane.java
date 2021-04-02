@@ -2,7 +2,6 @@ package org.signature.ui.audioPlayer.model;
 
 import com.jfoenix.controls.JFXButton;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
@@ -11,16 +10,13 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Font;
 import org.signature.dataModel.audioPlayer.Album;
-import org.signature.dataModel.audioPlayer.Artist;
 import org.signature.ui.audioPlayer.BaseController;
 import org.signature.ui.audioPlayer.ConsoleController;
 import org.signature.ui.audioPlayer.Inventory;
 import org.signature.ui.audioPlayer.tabs.AlbumViewTabController;
-import org.signature.ui.audioPlayer.tabs.FavouriteTabController;
 import org.signature.ui.audioPlayer.tabs.RecentlyPlayedTabController;
 import org.signature.util.Utils;
 
@@ -36,7 +32,6 @@ public class AlbumPane extends VBox {
 
     private final AnchorPane albumArtPane = new AnchorPane();
     private final ImageView albumArtView = new ImageView();
-    private final JFXButton btn_favourite = new JFXButton();
     private final JFXButton btn_play = new JFXButton();
     private final JFXButton btn_addToPlaylist = new JFXButton();
     private final Label albumName = new Label();
@@ -46,12 +41,9 @@ public class AlbumPane extends VBox {
     private final String releaseYear;
     private final String creationTime; // creation time of song file (in millis)
 
-    private boolean isFavourite = false;
-
     public AlbumPane(Album album) {
         assert album != null;
         this.album = album;
-        Artist artist = Inventory.getArtist(album.getArtist());
 
         setPrefSize(160.0, 260.0);
         setMinSize(160.0, 260.0);
@@ -84,22 +76,6 @@ public class AlbumPane extends VBox {
         AnchorPane.setLeftAnchor(this.albumArtView, 0.0);
         AnchorPane.setRightAnchor(this.albumArtView, 0.0);
 
-        btn_favourite.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-        btn_favourite.setMinSize(40.0, 40.0);
-        btn_favourite.setPrefSize(40.0, 40.0);
-        btn_favourite.setMaxSize(40.0, 40.0);
-        btn_favourite.getStyleClass().add("btn-controls");
-        btn_favourite.setVisible(false);
-        SVGPath btn_favourite_icon = new SVGPath();
-        btn_favourite_icon.setContent("M16.5 3c-1.74 0-3.41.81-4.5 2.09C10.91 3.81 9.24 3 7.5 3 4.42 3 2 5.42 2 8.5c0 3.78 3.4 6.86 8.55 11.54L12 21.35l1.45-1.32C18.6 15.36 22 12.28 22 8.5 22 5.42 19.58 3 16.5 3zm-4.4 15.55l-.1.1-.1-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04.99 3.57 2.36h1.87C13.46 5.99 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.9 10.05z");
-        btn_favourite_icon.setScaleX(1.2);
-        btn_favourite_icon.setScaleY(1.2);
-        btn_favourite.setGraphic(btn_favourite_icon);
-        AnchorPane.setTopAnchor(btn_favourite, 40.0);
-        AnchorPane.setBottomAnchor(btn_favourite, 80.0);
-        AnchorPane.setLeftAnchor(btn_favourite, 60.0);
-        AnchorPane.setRightAnchor(btn_favourite, 60.0);
-
         btn_play.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
         btn_play.setMinSize(40.0, 40.0);
         btn_play.setPrefSize(40.0, 40.0);
@@ -111,10 +87,10 @@ public class AlbumPane extends VBox {
         btn_play_icon.setScaleX(1.2);
         btn_play_icon.setScaleY(1.2);
         btn_play.setGraphic(btn_play_icon);
-        AnchorPane.setTopAnchor(btn_play, 80.0);
-        AnchorPane.setBottomAnchor(btn_play, 40.0);
-        AnchorPane.setLeftAnchor(btn_play, 20.0);
-        AnchorPane.setRightAnchor(btn_play, 100.0);
+        AnchorPane.setTopAnchor(btn_play, 60.0);
+        AnchorPane.setBottomAnchor(btn_play, 60.0);
+        AnchorPane.setLeftAnchor(btn_play, 30.0);
+        AnchorPane.setRightAnchor(btn_play, 90.0);
 
         btn_addToPlaylist.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
         btn_addToPlaylist.setMinSize(40.0, 40.0);
@@ -127,12 +103,12 @@ public class AlbumPane extends VBox {
         btn_addToPlaylist_icon.setScaleX(1.2);
         btn_addToPlaylist_icon.setScaleY(1.2);
         btn_addToPlaylist.setGraphic(btn_addToPlaylist_icon);
-        AnchorPane.setTopAnchor(btn_addToPlaylist, 80.0);
-        AnchorPane.setBottomAnchor(btn_addToPlaylist, 40.0);
-        AnchorPane.setLeftAnchor(btn_addToPlaylist, 100.0);
-        AnchorPane.setRightAnchor(btn_addToPlaylist, 20.0);
+        AnchorPane.setTopAnchor(btn_addToPlaylist, 60.0);
+        AnchorPane.setBottomAnchor(btn_addToPlaylist, 60.0);
+        AnchorPane.setLeftAnchor(btn_addToPlaylist, 90.0);
+        AnchorPane.setRightAnchor(btn_addToPlaylist, 30.0);
 
-        albumArtPane.getChildren().addAll(this.albumArtView, btn_favourite, btn_play, btn_addToPlaylist);
+        albumArtPane.getChildren().addAll(this.albumArtView, btn_play, btn_addToPlaylist);
 
         this.albumName.setAlignment(Pos.TOP_LEFT);
         this.albumName.setMaxWidth(Double.MAX_VALUE);
@@ -146,9 +122,9 @@ public class AlbumPane extends VBox {
         this.albumArtist.setMaxWidth(Double.MAX_VALUE);
         String albumArtist;
         if (album.getAlbumArtist() == null) {
-            albumArtist = artist.getName();
+            albumArtist = album.getArtist();
         } else if (album.getAlbumArtist().isEmpty()) {
-            albumArtist = artist.getName();
+            albumArtist = album.getArtist();
         } else {
             albumArtist = album.getAlbumArtist();
         }
@@ -169,42 +145,25 @@ public class AlbumPane extends VBox {
     private void init() {
         this.setOnMouseEntered(event -> {
             albumArtPane.setEffect(Utils.createNodeHoverEffect());
-            btn_favourite.setVisible(true);
             btn_play.setVisible(true);
             btn_addToPlaylist.setVisible(true);
         });
 
         this.setOnMouseExited(event -> {
             albumArtPane.setEffect(null);
-            btn_favourite.setVisible(false);
             btn_play.setVisible(false);
             btn_addToPlaylist.setVisible(false);
         });
 
         this.setOnMouseClicked(event -> {
-            if (AlbumViewTabController.getInstance().loadAlbum(album)) {
-                BaseController.getInstance().handleShowAlbumView();
-            }
-        });
-
-        if (album.getFavourite().get()) {
-            SVGPath yFavourite = new SVGPath();
-            yFavourite.setContent("M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z");
-            yFavourite.setFill(Color.rgb(219, 50, 54, 0.8));
-            btn_favourite.setGraphic(yFavourite);
-            isFavourite = true;
-        }
-        this.btn_favourite.setOnAction(this::handleSetFavourite);
-        album.getFavourite().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                SVGPath yFavourite = new SVGPath();
-                yFavourite.setContent("M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z");
-                yFavourite.setFill(Color.rgb(219, 50, 54, 0.8));
-                btn_favourite.setGraphic(yFavourite);
+            if (this.getParent().getParent().toString().contains("VBox")) {
+                if (AlbumViewTabController.getInstance().loadAlbum(album, true, Inventory.getArtist(this.album.getArtist()))) {
+                    BaseController.getInstance().handleShowAlbumView();
+                }
             } else {
-                SVGPath nFavourite = new SVGPath();
-                nFavourite.setContent("M16.5 3c-1.74 0-3.41.81-4.5 2.09C10.91 3.81 9.24 3 7.5 3 4.42 3 2 5.42 2 8.5c0 3.78 3.4 6.86 8.55 11.54L12 21.35l1.45-1.32C18.6 15.36 22 12.28 22 8.5 22 5.42 19.58 3 16.5 3zm-4.4 15.55l-.1.1-.1-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04.99 3.57 2.36h1.87C13.46 5.99 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.9 10.05z");
-                btn_favourite.setGraphic(nFavourite);
+                if (AlbumViewTabController.getInstance().loadAlbum(album, false, null)) {
+                    BaseController.getInstance().handleShowAlbumView();
+                }
             }
         });
 
@@ -212,18 +171,8 @@ public class AlbumPane extends VBox {
             ConsoleController.getInstance().load(album);
             RecentlyPlayedTabController.getInstance().addRecentlyPlayed(album);
         });
-    }
 
-    private void handleSetFavourite(ActionEvent actionEvent) {
-        if (isFavourite) {
-            album.setFavourite(false);
-            FavouriteTabController.getInstance().removeAlbum(album);
-            isFavourite = false;
-        } else {
-            album.setFavourite(true);
-            FavouriteTabController.getInstance().addAlbum(album);
-            isFavourite = true;
-        }
+        this.btn_addToPlaylist.setOnAction(event -> ConsoleController.getInstance().addToNowPlaying(album));
     }
 
     public Album getAlbum() {

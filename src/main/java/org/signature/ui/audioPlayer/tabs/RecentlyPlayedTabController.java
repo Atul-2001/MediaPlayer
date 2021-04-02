@@ -15,6 +15,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.signature.dataModel.audioPlayer.Album;
 import org.signature.dataModel.audioPlayer.Artist;
+import org.signature.dataModel.audioPlayer.OnlineSong;
 import org.signature.ui.audioPlayer.BaseController;
 import org.signature.ui.audioPlayer.ConsoleController;
 import org.signature.ui.audioPlayer.Inventory;
@@ -53,6 +54,9 @@ public class RecentlyPlayedTabController implements Initializable {
                 for (Object object : c.getAddedSubList()) {
                     list_played_albums.getChildren().add(new RecentPane(object));
                     if (isCachedListLoaded) {
+                        if (object instanceof OnlineSong) {
+                            ((OnlineSong) object).setSNO(recentlyPlayed.indexOf(object));
+                        }
                         Inventory.addRecentlyPlayed(object);
                     }
                 }
@@ -100,7 +104,7 @@ public class RecentlyPlayedTabController implements Initializable {
     }
 
     public void addRecentlyPlayed(Object recentPlayed) {
-        assert recentPlayed instanceof Album || recentPlayed instanceof Artist;
+        assert recentPlayed instanceof Album || recentPlayed instanceof Artist || recentPlayed instanceof OnlineSong;
         if (!recentlyPlayed.contains(recentPlayed)) {
             recentlyPlayed.add(recentPlayed);
         }

@@ -275,3 +275,12 @@ FlowPane {
     -fx-background-radius: 0;
     -fx-background-insets: 0;
 }
+
+/*************Tab_BrowseOnline**************************************************************************************************/
+.list-cell {
+    -fx-background-color: TRANSPARENT;
+}
+
+.list-view {
+    -fx-background-color: TRANSPARENT;
+}

@@ -160,7 +160,7 @@
                         </ImageView>
                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
                            <children>
-                              <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="22.0" text="Add songs from my collections" VBox.vgrow="NEVER">
+                              <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="22.0" text="Add onlineSongs from my collections" VBox.vgrow="NEVER">
                                  <font>
                                     <Font name="Roboto" size="16.0" />
                                  </font>

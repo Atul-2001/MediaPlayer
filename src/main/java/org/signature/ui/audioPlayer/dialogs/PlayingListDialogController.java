@@ -7,7 +7,9 @@ import javafx.scene.layout.VBox;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.signature.dataModel.audioPlayer.OnlineSong;
 import org.signature.dataModel.audioPlayer.Song;
+import org.signature.ui.audioPlayer.model.OnlineSongPane;
 import org.signature.ui.audioPlayer.model.SongPane;
 
 import java.net.URL;
@@ -48,24 +50,34 @@ public class PlayingListDialogController implements Initializable {
         return btn_close;
     }
 
-    public void loadData(List<Song> songs) {
+    public void loadData(List<Object> songs) {
         if (songs != null) {
             songsList.getChildren().clear();
             int i = 0;
 
-            for (Song song : songs) {
+            for (Object song : songs) {
 
-                if (song.getTitle().isEmpty()) {
-                    continue;
-                }
+                if (song instanceof Song) {
+                    if (((Song) song).getTitle().isEmpty()) {
+                        continue;
+                    }
 
-                SongPane songPane = new SongPane(song);
-                if (i%2 == 0) {
-                    songPane.getStyleClass().add("songNodeEVEN");
-                } else {
-                    songPane.getStyleClass().add("songNodeODD");
+                    SongPane songPane = new SongPane((Song) song);
+                    if (i%2 == 0) {
+                        songPane.getStyleClass().add("songNodeEVEN");
+                    } else {
+                        songPane.getStyleClass().add("songNodeODD");
+                    }
+                    songsList.getChildren().add(songPane);
+                } else if (song instanceof OnlineSong) {
+                    OnlineSongPane onlineSongPane = new OnlineSongPane((OnlineSong) song, "Basic");
+                    if (i%2 == 0) {
+                        onlineSongPane.getStyleClass().add("songNodeEVEN");
+                    } else {
+                        onlineSongPane.getStyleClass().add("songNodeODD");
+                    }
+                    songsList.getChildren().add(onlineSongPane);
                 }
-                songsList.getChildren().add(songPane);
 
                 i++;
             }

@@ -72,22 +72,22 @@ public class AlbumTabController implements Initializable {
         genreList.getItems().addAll(Inventory.getCachedGenres().values());
 
         sortCriteria.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
-           albumsList.getChildren().clear();
-           albums.sort((o1, o2) -> {
-               if (newValue.intValue() == 0) {
-                   return o1.getCreationTime().compareToIgnoreCase(o2.getCreationTime());
-               } else if (newValue.intValue() == 1) {
-                   return o1.getAlbumName().compareToIgnoreCase(o2.getAlbumName());
-               } else if (newValue.intValue() == 2) {
-                   return o1.getReleaseYear().compareToIgnoreCase(o2.getReleaseYear());
-               } else if (newValue.intValue() == 3) {
-                   return o1.getArtist().compareToIgnoreCase(o2.getArtist());
-               } else {
-                   return 1;
-               }
-           });
-           albumsList.getChildren().setAll(albums);
-           sortCriteria.getTooltip().setText(sortCriteria.getItems().get(newValue.intValue()));
+            albumsList.getChildren().clear();
+            albums.sort((o1, o2) -> {
+                if (newValue.intValue() == 0) {
+                    return o1.getCreationTime().compareToIgnoreCase(o2.getCreationTime());
+                } else if (newValue.intValue() == 1) {
+                    return o1.getAlbumName().compareToIgnoreCase(o2.getAlbumName());
+                } else if (newValue.intValue() == 2) {
+                    return o1.getReleaseYear().compareToIgnoreCase(o2.getReleaseYear());
+                } else if (newValue.intValue() == 3) {
+                    return o1.getArtist().compareToIgnoreCase(o2.getArtist());
+                } else {
+                    return 1;
+                }
+            });
+            albumsList.getChildren().setAll(albums);
+            sortCriteria.getTooltip().setText(sortCriteria.getItems().get(newValue.intValue()));
         });
 
         genreList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -103,7 +103,8 @@ public class AlbumTabController implements Initializable {
         });
 
         loadAlbums();
-//        albumsList.getChildren().setAll(albums);
+        albumsList.getChildren().setAll(albums);
+
         LOGGER.log(Level.INFO, "Album Tab Loaded !!");
     }
 
@@ -118,7 +119,9 @@ public class AlbumTabController implements Initializable {
     private void loadAlbums() {
         if (!albumsLoaded) {
             try {
+                albums.clear();
                 albumsList.getChildren().clear();
+
                 int listSize = Inventory.getCachedAlbums().size();
 
                 for (Album album : Inventory.getCachedAlbums()) {
@@ -129,12 +132,45 @@ public class AlbumTabController implements Initializable {
 
                     AlbumPane albumPane = new AlbumPane(album);
                     albums.add(albumPane);
-                    WelcomeScreenController.updateProgress(10.0/listSize);
+                    WelcomeScreenController.updateProgress(10.0 / listSize);
                 }
 
                 sortCriteria.getSelectionModel().select(0);
                 genreList.getSelectionModel().select(0);
                 albumsLoaded = true;
+
+                Inventory.getCachedAlbums().addListener((ListChangeListener<Album>) c -> {
+                    c.next();
+                    if (c.wasAdded()) {
+
+                        for (Album album : c.getAddedSubList()) {
+                            if (album.getAlbumName().isEmpty()) {
+                                continue;
+                            }
+
+                            AlbumPane albumPane = new AlbumPane(album);
+                            albums.add(albumPane);
+                        }
+
+                        sortCriteria.getSelectionModel().select(sortCriteria.getSelectionModel().getSelectedIndex());
+                        genreList.getSelectionModel().select(genreList.getSelectionModel().getSelectedIndex());
+
+                    } else if (c.wasRemoved()) {
+
+                        if (Inventory.getCachedAlbums().size() == 0) {
+                            albums.clear();
+                            albumsList.getChildren().clear();
+                        } else {
+                            for (Album album : c.getRemoved()) {
+                                albums.removeIf(albumPane -> albumPane.getAlbumName().equals(album.getAlbumName()));
+                                albumsList.getChildren().removeIf(node -> ((AlbumPane) node).getAlbumName().equals(album.getAlbumName()));
+                            }
+
+                            sortCriteria.getSelectionModel().select(sortCriteria.getSelectionModel().getSelectedIndex());
+                            genreList.getSelectionModel().select(genreList.getSelectionModel().getSelectedIndex());
+                        }
+                    }
+                });
             } catch (NullPointerException | IllegalStateException | UnsupportedOperationException | IllegalArgumentException e) {
                 LOGGER.log(Level.ERROR, "Failed to load album node! " + e.getLocalizedMessage(), e);
             }

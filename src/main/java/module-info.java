@@ -5,6 +5,7 @@ module org.signature {
     requires javafx.media;
     requires javafx.swing;
     requires com.jfoenix;
+    requires org.controlsfx.controls;
     requires org.apache.logging.log4j;
     requires java.sql;
     requires com.h2database;
@@ -13,6 +14,7 @@ module org.signature {
     requires org.hibernate.orm.core;
     requires org.hibernate.commons.annotations;
     requires mp3agic;
+    requires org.json;
 
     opens org.signature;
     opens org.signature.util;

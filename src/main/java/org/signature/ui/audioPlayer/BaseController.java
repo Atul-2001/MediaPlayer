@@ -35,6 +35,7 @@ import org.signature.WelcomeScreenController;
 import org.signature.animations.Animation;
 import org.signature.ui.audioPlayer.dialogs.AddMusicDialogController;
 import org.signature.ui.audioPlayer.dialogs.AddPlaylistDialogController;
+import org.signature.ui.audioPlayer.dialogs.DownloadsController;
 import org.signature.ui.audioPlayer.dialogs.PlayingListDialogController;
 import org.signature.ui.audioPlayer.tabs.*;
 import org.signature.util.Alerts;
@@ -69,7 +70,7 @@ public class BaseController implements Initializable {
     @FXML
     private TextField searchField;
     @FXML
-    private ToggleButton btnRecentlyPlayed, btnSongs, btnAlbums, btnArtists, btnFavourite, btnSettings;
+    private ToggleButton btnRecentlyPlayed, btnSongs, btnAlbums, btnArtists, btnBrowseOnline, btnSettings;
     @FXML
     private Separator separator;
     @FXML
@@ -83,8 +84,8 @@ public class BaseController implements Initializable {
     @FXML
     private StackPane tabStack;
 
-    private VBox tab_song, tab_artist, tab_album, tab_recentlyPlayed, tab_playlists, tab_settings, tab_albumView, tab_artistView, tab_playlistView;
-    private StackPane tab_searchResult, tab_favourite_stack;
+    private VBox tab_song, tab_artist, tab_album, tab_recentlyPlayed, tab_browseOnline, tab_playlists, tab_settings, tab_albumView, tab_artistView, tab_playlistView;
+    private StackPane tab_searchResult;
     private JFXDialog dialog = null;
 
     private boolean topBarShown = false;
@@ -225,7 +226,7 @@ public class BaseController implements Initializable {
             controller.getBtnSongs().selectedProperty().bindBidirectional(btnSongs.selectedProperty());
             controller.getBtnAlbums().selectedProperty().bindBidirectional(btnAlbums.selectedProperty());
             controller.getBtnArtists().selectedProperty().bindBidirectional(btnArtists.selectedProperty());
-            controller.getBtnFavourite().selectedProperty().bindBidirectional(btnFavourite.selectedProperty());
+            controller.getBtnBrowseOnline().selectedProperty().bindBidirectional(btnBrowseOnline.selectedProperty());
             controller.getBtnShowPlaylist().selectedProperty().bindBidirectional(btnShowPlaylist.selectedProperty());
             controller.getBtnSettings().selectedProperty().bindBidirectional(btnSettings.selectedProperty());
 
@@ -233,7 +234,7 @@ public class BaseController implements Initializable {
             controller.getBtnSongs().setOnAction(this::handleShowSongs);
             controller.getBtnAlbums().setOnAction(this::handleShowAlbums);
             controller.getBtnArtists().setOnAction(this::handleShowArtists);
-            controller.getBtnFavourite().setOnAction(this::handleShowFavourite);
+            controller.getBtnBrowseOnline().setOnAction(this::handleShowBrowseOnline);
             controller.getBtnShowPlaylist().setOnAction(this::handleShowPlaylist);
             controller.getBtnSettings().setOnAction(this::handleShowSettings);
         } catch (IOException | NullPointerException e) {
@@ -247,6 +248,7 @@ public class BaseController implements Initializable {
             FXMLLoader.load(AddMusicDialogController.class.getResource("AddLocalMusicDialog.fxml"));
             FXMLLoader.load(AddPlaylistDialogController.class.getResource("AddPlaylistDialog.fxml"));
             FXMLLoader.load(PlayingListDialogController.class.getResource("PlayingListDialog.fxml"));
+            FXMLLoader.load(DownloadsController.class.getResource("Downloads.fxml"));
         } catch (NullPointerException | IOException e) {
             LOGGER.log(Level.ERROR, e.getClass() + " " + e.getLocalizedMessage(), e);
             Alerts.loadTimeError(e);
@@ -286,9 +288,9 @@ public class BaseController implements Initializable {
 //            tab_recentlyPlayed.setVisible(false);
             WelcomeScreenController.updateProgress(10);
 
-            tab_favourite_stack = FXMLLoader.load(FavouriteTabController.class.getResource("Tab_Favourite.fxml"));
-            tab_favourite_stack.setOpacity(0.0);
-//            tab_favourite_stack.setVisible(false);
+            tab_browseOnline = FXMLLoader.load(BrowseOnlineTabController.class.getResource("Tab_BrowseOnline.fxml"));
+            tab_browseOnline.setOpacity(0.0);
+//            tab_browseOnline.setVisible(false);
 
             tab_settings = FXMLLoader.load(SettingsTabController.class.getResource("Tab_Settings.fxml"));
             tab_settings.setOpacity(0.0);
@@ -306,7 +308,7 @@ public class BaseController implements Initializable {
             tab_playlistView.setOpacity(0.0);
 //            tab_playlistView.setVisible(false);
 
-            tabStack.getChildren().addAll(tab_searchResult, tab_recentlyPlayed, tab_song, tab_album, tab_artist, tab_favourite_stack, tab_playlists, tab_settings, tab_albumView, tab_artistView, tab_playlistView);
+            tabStack.getChildren().addAll(tab_searchResult, tab_recentlyPlayed, tab_song, tab_album, tab_artist, tab_browseOnline, tab_playlists, tab_settings, tab_albumView, tab_artistView, tab_playlistView);
         } catch (NullPointerException | IOException e) {
             LOGGER.log(Level.ERROR, e.getClass() + " " + e.getLocalizedMessage(), e);
             Alerts.loadTimeError(e);
@@ -423,10 +425,10 @@ public class BaseController implements Initializable {
     }
 
     @FXML
-    private void handleShowFavourite(ActionEvent actionEvent) {
-        Utils.swapTabStack(tabStack, tab_favourite_stack);
-        if (!btnFavourite.isSelected()) {
-            btnFavourite.setSelected(true);
+    private void handleShowBrowseOnline(ActionEvent actionEvent) {
+        Utils.swapTabStack(tabStack, tab_browseOnline);
+        if (!btnBrowseOnline.isSelected()) {
+            btnBrowseOnline.setSelected(true);
         }
         if (menuDrawer.isOpened()) {
             menuDrawer.close();

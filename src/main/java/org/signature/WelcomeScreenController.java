@@ -11,9 +11,13 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.signature.ui.audioPlayer.AudioPlayer;
+import org.signature.ui.audioPlayer.tabs.SettingsTabController;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -47,7 +51,12 @@ public class WelcomeScreenController implements Initializable {
                 WelcomeScreenController.updateProgress(10.0);
                 Thread.sleep(600);
 
-                Platform.runLater(() -> stage.setScene(new Scene(root)));
+                Platform.runLater(() -> {
+                    stage.setScene(new Scene(root));
+                    KeyCombination keyCombination = new KeyCodeCombination(KeyCode.J, KeyCombination.CONTROL_DOWN);
+                    Runnable keyTask = () -> SettingsTabController.getInstance().showDownloads();
+                    App.getStage().getScene().getAccelerators().put(keyCombination, keyTask);
+                });
                 Thread.sleep(600);
 
                 WelcomeScreenController.updateProgress(10.0);
@@ -97,7 +106,6 @@ public class WelcomeScreenController implements Initializable {
         WelcomeScreenController.updateProgress(5.0);
         AudioPlayer.getInstance().loadMusic();
         AudioPlayer.getInstance().loadRecentlyPlayed();
-        AudioPlayer.getInstance().loadFavourites();
         WelcomeScreenController.updateProgress(10.0);
     }
 }

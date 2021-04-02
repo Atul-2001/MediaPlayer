@@ -24,7 +24,7 @@ public abstract class Utils {
     private static DropShadow dropShadow = null;
     private static final ParallelTransition swapTabTransition = new ParallelTransition();
 
-    public static void swapTabStack(StackPane parent, Pane child) {
+    public static void swapTabStack(StackPane parent, Node child) {
         assert parent != null;
         assert child != null;
         try {

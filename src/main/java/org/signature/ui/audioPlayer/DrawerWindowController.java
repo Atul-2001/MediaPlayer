@@ -10,7 +10,7 @@ import java.util.ResourceBundle;
 public class DrawerWindowController implements Initializable {
 
     @FXML
-    private ToggleButton btnRecentlyPlayed, btnSongs, btnAlbums, btnArtists, btnFavourite, btnShowPlaylist, btnSettings;
+    private ToggleButton btnRecentlyPlayed, btnSongs, btnAlbums, btnArtists, btnBrowseOnline, btnShowPlaylist, btnSettings;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -33,8 +33,8 @@ public class DrawerWindowController implements Initializable {
         return btnArtists;
     }
 
-    public ToggleButton getBtnFavourite() {
-        return btnFavourite;
+    public ToggleButton getBtnBrowseOnline() {
+        return btnBrowseOnline;
     }
 
     public ToggleButton getBtnShowPlaylist() {

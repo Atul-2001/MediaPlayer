@@ -26,6 +26,7 @@ import org.signature.util.Utils;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class SongTabController implements Initializable {
 
@@ -157,7 +158,7 @@ public class SongTabController implements Initializable {
                 songsList.getChildren().clear();
                 songs.clear();
 
-                int i = 0;
+                AtomicInteger i = new AtomicInteger(0);
                 int listSize = Inventory.getCachedSongs().size();
 
                 for (Song song : Inventory.getCachedSongs()) {
@@ -167,20 +168,57 @@ public class SongTabController implements Initializable {
                     }
 
                     SongPane songPane = new SongPane(song);
-                    if (i%2 == 0) {
+                    if (i.getAndIncrement() %2 == 0) {
                         songPane.getStyleClass().add("songNodeEVEN");
                     } else {
                         songPane.getStyleClass().add("songNodeODD");
                     }
                     songs.add(songPane);
                     WelcomeScreenController.updateProgress(10.0 /listSize);
-
-                    i++;
                 }
 
                 sortCriteria.getSelectionModel().select(0);
                 genreList.getSelectionModel().select(0);
                 songsLoaded = true;
+
+                Inventory.getCachedSongs().addListener((ListChangeListener<Song>) c -> {
+                    c.next();
+                    if (c.wasAdded()) {
+
+                        for (Song song : c.getAddedSubList()) {
+
+                            if (song.getTitle().isEmpty()) {
+                                continue;
+                            }
+
+                            SongPane songPane = new SongPane(song);
+                            if (i.getAndIncrement() %2 == 0) {
+                                songPane.getStyleClass().add("songNodeEVEN");
+                            } else {
+                                songPane.getStyleClass().add("songNodeODD");
+                            }
+                            songs.add(songPane);
+                        }
+
+                        sortCriteria.getSelectionModel().select(sortCriteria.getSelectionModel().getSelectedIndex());
+                        genreList.getSelectionModel().select(genreList.getSelectionModel().getSelectedIndex());
+
+                    } else if (c.wasRemoved()) {
+
+                        if (Inventory.getCachedSongs().size() == 0) {
+                            songs.clear();
+                            songsList.getChildren().clear();
+                        } else {
+                            for (Song song : c.getRemoved()) {
+                                songs.removeIf(songPane -> songPane.getSongTitle().equals(song.getTitle()));
+                                songsList.getChildren().removeIf(node -> ((SongPane) node).getSongTitle().equals(song.getTitle()));
+                            }
+
+                            sortCriteria.getSelectionModel().select(sortCriteria.getSelectionModel().getSelectedIndex());
+                            genreList.getSelectionModel().select(genreList.getSelectionModel().getSelectedIndex());
+                        }
+                    }
+                });
             } catch (NullPointerException | IllegalStateException | UnsupportedOperationException | IllegalArgumentException e) {
                 LOGGER.log(Level.ERROR, "Failed to load song node! " + e.getLocalizedMessage(), e);
             }

@@ -14,6 +14,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Font;
+import org.signature.dataModel.audioPlayer.Playlist;
 import org.signature.ui.audioPlayer.tabs.PlaylistTabController;
 import org.signature.util.Utils;
 
@@ -27,11 +28,11 @@ public class PlaylistPane extends VBox {
     private final JFXButton btn_play = new JFXButton();
     private final JFXButton btn_addToNowPlaying = new JFXButton();
     private final Label playlistName = new Label();
-    private final Label noOfSongsInPlaylist = new Label();
+    private final Label totalSongs = new Label();
 
     private boolean isFavourite = false;
 
-    public PlaylistPane(String playlistName, int noOfSongsInPlaylist) {
+    public PlaylistPane(Playlist playlist) {
         setPrefSize(200.0, 226.0);
         setMinSize(200.0, 226.0);
         setMaxSize(200.0, 226.0);
@@ -128,17 +129,17 @@ public class PlaylistPane extends VBox {
         this.playlistName.setMaxWidth(Double.MAX_VALUE);
         this.playlistName.setWrapText(true);
         this.playlistName.setFont(Font.font("Roboto", 16.0));
-        this.playlistName.setText(playlistName);
+        this.playlistName.setText(playlist.getPlaylistName());
         PlaylistPane.setVgrow(this.playlistName, Priority.ALWAYS);
 
-        this.noOfSongsInPlaylist.setAlignment(Pos.TOP_LEFT);
-        this.noOfSongsInPlaylist.setMaxWidth(Double.MAX_VALUE);
-        this.noOfSongsInPlaylist.setWrapText(true);
-        this.noOfSongsInPlaylist.setFont(Font.font("Roboto Light", 14.0));
-        this.noOfSongsInPlaylist.setText(String.valueOf(noOfSongsInPlaylist));
-        PlaylistPane.setVgrow(this.noOfSongsInPlaylist, Priority.ALWAYS);
+        this.totalSongs.setAlignment(Pos.TOP_LEFT);
+        this.totalSongs.setMaxWidth(Double.MAX_VALUE);
+        this.totalSongs.setWrapText(true);
+        this.totalSongs.setFont(Font.font("Roboto Light", 14.0));
+        this.totalSongs.setText(String.valueOf(playlist.getTotalSongs()));
+        PlaylistPane.setVgrow(this.totalSongs, Priority.ALWAYS);
 
-        getChildren().addAll(this.playlistArtPane, this.playlistName, this.noOfSongsInPlaylist);
+        getChildren().addAll(this.playlistArtPane, this.playlistName, this.totalSongs);
         init();
     }
 

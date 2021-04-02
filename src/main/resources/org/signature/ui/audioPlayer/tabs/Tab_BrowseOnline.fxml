@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXListView?>
+<?import com.jfoenix.controls.JFXProgressBar?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.SVGPath?>
+<?import javafx.scene.text.Font?>
+
+<VBox fx:id="tab_browse_song" focusTraversable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="630.0" prefWidth="960.0" stylesheets="@../audio-player-style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.signature.ui.audioPlayer.tabs.BrowseOnlineTabController">
+    <padding>
+        <Insets bottom="2.0" left="20.0" />
+    </padding>
+    <children>
+        <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="60.0" text="Browse Online Music" VBox.vgrow="NEVER">
+            <font>
+                <Font name="Roboto Medium" size="30.0" />
+            </font>
+        </Label>
+      <HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="60.0" VBox.vgrow="NEVER">
+         <children>
+            <HBox alignment="CENTER_LEFT" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" prefWidth="500.0" style="-fx-border-color: DARKGRAY; -fx-border-width: 2;" HBox.hgrow="NEVER">
+               <children>
+                  <TextField fx:id="query_field" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#handleSearchSong" prefHeight="30.0" prefWidth="440.0" promptText="Search" style="-fx-border-color: DARKGRAY; -fx-border-width: 0 2 0 0; -fx-background-color: TRANSPARENT;">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </TextField>
+                  <JFXButton fx:id="searchButton" contentDisplay="GRAPHIC_ONLY" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#handleSearchSong" prefHeight="28.0" prefWidth="60.0" ripplerFill="#f8f8f8" style="-fx-background-color: LIGHTGRAY; -fx-border-color: DARKGRAY; -fx-border-width: 1 0 1 0;">
+                     <graphic>
+                        <SVGPath content="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+                     </graphic>
+                  </JFXButton>
+               </children>
+               <HBox.margin>
+                  <Insets right="36.0" />
+               </HBox.margin>
+            </HBox>
+         </children>
+      </HBox>
+      <JFXProgressBar fx:id="searchProgressBar" maxWidth="1.7976931348623157E308" progress="0.0">
+         <VBox.margin>
+            <Insets right="10.0" />
+         </VBox.margin>
+      </JFXProgressBar>
+        <Separator maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="2.0">
+            <VBox.margin>
+                <Insets right="10.0" />
+            </VBox.margin>
+        </Separator>
+      <JFXListView fx:id="searchResultList" style="-fx-background-color: TRANSPARENT;" VBox.vgrow="ALWAYS">
+         <VBox.margin>
+            <Insets right="10.0" />
+         </VBox.margin>
+      </JFXListView>
+    </children>
+</VBox>
