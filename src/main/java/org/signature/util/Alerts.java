@@ -4,10 +4,10 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXDialogLayout;
 import javafx.application.Platform;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
-import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
-import org.signature.ui.audioPlayer.BaseController;
+import org.signature.ui.MainWindowController;
 import org.signature.ui.audioPlayer.dialogs.PlayingListDialogController;
 
 public abstract class Alerts {
@@ -17,11 +17,14 @@ public abstract class Alerts {
         Platform.exit();
     }
 
-    public static void showErrorAlert(String heading, String content)
-    {
+    private static JFXDialog createAlertDialog(String heading, String content, Alert.AlertType alertType) {
         JFXDialogLayout dialogLayout = new JFXDialogLayout();
         dialogLayout.getStylesheets().add(PlayingListDialogController.class.getResource("dialog-style.css").toString());
-        dialogLayout.getStyleClass().add("dialog_style");
+        if (alertType.equals(Alert.AlertType.ERROR)) {
+            dialogLayout.getStyleClass().add("error_dialog_box");
+        } else if (alertType.equals(Alert.AlertType.INFORMATION)) {
+            dialogLayout.getStyleClass().add("dialog_box");
+        }
         Label headingLabel = new Label(heading);
         headingLabel.setFont(Font.font("Roboto", 28));
         dialogLayout.setHeading(headingLabel);
@@ -30,16 +33,24 @@ public abstract class Alerts {
         contentLabel.setWrapText(true);
         dialogLayout.setBody(contentLabel);
         JFXButton okButton = new JFXButton("OK");
+        okButton.getStyleClass().add("dialog-button");
         okButton.setFont(Font.font("Roboto", 16));
         dialogLayout.setActions(okButton);
 
-        StackPane baseStackPane = (StackPane) BaseController.getInstance().getRoot().getCenter();
-        JFXDialog alertDialog = new JFXDialog(baseStackPane,dialogLayout, JFXDialog.DialogTransition.CENTER);
+        JFXDialog alertDialog = new JFXDialog(MainWindowController.getInstance().getRoot(), dialogLayout, JFXDialog.DialogTransition.CENTER);
         alertDialog.setOverlayClose(false);
-        alertDialog.getStylesheets().add(PlayingListDialogController.class.getResource("dialog-style.css").toString());
-        alertDialog.getStyleClass().add("dialog_box");
         okButton.setOnMouseClicked(event -> alertDialog.close());
 
-        Platform.runLater(alertDialog::show);
+        return alertDialog;
+    }
+
+    public static void showErrorAlert(String heading, String content) {
+        JFXDialog errorAlert = createAlertDialog(heading, content, Alert.AlertType.ERROR);
+        Platform.runLater(errorAlert::show);
+    }
+
+    public static void showInformationAlert(String heading, String content) {
+        JFXDialog informationAlert = createAlertDialog(heading, content, Alert.AlertType.INFORMATION);
+        Platform.runLater(informationAlert::show);
     }
 }

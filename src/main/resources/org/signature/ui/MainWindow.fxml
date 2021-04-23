@@ -2,11 +2,14 @@
 
 <?import com.jfoenix.controls.JFXTabPane?>
 <?import javafx.scene.control.Tab?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.StackPane?>
 
-<VBox fx:id="root" alignment="TOP_CENTER" stylesheets="@main-window-style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.signature.ui.MainWindowController">
-    <JFXTabPane fx:id="tabStack" tabClosingPolicy="UNAVAILABLE" tabMinHeight="40.0" VBox.vgrow="ALWAYS">
-        <Tab closable="false" text="Audio Player" />
-        <Tab closable="false" text="Video Player" />
-    </JFXTabPane>
-</VBox>
+<StackPane fx:id="root" alignment="TOP_CENTER" stylesheets="@main-window-style.css" xmlns="http://javafx.com/javafx/11.0.1"
+           xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.signature.ui.MainWindowController">
+    <children>
+        <JFXTabPane fx:id="tabStack" tabClosingPolicy="UNAVAILABLE" tabMinHeight="40.0">
+            <Tab closable="false" text="Audio Player"/>
+            <Tab closable="false" text="Video Player"/>
+        </JFXTabPane>
+    </children>
+</StackPane>

@@ -2,6 +2,7 @@ package org.signature.dataModel.audioPlayer;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 
 @Entity
 public class MusicLibrary {
@@ -10,6 +11,8 @@ public class MusicLibrary {
     private int id;
     private String folderName;
     private String folderLocation;
+    @Transient
+    private boolean isLibraryLoaded = false;
 
     public MusicLibrary() {}
 
@@ -38,6 +41,14 @@ public class MusicLibrary {
     public void setFolderLocation(String folderLocation) {
         this.folderLocation = folderLocation;
         this.id = hashCode();
+    }
+
+    public boolean isLibraryLoaded() {
+        return isLibraryLoaded;
+    }
+
+    public void setLibraryLoaded(boolean libraryLoaded) {
+        isLibraryLoaded = libraryLoaded;
     }
 
     @Override

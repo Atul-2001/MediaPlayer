@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXComboBox?>
+<?import com.jfoenix.controls.JFXDialogLayout?>
+<?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.SVGPath?>
+<?import javafx.scene.text.Font?>
+
+<JFXDialogLayout fx:id="root" prefHeight="400.0" prefWidth="600.0" styleClass="dialog_box"
+                 stylesheets="@dialog-style.css" xmlns="http://javafx.com/javafx/11.0.1"
+                 xmlns:fx="http://javafx.com/fxml/1"
+                 fx:controller="org.signature.ui.audioPlayer.dialogs.EqualizerController">
+    <heading>
+        <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+              prefHeight="40.0" prefWidth="572.0" VBox.vgrow="NEVER">
+            <children>
+                <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Now Playing List"
+                       HBox.hgrow="ALWAYS">
+                    <font>
+                        <Font name="Roboto" size="18.0"/>
+                    </font>
+                    <padding>
+                        <Insets left="10.0"/>
+                    </padding>
+                </Label>
+                <JFXButton id="btn_close" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" maxHeight="-Infinity"
+                           maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#handleCloseDialog"
+                           prefHeight="30.0" prefWidth="44.0" ripplerFill="BROWN" HBox.hgrow="NEVER">
+                    <graphic>
+                        <SVGPath
+                                content="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z"/>
+                    </graphic>
+                    <tooltip>
+                        <Tooltip text="Close"/>
+                    </tooltip>
+                    <HBox.margin>
+                        <Insets bottom="0.5" right="0.5" top="0.5"/>
+                    </HBox.margin>
+                </JFXButton>
+            </children>
+        </HBox>
+    </heading>
+    <body>
+        <VBox spacing="30.0">
+            <children>
+                <JFXComboBox fx:id="EQMode" onAction="#handleSetEQMode" prefWidth="200.0" VBox.vgrow="NEVER">
+                    <items>
+                        <FXCollections fx:factory="observableArrayList">
+                            <String fx:value="Flat"/>
+                            <String fx:value="Treble boost"/>
+                            <String fx:value="Bass boost"/>
+                            <String fx:value="Headphones"/>
+                            <String fx:value="Laptop"/>
+                            <String fx:value="Portable speakers"/>
+                            <String fx:value="Home stereo"/>
+                            <String fx:value="TV"/>
+                            <String fx:value="Car"/>
+                            <String fx:value="Custom"/>
+                        </FXCollections>
+                    </items>
+                    <value>
+                        <String fx:value="Flat"/>
+                    </value>
+                    <tooltip>
+                        <Tooltip text="Flat"/>
+                    </tooltip>
+                </JFXComboBox>
+                <VBox spacing="10.0" VBox.vgrow="ALWAYS">
+                    <children>
+                        <HBox spacing="20.0">
+                            <children>
+                                <VBox alignment="TOP_RIGHT" spacing="20.0">
+                                    <children>
+                                        <Label alignment="CENTER_RIGHT" text="+12">
+                                            <font>
+                                                <Font name="Roboto" size="14.0"/>
+                                            </font>
+                                        </Label>
+                                        <Label alignment="CENTER_RIGHT" text="+6">
+                                            <font>
+                                                <Font name="Roboto" size="14.0"/>
+                                            </font>
+                                        </Label>
+                                        <Label alignment="CENTER_RIGHT" text="0">
+                                            <font>
+                                                <Font name="Roboto" size="14.0"/>
+                                            </font>
+                                        </Label>
+                                        <Label alignment="CENTER_RIGHT" text="-6">
+                                            <font>
+                                                <Font name="Roboto" size="14.0"/>
+                                            </font>
+                                        </Label>
+                                        <Label alignment="CENTER_RIGHT" text="-12">
+                                            <font>
+                                                <Font name="Roboto" size="14.0"/>
+                                            </font>
+                                        </Label>
+                                    </children>
+                                </VBox>
+                                <HBox spacing="100.0" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Slider fx:id="low" blockIncrement="6.0" max="12.0" min="-12.0"
+                                                orientation="VERTICAL"/>
+                                        <Slider fx:id="midLow" blockIncrement="6.0" max="12.0" min="-12.0"
+                                                orientation="VERTICAL"/>
+                                        <Slider fx:id="mid" blockIncrement="6.0" max="12.0" min="-12.0"
+                                                orientation="VERTICAL"/>
+                                        <Slider fx:id="midHigh" blockIncrement="6.0" max="12.0" min="-12.0"
+                                                orientation="VERTICAL"/>
+                                        <Slider fx:id="high" blockIncrement="6.0" max="12.0" min="-12.0"
+                                                orientation="VERTICAL"/>
+                                    </children>
+                                </HBox>
+                            </children>
+                        </HBox>
+                        <HBox alignment="CENTER_RIGHT" spacing="64.0">
+                            <children>
+                                <Label alignment="CENTER" text="LOW">
+                                    <font>
+                                        <Font name="Roboto" size="14.0"/>
+                                    </font>
+                                    <HBox.margin>
+                                        <Insets right="5.0"/>
+                                    </HBox.margin>
+                                </Label>
+                                <Label alignment="CENTER" text="MID LOW">
+                                    <font>
+                                        <Font name="Roboto" size="14.0"/>
+                                    </font>
+                                    <HBox.margin>
+                                        <Insets right="6.0"/>
+                                    </HBox.margin>
+                                </Label>
+                                <Label alignment="CENTER" text="MID">
+                                    <font>
+                                        <Font name="Roboto" size="14.0"/>
+                                    </font>
+                                    <HBox.margin>
+                                        <Insets right="5.0"/>
+                                    </HBox.margin>
+                                </Label>
+                                <Label alignment="CENTER" text="MID HIGH">
+                                    <font>
+                                        <Font name="Roboto" size="14.0"/>
+                                    </font>
+                                    <HBox.margin>
+                                        <Insets right="2.0"/>
+                                    </HBox.margin>
+                                </Label>
+                                <Label alignment="CENTER" text="HIGH">
+                                    <font>
+                                        <Font name="Roboto" size="14.0"/>
+                                    </font>
+                                </Label>
+                            </children>
+                            <padding>
+                                <Insets right="22.0"/>
+                            </padding>
+                        </HBox>
+                    </children>
+                </VBox>
+            </children>
+        </VBox>
+    </body>
+</JFXDialogLayout>

@@ -1,7 +1,6 @@
 package org.signature.ui.audioPlayer;
 
 import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXSpinner;
 import javafx.application.Platform;
@@ -15,7 +14,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
-import javafx.scene.Scene;
 import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
@@ -23,23 +21,22 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.shape.SVGPath;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jnativehook.GlobalScreen;
+import org.jnativehook.keyboard.NativeKeyEvent;
+import org.jnativehook.keyboard.NativeKeyListener;
 import org.signature.App;
-import org.signature.dataModel.audioPlayer.Album;
-import org.signature.dataModel.audioPlayer.Artist;
-import org.signature.dataModel.audioPlayer.OnlineSong;
-import org.signature.dataModel.audioPlayer.Song;
+import org.signature.dataModel.audioPlayer.*;
+import org.signature.ui.audioPlayer.dialogs.EqualizerController;
 import org.signature.ui.audioPlayer.dialogs.PlayingListDialogController;
 import org.signature.ui.audioPlayer.model.AlbumPane;
+import org.signature.ui.audioPlayer.model.PlaylistPane;
 import org.signature.ui.audioPlayer.tabs.RecentlyPlayedTabController;
 import org.signature.util.Alerts;
 import org.signature.util.Utils;
@@ -54,6 +51,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ConsoleController implements Initializable {
 
@@ -108,34 +109,40 @@ public class ConsoleController implements Initializable {
     private final ObservableList<Object> playingList = FXCollections.observableArrayList();
     private ListIterator<Object> playingListIterator = playingList.listIterator();
 
-    private Song previousSong;
+    private Object previousSong;
     private Media media;
     private MediaPlayer mediaPlayer;
-    private Thread mediaThread;
-
-    private JFXDialog dialog = null;
-    private Stage miniPlayerStage = null;
+    private static final ExecutorService mediaPlayerService;
 
     private String youtubeExecName = "youtube-dl.exe";
     private boolean isUnix = false;
 
-    public static ConsoleController getInstance() {
-        return instance;
-    }
+    static {
+        mediaPlayerService = Executors.newFixedThreadPool(2, new ThreadFactory() {
+            final AtomicInteger counter = new AtomicInteger();
 
-    public static void setInstance(ConsoleController controller) {
-        if (instance == null) {
-            ConsoleController.instance = controller;
-        }
+            @Override
+            public Thread newThread(Runnable runnable) {
+
+                Thread thread = new Thread(runnable, "Media Player Service Pool--Thread-" + counter.incrementAndGet());
+                thread.setPriority(Thread.NORM_PRIORITY);
+
+                return thread;
+            }
+        });
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        if (location != null && instance == null) {
+            instance = this;
+        }
+
         String osName = System.getProperty("os.name").toLowerCase();
-        if(osName.contains("linux") || osName.contains("mac"))
+        if (osName.contains("linux") || osName.contains("mac"))
             isUnix = true;
 
-        if(isUnix) youtubeExecName = "./youtube-dl";
+        if (isUnix) youtubeExecName = "./youtube-dl";
 
         console.setOpacity(0.0);
         console.setTranslateY(100.0);
@@ -193,6 +200,20 @@ public class ConsoleController implements Initializable {
             Bounds screenBounds = moreOptions2.localToScreen(moreOptions2.getBoundsInLocal());
             moreOptions.getContextMenu().show(moreOptions2, screenBounds.getMinX(), screenBounds.getMinY());
         });
+
+        registerMediaKeys();
+    }
+
+    public static ConsoleController getInstance() {
+        return instance;
+    }
+
+    public StackPane getRoot() {
+        return console;
+    }
+
+    public static ExecutorService getMediaPlayerService() {
+        return mediaPlayerService;
     }
 
     public ObjectProperty<Image> albumArtProperty() {
@@ -233,6 +254,64 @@ public class ConsoleController implements Initializable {
 
     public JFXButton getSkipNext() {
         return skipNext;
+    }
+
+    private void registerMediaKeys() {
+//        https://stackoverflow.com/questions/30560212/how-to-remove-the-logging-data-from-jnativehook-library
+        java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GlobalScreen.class.getPackage().getName());
+        logger.setLevel(java.util.logging.Level.OFF);
+        logger.setUseParentHandlers(false);
+
+        try {
+                    /*Raw Key codes of media buttons
+                    Linux :
+                    65300 - Play/Pause
+                    65303 - Next
+                    65302 - Previous
+
+                    Windows :
+                    179 - Play/Pause
+                    176 - Next
+                    177 - Previous
+                    178 - Stop
+                     */
+            GlobalScreen.registerNativeHook();
+
+            GlobalScreen.addNativeKeyListener(new NativeKeyListener() {
+                @Override
+                public void nativeKeyTyped(NativeKeyEvent nativeKeyEvent) {
+
+                }
+
+                @Override
+                public void nativeKeyPressed(NativeKeyEvent nativeKeyEvent) {
+                    int keyEventCode = nativeKeyEvent.getRawCode();
+
+                    if (!isUnix && keyEventCode == 57380) {
+                        handleClearPlayer(null);
+                    }
+
+                    if (isActive.get() && !isUnix && keyEventCode == 178) {
+                        onEndOfMediaTrigger();
+                    }
+
+                    if (!isUnix && keyEventCode == 179 || isUnix && keyEventCode == 65300) {
+                        handlePlayPauseSong(null);
+                    } else if (!isUnix && keyEventCode == 177 || isUnix && keyEventCode == 65302) {
+                        handlePlayPrevious(null);
+                    } else if (!isUnix && keyEventCode == 176 || isUnix && keyEventCode == 65303) {
+                        handlePlayNext(null);
+                    }
+                }
+
+                @Override
+                public void nativeKeyReleased(NativeKeyEvent nativeKeyEvent) {
+
+                }
+            });
+        } catch (Exception ex) {
+            LOGGER.log(Level.ERROR, ex);
+        }
     }
 
     @FXML
@@ -284,7 +363,7 @@ public class ConsoleController implements Initializable {
         for (Object recentlyPlays : Inventory.getCachedRecentlyPlayed()) {
             if (recentlyPlays instanceof Album) {
                 playingList.addAll(Inventory.getSongs((Album) recentlyPlays));
-            } else if (recentlyPlays instanceof Artist){
+            } else if (recentlyPlays instanceof Artist) {
                 playingList.addAll(Inventory.getSongs((Artist) recentlyPlays));
             } else if (recentlyPlays instanceof OnlineSong) {
                 playingList.add((OnlineSong) recentlyPlays);
@@ -308,12 +387,7 @@ public class ConsoleController implements Initializable {
         }
 
         if (playingListIterator.hasPrevious()) {
-            Object song = playingListIterator.previous();
-            if (song instanceof Song) {
-                playSong((Song) song);
-            } else if (song instanceof OnlineSong) {
-                playOnlineSong((OnlineSong) song);
-            }
+            playSong(playingListIterator.previous());
         }
     }
 
@@ -325,29 +399,19 @@ public class ConsoleController implements Initializable {
     }
 
     @FXML
-    private void handlePlayPauseSong(ActionEvent actionEvent) {
+    public void handlePlayPauseSong(ActionEvent actionEvent) {
         if (isActive.get()) {
-            new Thread(new Task<Void>() {
-                @Override
-                protected Void call() throws Exception {
-                    if (isPlaying.get()) {
-                        Platform.runLater(() -> {
-                            playPauseIcon.setContent(PLAY_ICON);
-                            playPause.getTooltip().setText("Play");
-                        });
-                        mediaPlayer.pause();
-                        isPlaying.set(false);
-                    } else {
-                        Platform.runLater(() -> {
-                            playPauseIcon.setContent(PAUSE_ICON);
-                            playPause.getTooltip().setText("Pause");
-                        });
-                        mediaPlayer.play();
-                        isPlaying.set(true);
-                    }
-                    return null;
-                }
-            }).start();
+            if (isPlaying.get()) {
+                playPauseIcon.setContent(PLAY_ICON);
+                playPause.getTooltip().setText("Play");
+                mediaPlayer.pause();
+                isPlaying.set(false);
+            } else {
+                playPauseIcon.setContent(PAUSE_ICON);
+                playPause.getTooltip().setText("Pause");
+                mediaPlayer.play();
+                isPlaying.set(true);
+            }
         }
     }
 
@@ -368,12 +432,7 @@ public class ConsoleController implements Initializable {
         }
 
         if (playingListIterator.hasNext()) {
-            Object song = playingListIterator.next();
-            if (song instanceof Song) {
-                playSong((Song) song);
-            } else if (song instanceof OnlineSong) {
-                playOnlineSong((OnlineSong) song);
-            }
+            playSong(playingListIterator.next());
         }
     }
 
@@ -401,72 +460,38 @@ public class ConsoleController implements Initializable {
 
     @FXML
     private void handleMute(ActionEvent actionEvent) {
-        new Thread(new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                if (isMute) {
-                    Platform.runLater(() -> volumeIcon.setContent(UNMUTE_ICON));
-                    if (isActive.get()) mediaPlayer.setMute(false);
-                    volume.getTooltip().setText("Mute: off");
-                    isMute = false;
-                } else {
-                    Platform.runLater(() -> volumeIcon.setContent(MUTE_ICON));
-                    if (isActive.get()) mediaPlayer.setMute(true);
-                    volume.getTooltip().setText("Mute: on");
-                    isMute = true;
-                }
-                return null;
-            }
-        }).start();
+        if (isMute) {
+            volumeIcon.setContent(UNMUTE_ICON);
+            if (isActive.get()) mediaPlayer.setMute(false);
+            volume.getTooltip().setText("Mute: off");
+            isMute = false;
+        } else {
+            volumeIcon.setContent(MUTE_ICON);
+            if (isActive.get()) mediaPlayer.setMute(true);
+            volume.getTooltip().setText("Mute: on");
+            isMute = true;
+        }
     }
 
     @FXML
     private void handleShowMiniPlayer(ActionEvent actionEvent) {
-        if (miniPlayerStage == null) {
-            miniPlayerStage = new Stage(StageStyle.UNDECORATED);
-            miniPlayerStage.setScene(new Scene(MiniPlayerViewController.getInstance().getRoot()));
-            miniPlayerStage.setMinWidth(168.0);
-            miniPlayerStage.setMinHeight(160.0);
-            miniPlayerStage.setWidth(300.0);
-            miniPlayerStage.setHeight(300.0);
-            miniPlayerStage.setMaxWidth(500.0);
-            miniPlayerStage.setMaxHeight(386.0);
-            miniPlayerStage.setAlwaysOnTop(true);
-            miniPlayerStage.setX(App.getScreenWidth() - 320.0);
-            miniPlayerStage.setY(20.0);
-
-            MiniPlayerViewController.getInstance().load(App.getStage(), miniPlayerStage);
-        }
-
-        miniPlayerStage.show();
-        App.getStage().close();
+        MiniPlayerViewController.getInstance().showStage();
     }
 
     @FXML
     private void handleShowNowPlaying(ActionEvent actionEvent) {
-        if (dialog == null) {
-            VBox node = PlayingListDialogController.getInstance().getRoot();
-            dialog = new JFXDialog((StackPane) BaseController.getInstance().getRoot().getCenter(), node, JFXDialog.DialogTransition.CENTER);
-            PlayingListDialogController.getInstance().getCloseButton().setOnAction(event -> dialog.close());
-        }
-        dialog.show();
+        PlayingListDialogController.getInstance().showDialog();
     }
 
     @FXML
     private void handleClearPlayer(ActionEvent actionEvent) {
         if (isActive.get()) {
             if (mediaPlayer != null) {
-                new Thread(new Task<Void>() {
-                    @Override
-                    protected Void call() throws Exception {
-                        if (mediaPlayer.getStatus().equals(MediaPlayer.Status.PLAYING)) {
-                            mediaPlayer.pause();
-                            isPlaying.set(false);
-                        }
-                        mediaPlayer.dispose();
-                        return null;
-                    }
-                }).start();
+                if (mediaPlayer.getStatus().equals(MediaPlayer.Status.PLAYING)) {
+                    mediaPlayer.pause();
+                    isPlaying.set(false);
+                }
+                mediaPlayer.dispose();
             } else {
                 isPlaying.set(false);
             }
@@ -475,29 +500,46 @@ public class ConsoleController implements Initializable {
             isPlaying.set(false);
         }
 
+        albumArt.setImage(null);
+        songName.setText("");
+        songArtist.setText("");
+        playPauseIcon.setContent(PLAY_ICON);
+        fastRewind.setDisable(true);
+        playPause.setDisable(true);
+        fastForward.setDisable(true);
+        currentDuration.setText(DEFAULT_TIME);
+        totalDuration.setText(DEFAULT_TIME);
+        songSeek.setValue(-1);
+        songSeek.setDisable(true);
+
         if (actionEvent != null) {
-            albumArt.setImage(null);
-            songName.setText("");
-            songArtist.setText("");
-            playPauseIcon.setContent(PLAY_ICON);
+            playerLoader.setVisible(false);
             skipPrevious.setDisable(true);
-            fastRewind.setDisable(true);
-            playPause.setDisable(true);
-            fastForward.setDisable(true);
             skipNext.setDisable(true);
-            currentDuration.setText(DEFAULT_TIME);
-            totalDuration.setText(DEFAULT_TIME);
-            songSeek.setValue(-1);
-            songSeek.setDisable(true);
             nowPlaying.setDisable(true);
             clearPlayer.setDisable(true);
             PlayingListDialogController.getInstance().clearData();
         }
 
         if (previousSong != null) {
-            previousSong.setPlaying(false);
+            if (previousSong instanceof Song) {
+                ((Song) previousSong).setPlaying(false);
+            } else if (previousSong instanceof PlaylistSong) {
+                ((PlaylistSong) previousSong).setPlaying(false);
+            } else if (previousSong instanceof OnlineSong) {
+                ((OnlineSong) previousSong).setPlaying(false);
+            }
         }
-        mediaThread = null;
+
+    }
+
+    public void playlistLoadProgress(boolean start) {
+        if (start) {
+            this.playerLoader.setVisible(true);
+            this.albumArt.setImage(PlaylistPane.getDefaultPlaylistArt());
+            this.songName.setText("Loading playlist...");
+            this.songArtist.setText("");
+        }
     }
 
     public void load(List<Song> songs, Song song) {
@@ -521,8 +563,12 @@ public class ConsoleController implements Initializable {
     }
 
     public void addToNowPlaying(Song song) {
-        if (!playingList.contains(song)) {
-            playingList.add(song);
+        if (song != null) {
+            if (!playingList.contains(song)) {
+                playingList.add(song);
+            }
+
+            startNowPlaying();
         }
     }
 
@@ -539,11 +585,21 @@ public class ConsoleController implements Initializable {
         }
     }
 
+    public void load(Album album, Song song) {
+        if (album != null && song != null) {
+            load(Inventory.getSongs(album), song);
+        }
+    }
+
     public void addToNowPlaying(Album album) {
-        for (Song song : Inventory.getSongs(album)) {
-            if (!playingList.contains(song)) {
-                playingList.add(song);
+        if (album != null) {
+            for (Song song : Inventory.getSongs(album)) {
+                if (!playingList.contains(song)) {
+                    playingList.add(song);
+                }
             }
+
+            startNowPlaying();
         }
     }
 
@@ -560,152 +616,70 @@ public class ConsoleController implements Initializable {
         }
     }
 
-    public void addToNowPlaying(Artist artist) {
-        for (Song song : Inventory.getSongs(artist)) {
-            if (!playingList.contains(song)) {
-                playingList.add(song);
-            }
+    public void load(Artist artist, Song song) {
+        if (artist != null && song != null) {
+            load(Inventory.getSongs(artist), song);
         }
     }
 
-    private void playSong(Song song) {
-        playerLoader.setVisible(true);
-        new Thread(new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                try {
-                    Album album = Inventory.getAlbum(song.getAlbum());
-                    Artist artist = Inventory.getArtist(song.getArtist());
-
-                    Platform.runLater(() -> {
-                        handleClearPlayer(null);
-
-                        if (album.getAlbumImage() == null || album.getAlbumImage().length == 0) {
-                            albumArt.setImage(new Image(AlbumPane.class.getResourceAsStream("album_white.png")));
-                        } else {
-                            try {
-                                albumArt.setImage(SwingFXUtils.toFXImage(ImageIO.read(new ByteArrayInputStream(album.getAlbumImage())), null));
-                            } catch (NullPointerException | IOException ex) {
-                                albumArt.setImage(new Image(AlbumPane.class.getResourceAsStream("album_white.png")));
-                            }
-                        }
-
-                        songName.setText(song.getTitle());
-                        songArtist.setText(artist.getName());
-                        totalDuration.setText(Utils.getDuration(song.getLength()));
-                    });
-
-                    mediaThread = new Thread(new Task<Void>() {
-                        @Override
-                        protected Void call() throws Exception {
-                            media = new Media(new File(song.getLocation()).toURI().toString());
-                            mediaPlayer = new MediaPlayer(media);
-
-                            mediaPlayer.setVolume(volumeSlider.getValue() / 100);
-                            if (isMute) {
-                                mediaPlayer.setMute(true);
-                            }
-
-                            mediaPlayer.setOnError(() -> {
-                                stop();
-                                mediaPlayer.getError().printStackTrace();
-                                LOGGER.log(Level.TRACE, mediaPlayer.getError());
-                            });
-
-                            mediaPlayer.setOnReady(() -> {
-                                Platform.runLater(() -> {
-                                    skipPrevious.setDisable(false);
-                                    fastRewind.setDisable(false);
-                                    playPause.setDisable(false);
-                                    fastForward.setDisable(false);
-                                    skipNext.setDisable(false);
-                                    songSeek.setDisable(false);
-                                    songSeek.setMax(media.getDuration().toSeconds());
-                                    nowPlaying.setDisable(false);
-                                    clearPlayer.setDisable(false);
-
-                                    songSeek.setOnMousePressed(event -> new Thread(new Task<Void>() {
-                                        @Override
-                                        protected Void call() throws Exception {
-                                            mediaPlayer.seek(Duration.seconds(songSeek.getValue()));
-                                            return null;
-                                        }
-                                    }).start());
-
-                                    songSeek.setOnMouseDragged(event -> new Thread(new Task<Void>() {
-                                        @Override
-                                        protected Void call() throws Exception {
-                                            mediaPlayer.seek(Duration.seconds(songSeek.getValue()));
-                                            return null;
-                                        }
-                                    }).start());
-
-                                    volumeSlider.setOnMousePressed(event -> new Thread(new Task<Void>() {
-                                        @Override
-                                        protected Void call() throws Exception {
-                                            mediaPlayer.setVolume(volumeSlider.getValue() / 100);
-                                            return null;
-                                        }
-                                    }).start());
-
-                                    volumeSlider.setOnMouseDragged(event -> new Thread(new Task<Void>() {
-                                        @Override
-                                        protected Void call() throws Exception {
-                                            mediaPlayer.setVolume(volumeSlider.getValue() / 100);
-                                            return null;
-                                        }
-                                    }).start());
-
-                                    song.setPlaying(true);
-                                    isActive.set(true);
-                                    RecentlyPlayedTabController.getInstance().addRecentlyPlayed(album);
-
-                                    if (song.getId() != songID) {
-                                        playValue = -1;
-                                        songID = song.getId();
-                                    }
-                                    playValue += 1;
-                                });
-
-                                mediaPlayer.play();
-                                Platform.runLater(() -> {
-                                    playPauseIcon.setContent(PAUSE_ICON);
-                                    playerLoader.setVisible(false);
-                                });
-                                isPlaying.set(true);
-                            });
-
-                            mediaPlayer.setOnEndOfMedia(() -> Platform.runLater(() -> {
-                                handlePlayPauseSong(null);
-                                onEndOfMediaTrigger();
-                            }));
-
-                            mediaPlayer.currentTimeProperty().addListener((observable, oldValue, newValue) -> Platform.runLater(() -> {
-                                currentDuration.setText(Utils.getDuration((long) newValue.toMillis()));
-                                songSeek.setValue(newValue.toSeconds());
-                            }));
-
-                            return null;
-                        }
-                    });
-                    mediaThread.setName("Audio Player Thread");
-                    mediaThread.setPriority(1);
-                    mediaThread.start();
-
-                    if (previousSong != null) {
-                        previousSong.setPlaying(false);
-                    }
-
-                    previousSong = song;
-                } catch (Exception ex) {
-                    LOGGER.log(Level.ERROR, ex);
-                    Platform.runLater(() -> playerLoader.setVisible(false));
-                    ex.printStackTrace();
+    public void addToNowPlaying(Artist artist) {
+        if (artist != null) {
+            for (Song song : Inventory.getSongs(artist)) {
+                if (!playingList.contains(song)) {
+                    playingList.add(song);
                 }
-                return null;
             }
-        }).start();
+
+            startNowPlaying();
+        }
     }
+
+    public void load(Playlist playlist) {
+        if (playlist != null) {
+            playingList.clear();
+            playingList.addAll(playlist.getSongList());
+            PlayingListDialogController.getInstance().loadData(playingList);
+            playingListIterator = playingList.listIterator();
+            handlePlayNext(null);
+            isSongListLoaded = false;
+            goingForward = true;
+        }
+    }
+
+    public void load(Playlist playlist, PlaylistSong playlistSong) {
+        if (playlist != null) {
+            this.playingList.clear();
+            this.playingList.addAll(playlist.getSongList());
+
+            PlayingListDialogController.getInstance().loadData(playingList);
+            int index = playingList.indexOf(playlistSong);
+            if (index > -1) {
+                playingListIterator = playingList.listIterator(index);
+            } else {
+                playingListIterator = playingList.listIterator();
+            }
+            handlePlayNext(null);
+            isSongListLoaded = false;
+            goingForward = true;
+        }
+    }
+
+    public void addToNowPlaying(Playlist playlist) {
+        if (playlist != null) {
+            playingList.addAll(playlist.getSongList());
+            startNowPlaying();
+        }
+    }
+
+    public void addToNowPlaying(PlaylistSong playlistSong) {
+        if (playlistSong != null) {
+            if (!playingList.contains(playlistSong)) {
+                this.playingList.add(playlistSong);
+            }
+            startNowPlaying();
+        }
+    }
+
 
     public void setOnlineSongListLoaded(boolean value) {
         this.isOnlineSongListLoaded = value;
@@ -733,90 +707,188 @@ public class ConsoleController implements Initializable {
     }
 
     public void addToNowPlaying(OnlineSong onlineSong) {
-        if (!playingList.contains(onlineSong)) {
-            playingList.add(onlineSong);
-            playOnlineSong(onlineSong);
+        if (onlineSong != null) {
+            if (!playingList.contains(onlineSong)) {
+                playingList.add(onlineSong);
+            }
+
+            startNowPlaying();
+        }
+    }
+
+    public void addToNowPlaying(List<OnlineSong> onlineSongs) {
+        if (onlineSongs != null) {
+            playingList.addAll(onlineSongs);
+            startNowPlaying();
         }
     }
 
     private String getYoutubeURL(String rawURL) throws IOException {
-        String youtubeDLQuery = youtubeExecName +" -f 18 -g " + rawURL;
+        String youtubeDLQuery = youtubeExecName + " -f 18 -g " + rawURL;
         Process p = Runtime.getRuntime().exec(youtubeDLQuery);
 
         InputStream i = p.getInputStream();
         InputStream e = p.getErrorStream();
 
         StringBuilder result = new StringBuilder();
-        while(true)
-        {
+        while (true) {
             int c = i.read();
-            if(c == -1) break;
+            if (c == -1) break;
             result.append((char) c);
         }
 
-        if(result.length() == 0)
-        {
+        if (result.length() == 0) {
             //get errors
             StringBuilder errResult = new StringBuilder();
-            while(true)
-            {
+            while (true) {
                 int c = e.read();
-                if(c == -1) break;
+                if (c == -1) break;
                 errResult.append((char) c);
             }
 
 
             e.close();
-            Alerts.showErrorAlert("Uh OH!","Unable to play, probably because Age Restricted/Live Video. If not, check connection and try again!\n\n"+errResult);
+            Alerts.showErrorAlert("Uh OH!", "Unable to play, probably because Age Restricted/Live Video. If not, check connection and try again!\n\n" + errResult);
             return null;
         }
 
         i.close();
         e.close();
 
-        return result.substring(0,result.length()-1);
+        return result.substring(0, result.length() - 1);
     }
 
-    private void playOnlineSong(OnlineSong onlineSong) {
+    private void startNowPlaying() {
+        if (clearPlayer.isDisable()) {
+            PlayingListDialogController.getInstance().loadData(playingList);
+            playingListIterator = playingList.listIterator();
+            handlePlayNext(null);
+            isSongListLoaded = false;
+            goingForward = true;
+        } else {
+            PlayingListDialogController.getInstance().loadData(playingList);
+            playingListIterator = playingList.listIterator(playingListIterator.nextIndex());
+        }
+    }
+
+    private void playSong(Object song) {
+        assert song instanceof Song || song instanceof PlaylistSong || song instanceof OnlineSong;
+
         playerLoader.setVisible(true);
-        new Thread(new Task<Void>() {
+
+        mediaPlayerService.submit(new Task<Void>() {
             @Override
             protected Void call() throws Exception {
                 try {
-                    Platform.runLater(() -> {
-                        handleClearPlayer(null);
+                    StringBuilder mediaURL = new StringBuilder();
 
-                        if (onlineSong.getThumbnailURL() == null || onlineSong.getThumbnailURL().isEmpty()) {
-                            albumArt.setImage(new Image(AlbumPane.class.getResourceAsStream("album_white.png")));
-                        } else {
-                            try {
-                                albumArt.setImage(new Image(onlineSong.getThumbnailURL()));
-                            } catch (NullPointerException ex) {
+                    if (song instanceof Song) {
+                        Album album = Inventory.getAlbum(((Song) song).getAlbum(), ((Song) song).getAlbumArtist());
+                        if (album == null) {
+                            playerLoader.setVisible(false);
+                            playingListIterator.remove();
+                            PlayingListDialogController.getInstance().loadData(playingList);
+                            handlePlayNext(null);
+                            return null;
+                        }
+                        Platform.runLater(() -> {
+                            handleClearPlayer(null);
+
+                            if (album.getAlbumImage() == null || album.getAlbumImage().length == 0) {
                                 albumArt.setImage(new Image(AlbumPane.class.getResourceAsStream("album_white.png")));
+                            } else {
+                                try {
+                                    albumArt.setImage(SwingFXUtils.toFXImage(ImageIO.read(new ByteArrayInputStream(album.getAlbumImage())), null));
+                                } catch (NullPointerException | IOException ex) {
+                                    albumArt.setImage(new Image(AlbumPane.class.getResourceAsStream("album_white.png")));
+                                }
+                            }
+
+                            album.albumImageMimeTypeProperty().addListener((observable, oldValue, newValue) -> {
+                                byte[] albumArt1 = album.getAlbumImage();
+                                if (albumArt1 == null || albumArt1.length == 0) {
+                                    albumArt.setImage(AlbumPane.getDefaultAlbumArt());
+                                } else {
+                                    try {
+                                        albumArt.setImage(SwingFXUtils.toFXImage(ImageIO.read(new ByteArrayInputStream(albumArt1)), null));
+                                    } catch (NullPointerException | IOException ex) {
+                                        albumArt.setImage(AlbumPane.getDefaultAlbumArt());
+                                    }
+                                }
+                            });
+
+                            songName.setText(((Song) song).getTitle());
+                            songArtist.setText(((Song) song).getArtist());
+                            totalDuration.setText(Utils.getDuration(((Song) song).getLength()));
+                        });
+
+                        mediaURL.append(new File(((Song) song).getLocation()).toURI());
+                    } else if (song instanceof PlaylistSong) {
+                        Platform.runLater(() -> {
+                            handleClearPlayer(null);
+
+                            PlaylistSong playlistSong = (PlaylistSong) song;
+                            if (playlistSong.getThumbnail() == null || playlistSong.getThumbnail().length == 0) {
+                                albumArt.setImage(PlaylistPane.getDefaultPlaylistArt());
+                            } else {
+                                try {
+                                    albumArt.setImage(SwingFXUtils.toFXImage(ImageIO.read(new ByteArrayInputStream(playlistSong.getThumbnail())), null));
+                                } catch (IOException ignored) {
+                                    albumArt.setImage(PlaylistPane.getDefaultPlaylistArt());
+                                }
+                            }
+
+                            songName.setText(playlistSong.getTitle());
+                            songArtist.setText(playlistSong.getArtist());
+                            totalDuration.setText(Utils.getDuration((long) playlistSong.getLength()));
+                        });
+
+                        if (((PlaylistSong) song).getLocation().startsWith("https://")) {
+                            mediaURL.append(getYoutubeURL(((PlaylistSong) song).getLocation()));
+                            if (mediaURL.length() == 0) {
+                                handlePlayNext(null);
+                                return null;
+                            }
+                        } else {
+                            mediaURL.append(new File(((PlaylistSong) song).getLocation()).toURI());
+                        }
+                    } else {
+                        Platform.runLater(() -> {
+                            handleClearPlayer(null);
+
+                            OnlineSong onlineSong = (OnlineSong) song;
+                            if (onlineSong.getThumbnailURL() == null || onlineSong.getThumbnailURL().isEmpty()) {
+                                albumArt.setImage(new Image(AlbumPane.class.getResourceAsStream("album_white.png")));
+                            } else {
+                                try {
+                                    albumArt.setImage(new Image(onlineSong.getThumbnailURL()));
+                                } catch (NullPointerException ex) {
+                                    albumArt.setImage(new Image(AlbumPane.class.getResourceAsStream("album_white.png")));
+                                }
+                            }
+
+                            songName.setText(onlineSong.getTitle());
+                            songArtist.setText(onlineSong.getChannelName());
+                        });
+
+                        if (((OnlineSong) song).isLocalSourceAvailable()) {
+                            mediaURL.append(new File(((OnlineSong) song).getURL()).toURI());
+                        } else {
+                            mediaURL.append(getYoutubeURL(((OnlineSong) song).getURL()));
+                            if (mediaURL.length() == 0) {
+                                handlePlayNext(null);
+                                return null;
                             }
                         }
 
-                        songName.setText(onlineSong.getTitle());
-                        songArtist.setText(onlineSong.getChannelName());
-                    });
-
-                    StringBuilder mediaURL = new StringBuilder();
-
-                    if (onlineSong.isLocalSourceAvailable()) {
-                        mediaURL.append(onlineSong.getURL());
-                    } else {
-                        mediaURL.append(getYoutubeURL(onlineSong.getURL()));
-                        if (mediaURL.length() == 0) {
-                            handlePlayNext(null);
-                            return Void.TYPE.newInstance();
-                        }
+                        Platform.runLater(() -> RecentlyPlayedTabController.getInstance().addRecentlyPlayed((OnlineSong) song));
                     }
 
-                    mediaThread = new Thread(new Task<Void>() {
+                    mediaPlayerService.submit(new Task<Void>() {
                         @Override
                         protected Void call() throws Exception {
                             media = new Media(mediaURL.toString());
-                            mediaPlayer = new MediaPlayer(media);
+                            mediaPlayer = EqualizerController.getInstance().setAudioEqualizer(new MediaPlayer(media));
 
                             mediaPlayer.setVolume(volumeSlider.getValue() / 100);
                             if (isMute) {
@@ -825,8 +897,7 @@ public class ConsoleController implements Initializable {
 
                             mediaPlayer.setOnError(() -> {
                                 stop();
-                                mediaPlayer.getError().printStackTrace();
-                                LOGGER.log(Level.TRACE, mediaPlayer.getError());
+                                LOGGER.log(Level.TRACE, "", mediaPlayer.getError());
                             });
 
                             mediaPlayer.setOnReady(() -> {
@@ -842,46 +913,35 @@ public class ConsoleController implements Initializable {
                                     nowPlaying.setDisable(false);
                                     clearPlayer.setDisable(false);
 
-                                    songSeek.setOnMousePressed(event -> new Thread(new Task<Void>() {
-                                        @Override
-                                        protected Void call() throws Exception {
-                                            mediaPlayer.seek(Duration.seconds(songSeek.getValue()));
-                                            return null;
+                                    songSeek.setOnMousePressed(event -> mediaPlayer.seek(Duration.seconds(songSeek.getValue())));
+                                    songSeek.setOnMouseDragged(event -> mediaPlayer.seek(Duration.seconds(songSeek.getValue())));
+
+                                    volumeSlider.setOnMousePressed(event -> mediaPlayer.setVolume(volumeSlider.getValue() / 100));
+                                    volumeSlider.setOnMouseDragged(event -> mediaPlayer.setVolume(volumeSlider.getValue() / 100));
+
+                                    if (song instanceof Song) {
+                                        ((Song) song).setPlaying(true);
+
+                                        if (((Song) song).getId() != songID) {
+                                            playValue = -1;
+                                            songID = ((Song) song).getId();
                                         }
-                                    }).start());
+                                    } else if (song instanceof PlaylistSong) {
+                                        ((PlaylistSong) song).setPlaying(true);
 
-                                    songSeek.setOnMouseDragged(event -> new Thread(new Task<Void>() {
-                                        @Override
-                                        protected Void call() throws Exception {
-                                            mediaPlayer.seek(Duration.seconds(songSeek.getValue()));
-                                            return null;
+                                        if (((PlaylistSong) song).getId() != songID) {
+                                            playValue = -1;
+                                            songID = ((PlaylistSong) song).getId();
                                         }
-                                    }).start());
+                                    } else {
+                                        ((OnlineSong) song).setPlaying(true);
 
-                                    volumeSlider.setOnMousePressed(event -> new Thread(new Task<Void>() {
-                                        @Override
-                                        protected Void call() throws Exception {
-                                            mediaPlayer.setVolume(volumeSlider.getValue() / 100);
-                                            return null;
+                                        if (((OnlineSong) song).getSNO() != songID) {
+                                            playValue = -1;
+                                            songID = ((OnlineSong) song).getSNO();
                                         }
-                                    }).start());
-
-                                    volumeSlider.setOnMouseDragged(event -> new Thread(new Task<Void>() {
-                                        @Override
-                                        protected Void call() throws Exception {
-                                            mediaPlayer.setVolume(volumeSlider.getValue() / 100);
-                                            return null;
-                                        }
-                                    }).start());
-
-                                    onlineSong.setPlaying(true);
-                                    isActive.set(true);
-                                    RecentlyPlayedTabController.getInstance().addRecentlyPlayed(onlineSong);
-
-                                    if (onlineSong.getId() != songID) {
-                                        playValue = -1;
-                                        songID = onlineSong.getId();
                                     }
+                                    isActive.set(true);
                                     playValue += 1;
                                 });
 
@@ -902,43 +962,39 @@ public class ConsoleController implements Initializable {
                                 currentDuration.setText(Utils.getDuration((long) newValue.toMillis()));
                                 songSeek.setValue(newValue.toSeconds());
                             }));
-
                             return null;
                         }
                     });
-                    mediaThread.setName("Audio Player Thread");
-                    mediaThread.setPriority(1);
-                    mediaThread.start();
 
                     if (previousSong != null) {
-                        previousSong.setPlaying(false);
+                        if (previousSong instanceof Song) {
+                            ((Song) previousSong).setPlaying(false);
+                        } else if (previousSong instanceof PlaylistSong) {
+                            ((PlaylistSong) previousSong).setPlaying(false);
+                        } else if (previousSong instanceof OnlineSong) {
+                            ((OnlineSong) previousSong).setPlaying(false);
+                        }
                     }
 
+                    previousSong = song;
                 } catch (Exception ex) {
-                    LOGGER.log(Level.ERROR, ex);
+                    LOGGER.log(Level.ERROR, "", ex);
                     Platform.runLater(() -> playerLoader.setVisible(false));
-                    ex.printStackTrace();
                 }
                 return null;
             }
-        }).start();
+        });
     }
 
     private void stop() {
         if (isPlaying.get()) {
             isPlaying.set(false);
-            new Thread(new Task<Void>() {
-                @Override
-                protected Void call() throws Exception {
-                    try {
-                        mediaPlayer.stop();
-                        mediaPlayer.dispose();
-                    } catch (Exception e) {
-                        System.out.println("disposing ...");
-                    }
-                    return null;
-                }
-            }).start();
+            try {
+                mediaPlayer.stop();
+                mediaPlayer.dispose();
+            } catch (Exception e) {
+                System.out.println("disposing ...");
+            }
         }
         isActive.set(false);
     }

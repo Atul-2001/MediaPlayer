@@ -1,0 +1,12 @@
+* {
+    -fx-focus-color: rgba(234, 240, 241, 0.8);
+    -fx-google-green: #3cba54; /*RGB: 60, 186, 84*/
+    -fx-google-yellow: #f4c20d; /*RGB: 244, 194, 13*/
+    -fx-google-red: #db3236; /*RGB: 219, 50, 54*/
+    -fx-google-blue: #4885ed; /*RGB: 72, 133, 237*/
+    -fx-background-fill: linear-gradient(to bottom, #FFDEE9 0%, #B5FFFC 100%);
+}
+
+#video-player-base {
+    -fx-background-color: -fx-background-fill;
+}

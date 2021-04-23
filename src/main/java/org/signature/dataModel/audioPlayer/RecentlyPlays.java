@@ -9,24 +9,24 @@ public class RecentlyPlays {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "recently_played_generator")
     @SequenceGenerator(name = "recently_played_generator", sequenceName = "recently_played_seq", allocationSize = 1)
     private int id;
-    private String albumName;
-    private String albumArtist;
-    private String artist;
+    private String name;
+    private String category;
 
     public RecentlyPlays() {
     }
 
     public RecentlyPlays(Object object) {
-        assert object instanceof Album || object instanceof Artist;
+        assert object instanceof Album || object instanceof Artist || object instanceof Playlist;
 
         if (object instanceof Album) {
-            this.albumName = ((Album) object).getAlbumName();
-            this.albumArtist = ((Album) object).getAlbumArtist();
-            this.artist = ((Album) object).getArtist();
+            this.name = ((Album) object).getAlbumName();
+            this.category = "Album by ".concat(((Album) object).getArtist());
+        } else if (object instanceof Artist){
+            this.name = ((Artist) object).getName();
+            this.category = "Artist";
         } else {
-            this.albumName = null;
-            this.albumArtist = null;
-            this.artist = ((Artist) object).getName();
+            this.name = ((Playlist) object).getPlaylistName();
+            this.category = "Playlist";
         }
     }
 
@@ -34,27 +34,20 @@ public class RecentlyPlays {
         return id;
     }
 
-    public String getAlbumName() {
-        return albumName;
+    public String getName() {
+        return name;
     }
 
-    public void setAlbumName(String albumName) {
-        this.albumName = albumName;
+    public void setName(String albumName) {
+        this.name = albumName;
     }
 
-    public String getAlbumArtist() {
-        return albumArtist;
+    public String getCategory() {
+        return category;
     }
 
-    public void setAlbumArtist(String albumArtist) {
-        this.albumArtist = albumArtist;
+    public void setCategory(String albumArtist) {
+        this.category = albumArtist;
     }
 
-    public String getArtist() {
-        return artist;
-    }
-
-    public void setArtist(String artist) {
-        this.artist = artist;
-    }
 }

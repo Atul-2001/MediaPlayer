@@ -1,13 +1,10 @@
 package org.signature.ui.audioPlayer;
 
 import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXDrawer;
 import javafx.animation.*;
-import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -31,12 +28,9 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.signature.App;
-import org.signature.WelcomeScreenController;
 import org.signature.animations.Animation;
-import org.signature.ui.audioPlayer.dialogs.AddMusicDialogController;
-import org.signature.ui.audioPlayer.dialogs.AddPlaylistDialogController;
-import org.signature.ui.audioPlayer.dialogs.DownloadsController;
-import org.signature.ui.audioPlayer.dialogs.PlayingListDialogController;
+import org.signature.dataModel.audioPlayer.Playlist;
+import org.signature.ui.audioPlayer.dialogs.*;
 import org.signature.ui.audioPlayer.tabs.*;
 import org.signature.util.Alerts;
 import org.signature.util.Utils;
@@ -86,7 +80,6 @@ public class BaseController implements Initializable {
 
     private VBox tab_song, tab_artist, tab_album, tab_recentlyPlayed, tab_browseOnline, tab_playlists, tab_settings, tab_albumView, tab_artistView, tab_playlistView;
     private StackPane tab_searchResult;
-    private JFXDialog dialog = null;
 
     private boolean topBarShown = false;
     private final BooleanProperty sideMenu_collapsed_by_button = new SimpleBooleanProperty(false);
@@ -127,10 +120,6 @@ public class BaseController implements Initializable {
                         Utils.flipStackPane(showPlaylistStack);
                     }
                     Utils.replaceNode(showPlaylistStack.getParent(), addedPlaylists, btn_addPlaylist1);
-                    /*Utils.flipStackPane(playlistStack);
-                    while (playlistStack.getChildren().get(1).toString().contains("VBox")) {
-                        Utils.flipStackPane(playlistStack);
-                    }*/
                 });
                 timeline.play();
 
@@ -147,10 +136,6 @@ public class BaseController implements Initializable {
                     Utils.flipStackPane(showPlaylistStack);
                 }
                 Utils.replaceNode(showPlaylistStack.getParent(), btn_addPlaylist1, addedPlaylists);
-                /*Utils.flipStackPane(playlistStack);
-                while (!playlistStack.getChildren().get(1).toString().contains("VBox")) {
-                    Utils.flipStackPane(playlistStack);
-                }*/
             }
 
             if (newValue.doubleValue() <= Math.round(screenWidth * 0.558) && !topBarShown) {
@@ -184,15 +169,18 @@ public class BaseController implements Initializable {
             }
         });
 
-        WelcomeScreenController.updateProgress(10);
+        if (sideMenu.getPrefWidth() == 320.0) {
+            ((VBox) showPlaylistStack.getParent()).getChildren().add(addedPlaylists);
+        } else {
+            ((VBox) showPlaylistStack.getParent()).getChildren().add(btn_addPlaylist1);
+        }
 
         loadDialogs();
         loadPlayerTabs();
         btnSongs.fire();
-        WelcomeScreenController.updateProgress(5);
         loadPlayerConsole();
 
-        LOGGER.log(Level.INFO, "Audio Player Loaded !!");
+//        LOGGER.log(Level.INFO, "Audio Player Loaded !!");
     }
 
     public static BaseController getInstance() {
@@ -201,6 +189,10 @@ public class BaseController implements Initializable {
 
     public BorderPane getRoot() {
         return playerBase;
+    }
+
+    public ToggleButton getBtnRecentlyPlayed() {
+        return btnRecentlyPlayed;
     }
 
     public ToggleButton getBtnSongs() {
@@ -213,6 +205,10 @@ public class BaseController implements Initializable {
 
     public ToggleButton getBtnArtists() {
         return btnArtists;
+    }
+
+    public ToggleButton getBtnShowPlaylist() {
+        return btnShowPlaylist;
     }
 
     private void loadSideMenuDrawer() {
@@ -237,89 +233,85 @@ public class BaseController implements Initializable {
             controller.getBtnBrowseOnline().setOnAction(this::handleShowBrowseOnline);
             controller.getBtnShowPlaylist().setOnAction(this::handleShowPlaylist);
             controller.getBtnSettings().setOnAction(this::handleShowSettings);
-        } catch (IOException | NullPointerException e) {
-            LOGGER.log(Level.ERROR, e.getClass() + " " + e.getLocalizedMessage(), e);
-            Alerts.loadTimeError(e);
+        } catch (IOException | NullPointerException ex) {
+            LOGGER.log(Level.ERROR, ex.getClass() + " " + ex.getLocalizedMessage(), ex);
+            Alerts.loadTimeError(ex);
         }
     }
 
     private void loadDialogs() {
         try {
+            FXMLLoader.load(AboutSongDialogController.class.getResource("About.fxml"));
+            FXMLLoader.load(AboutSongDialogController.class.getResource("AboutSongDialog.fxml"));
             FXMLLoader.load(AddMusicDialogController.class.getResource("AddLocalMusicDialog.fxml"));
             FXMLLoader.load(AddPlaylistDialogController.class.getResource("AddPlaylistDialog.fxml"));
-            FXMLLoader.load(PlayingListDialogController.class.getResource("PlayingListDialog.fxml"));
+            FXMLLoader.load(AboutSongDialogController.class.getResource("AddToListDialog.fxml"));
             FXMLLoader.load(DownloadsController.class.getResource("Downloads.fxml"));
-        } catch (NullPointerException | IOException e) {
-            LOGGER.log(Level.ERROR, e.getClass() + " " + e.getLocalizedMessage(), e);
-            Alerts.loadTimeError(e);
+            FXMLLoader.load(AboutSongDialogController.class.getResource("EditAlbumInfoDialog.fxml"));
+            FXMLLoader.load(AboutSongDialogController.class.getResource("EditSongInfoDialog.fxml"));
+            FXMLLoader.load(AboutSongDialogController.class.getResource("Equalizer.fxml"));
+            FXMLLoader.load(AboutSongDialogController.class.getResource("Feedback.fxml"));
+            FXMLLoader.load(AboutSongDialogController.class.getResource("Help.fxml"));
+            FXMLLoader.load(PlayingListDialogController.class.getResource("PlayingListDialog.fxml"));
+            App.updateProgress(5.0);
+        } catch (NullPointerException | IOException ex) {
+            LOGGER.log(Level.ERROR, ex.getClass() + " " + ex.getLocalizedMessage(), ex);
+            Alerts.loadTimeError(ex);
         }
     }
 
     private void loadPlayerTabs() {
         try {
             tab_song = FXMLLoader.load(SongTabController.class.getResource("Tab_Song.fxml"));
-            tab_song.setOpacity(0.0);
-//            tab_song.setVisible(false);
+            tab_song.setVisible(false);
 
             tab_album = FXMLLoader.load(AlbumTabController.class.getResource("Tab_Album.fxml"));
-            tab_album.setOpacity(0.0);
-//            tab_album.setVisible(false);
+            tab_album.setVisible(false);
 
             tab_artist = FXMLLoader.load(ArtistTabController.class.getResource("Tab_Artist.fxml"));
-            tab_artist.setOpacity(0.0);
-//            tab_artist.setVisible(false);
+            tab_artist.setVisible(false);
 
             tab_playlists = FXMLLoader.load(PlaylistTabController.class.getResource("Tab_Playlists.fxml"));
-            tab_playlists.setOpacity(0.0);
-//            tab_playlists.setVisible(false);
-            WelcomeScreenController.updateProgress(10);
+            tab_playlists.setVisible(false);
+            App.updateProgress(5.0);
 
             tab_searchResult = FXMLLoader.load(SearchResultTabController.class.getResource("Tab_SearchResult.fxml"));
-            tab_searchResult.setOpacity(0.0);
-            tab_searchResult.opacityProperty().addListener((observable, oldValue, newValue) -> {
-                if (newValue.doubleValue() == 0.0) {
+            tab_searchResult.setVisible(false);
+            tab_searchResult.visibleProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue.equals(Boolean.FALSE)) {
                     searchField.clear();
                 }
             });
-//            tab_searchResult.setVisible(false);
 
             tab_recentlyPlayed = FXMLLoader.load(RecentlyPlayedTabController.class.getResource("Tab_RecentlyPlayed.fxml"));
-            tab_recentlyPlayed.setOpacity(0.0);
-//            tab_recentlyPlayed.setVisible(false);
-            WelcomeScreenController.updateProgress(10);
+            tab_recentlyPlayed.setVisible(false);
+            App.updateProgress(5.0);
 
             tab_browseOnline = FXMLLoader.load(BrowseOnlineTabController.class.getResource("Tab_BrowseOnline.fxml"));
-            tab_browseOnline.setOpacity(0.0);
-//            tab_browseOnline.setVisible(false);
+            tab_browseOnline.setVisible(false);
 
             tab_settings = FXMLLoader.load(SettingsTabController.class.getResource("Tab_Settings.fxml"));
-            tab_settings.setOpacity(0.0);
-//            tab_settings.setVisible(false);
+            tab_settings.setVisible(false);
 
             tab_albumView = FXMLLoader.load(AlbumViewTabController.class.getResource("Tab_AlbumView.fxml"));
-            tab_albumView.setOpacity(0.0);
-//            tab_albumView.setVisible(false);
+            tab_albumView.setVisible(false);
 
             tab_artistView = FXMLLoader.load(ArtistViewTabController.class.getResource("Tab_ArtistView.fxml"));
-            tab_artistView.setOpacity(0.0);
-//            tab_artistView.setVisible(false);
+            tab_artistView.setVisible(false);
 
             tab_playlistView = FXMLLoader.load(PlaylistViewTabController.class.getResource("Tab_PlaylistView.fxml"));
-            tab_playlistView.setOpacity(0.0);
-//            tab_playlistView.setVisible(false);
+            tab_playlistView.setVisible(false);
 
             tabStack.getChildren().addAll(tab_searchResult, tab_recentlyPlayed, tab_song, tab_album, tab_artist, tab_browseOnline, tab_playlists, tab_settings, tab_albumView, tab_artistView, tab_playlistView);
-        } catch (NullPointerException | IOException e) {
-            LOGGER.log(Level.ERROR, e.getClass() + " " + e.getLocalizedMessage(), e);
-            Alerts.loadTimeError(e);
+        } catch (NullPointerException | IOException ex) {
+            LOGGER.log(Level.ERROR, ex.getClass() + " " + ex.getLocalizedMessage(), ex);
+            Alerts.loadTimeError(ex);
         }
     }
 
     private void loadPlayerConsole() {
         try {
-            FXMLLoader loader = new FXMLLoader(ConsoleController.class.getResource("AudioPlayerConsole.fxml"));
-            Node playerConsole = loader.load();
-            ConsoleController.setInstance(loader.getController());
+            Node playerConsole = FXMLLoader.load(ConsoleController.class.getResource("AudioPlayerConsole.fxml"));
             playerBase.setBottom(playerConsole);
 
             TranslateTransition transition = new TranslateTransition(Duration.seconds(2.8));
@@ -331,10 +323,10 @@ public class BaseController implements Initializable {
             parallelTransition.play();
 
             FXMLLoader.load(MiniPlayerViewController.class.getResource("MiniPlayerView.fxml"));
-            WelcomeScreenController.updateProgress(10);
-        } catch (Exception e) {
-            LOGGER.log(Level.ERROR, " Failed to load player console!\n" + e.getClass() + e.getLocalizedMessage(), e);
-            Alerts.loadTimeError(e);
+            App.updateProgress(5.0);
+        } catch (Exception ex) {
+            LOGGER.log(Level.ERROR, " Failed to load player console!\n" + ex.getClass() + ex.getLocalizedMessage(), ex);
+            Alerts.loadTimeError(ex);
         }
     }
 
@@ -448,13 +440,7 @@ public class BaseController implements Initializable {
 
     @FXML
     private void handleAddPlaylist(ActionEvent actionEvent) {
-        if (dialog == null) {
-            BorderPane node = AddPlaylistDialogController.getInstance().getRoot();
-            dialog = new JFXDialog((StackPane) playerBase.getCenter(), node, JFXDialog.DialogTransition.CENTER);
-            dialog.setMinSize(400, 400);
-            ((JFXButton) ((HBox) node.getBottom()).getChildren().get(0)).setOnAction(event -> dialog.close());
-        }
-        dialog.show();
+        AddPlaylistDialogController.getInstance().load(null);
     }
 
     @FXML
@@ -492,13 +478,12 @@ public class BaseController implements Initializable {
         Utils.swapTabStack(tabStack, tab_playlistView);
     }
 
-    public void addPlaylist(VBox tab_playlistView, StringProperty playlistNameProperty) {
+    public void addPlaylist(Playlist playlist) {
         ToggleButton playListViewButton = new ToggleButton();
-        playListViewButton.textProperty().bind(playlistNameProperty);
+        playListViewButton.textProperty().bind(playlist.playlistNameProperty());
         playListViewButton.setAlignment(Pos.CENTER_LEFT);
         playListViewButton.setFont(Font.font("Roboto", 18));
         playListViewButton.setToggleGroup(menuTabGroup);
-        playListViewButton.setGraphicTextGap(16);
         playListViewButton.setGraphicTextGap(16);
         SVGPath icon = new SVGPath();
         icon.setContent("M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z");
@@ -515,15 +500,19 @@ public class BaseController implements Initializable {
         playListViewButton.maxHeightProperty().bind(playListViewButton.prefHeightProperty());
 
         playListViewButton.setOnAction(event -> {
+            PlaylistViewTabController.getInstance().loadPlaylist(playlist);
+            PlaylistViewTabController.getInstance().setViewCalledByPlaylistTab(false);
+            PlaylistViewTabController.getInstance().setViewCalledByRecentTab(false);
             Utils.swapTabStack(tabStack, tab_playlistView);
             if (!playListViewButton.isSelected()) {
                 playListViewButton.setSelected(true);
             }
         });
 
-        Platform.runLater(() -> {
-            tabStack.getChildren().add(tab_playlistView);
-            addedPlaylists.getChildren().add(playListViewButton);
-        });
+        addedPlaylists.getChildren().add(playListViewButton);
+    }
+
+    public void removePlaylist(Playlist playlist) {
+        addedPlaylists.getChildren().removeIf(node -> ((ToggleButton) node).getText().equalsIgnoreCase(playlist.getPlaylistName()));
     }
 }

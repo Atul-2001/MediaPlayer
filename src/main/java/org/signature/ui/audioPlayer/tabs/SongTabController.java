@@ -11,22 +11,24 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.signature.WelcomeScreenController;
+import org.signature.App;
 import org.signature.dataModel.audioPlayer.Song;
 import org.signature.ui.audioPlayer.BaseController;
 import org.signature.ui.audioPlayer.ConsoleController;
 import org.signature.ui.audioPlayer.Inventory;
+import org.signature.ui.audioPlayer.dialogs.AddMusicDialogController;
 import org.signature.ui.audioPlayer.model.SongPane;
 import org.signature.util.Utils;
 
 import java.net.URL;
+import java.nio.file.attribute.FileTime;
 import java.util.ResourceBundle;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class SongTabController implements Initializable {
 
@@ -43,11 +45,15 @@ public class SongTabController implements Initializable {
     @FXML
     private JFXComboBox<String> sortCriteria, genreList;
     @FXML
+    private VBox addLibraryReminderPane;
+    @FXML
     private StackPane contentStack;
     @FXML
     private VBox songsList;
 
     private final ObservableList<SongPane> songs = FXCollections.observableArrayList();
+    private int sortByIndex = 0;
+    private String selectedGenre = Inventory.getCachedGenres().get(0);
 
     private boolean songsLoaded = false;
 
@@ -60,9 +66,10 @@ public class SongTabController implements Initializable {
     private final IntegerProperty albumNameFieldWidth = new SimpleIntegerProperty(0);
     private final IntegerProperty genreFieldWidth = new SimpleIntegerProperty(0);
 
+    private final BooleanProperty requestParentForIndex = new SimpleBooleanProperty(false);
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
         if (location != null && instance == null) {
             instance = this;
         }
@@ -70,8 +77,10 @@ public class SongTabController implements Initializable {
         songsList.getChildren().addListener((ListChangeListener<Node>) c -> {
             if (songsList.getChildren().size() == 0 && !contentStack.getChildren().get(1).toString().contains("Label")) {
                 Utils.flipStackPane(contentStack);
+                tab_song.getChildren().add(4, addLibraryReminderPane);
             } else if (songsList.getChildren().size() > 0 && contentStack.getChildren().get(1).toString().contains("Label")) {
                 Utils.flipStackPane(contentStack);
+                handleClosePopup(null);
             }
             btn_shuffle.setText("Shuffle all(" + songsList.getChildren().size() + ")");
         });
@@ -88,29 +97,35 @@ public class SongTabController implements Initializable {
             }
         });
 
-        genreList.getItems().addAll(Inventory.getCachedGenres().values());
+        genreList.setItems(Inventory.getCachedGenres());
+        genreList.getSelectionModel().select(0);
+        genreList.getTooltip().setText(genreList.getSelectionModel().getSelectedItem());
 
         sortCriteria.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
+            this.sortByIndex = newValue.intValue();
+            requestParentForIndex.set(false);
             songsList.getChildren().clear();
-            songs.sort((o1, o2) -> {
-                        if (newValue.intValue() == 0) {
-                            return o1.getCreationTime().compareToIgnoreCase(o2.getCreationTime());
+            songsList.getChildren().setAll(songs.sorted((node1, node2) -> {
+                if (newValue.intValue() == 0) {
+                            return Integer.compare(0, FileTime.fromMillis(node1.getDateCreated()).compareTo(FileTime.fromMillis(node2.getDateCreated())));
                         } else if (newValue.intValue() == 1) {
-                            return o1.getSongTitle().compareToIgnoreCase(o2.getSongTitle());
+                            return node1.getSongTitle().compareToIgnoreCase(node2.getSongTitle());
                         } else if (newValue.intValue() == 2) {
-                            return o1.getArtist().compareToIgnoreCase(o2.getArtist());
+                            return node1.getArtist().compareToIgnoreCase(node2.getArtist());
                         } else if (newValue.intValue() == 3) {
-                            return o1.getAlbum().compareToIgnoreCase(o2.getAlbum());
+                            return node1.getAlbum().compareToIgnoreCase(node2.getAlbum());
                         } else {
                             return 1;
                         }
                     }
-            );
-            songsList.getChildren().setAll(songs);
+            ));
             sortCriteria.getTooltip().setText(sortCriteria.getItems().get(newValue.intValue()));
+            requestParentForIndex.set(true);
         });
 
         genreList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            this.selectedGenre = newValue;
+            requestParentForIndex.set(false);
             songsList.getChildren().clear();
             songsList.getChildren().setAll(songs.filtered(songPane -> {
                 if (newValue.equalsIgnoreCase(genreList.getItems().get(0))) {
@@ -120,12 +135,12 @@ public class SongTabController implements Initializable {
                 }
             }));
             genreList.getTooltip().setText(newValue);
+            requestParentForIndex.set(true);
         });
 
         loadSongs();
-        songsList.getChildren().setAll(songs);
 
-        LOGGER.log(Level.INFO, "Song Tab Loaded !!");
+//        LOGGER.log(Level.INFO, "Song Tab Loaded !!");
     }
 
     public static SongTabController getInstance() {
@@ -158,7 +173,6 @@ public class SongTabController implements Initializable {
                 songsList.getChildren().clear();
                 songs.clear();
 
-                AtomicInteger i = new AtomicInteger(0);
                 int listSize = Inventory.getCachedSongs().size();
 
                 for (Song song : Inventory.getCachedSongs()) {
@@ -166,19 +180,16 @@ public class SongTabController implements Initializable {
                     if (song.getTitle().isEmpty()) {
                         continue;
                     }
-
-                    SongPane songPane = new SongPane(song);
-                    if (i.getAndIncrement() %2 == 0) {
-                        songPane.getStyleClass().add("songNodeEVEN");
-                    } else {
-                        songPane.getStyleClass().add("songNodeODD");
-                    }
-                    songs.add(songPane);
-                    WelcomeScreenController.updateProgress(10.0 /listSize);
+                    songs.add(new SongPane(song, song));
+                    App.updateProgress(10.0/listSize);
                 }
 
-                sortCriteria.getSelectionModel().select(0);
-                genreList.getSelectionModel().select(0);
+                if (listSize == 0) {
+                    App.updateProgress(10.0);
+                }
+                songsList.getChildren().setAll(songs.sorted((node1, node2) -> Integer.compare(0, FileTime.fromMillis(node1.getDateCreated()).compareTo(FileTime.fromMillis(node2.getDateCreated())))));
+                requestParentForIndex.set(true);
+
                 songsLoaded = true;
 
                 Inventory.getCachedSongs().addListener((ListChangeListener<Song>) c -> {
@@ -190,18 +201,12 @@ public class SongTabController implements Initializable {
                             if (song.getTitle().isEmpty()) {
                                 continue;
                             }
-
-                            SongPane songPane = new SongPane(song);
-                            if (i.getAndIncrement() %2 == 0) {
-                                songPane.getStyleClass().add("songNodeEVEN");
-                            } else {
-                                songPane.getStyleClass().add("songNodeODD");
-                            }
-                            songs.add(songPane);
+                            songs.add(new SongPane(song, song));
                         }
 
-                        sortCriteria.getSelectionModel().select(sortCriteria.getSelectionModel().getSelectedIndex());
-                        genreList.getSelectionModel().select(genreList.getSelectionModel().getSelectedIndex());
+                        int indexOfSort = sortCriteria.getSelectionModel().getSelectedIndex();
+                        sortCriteria.getSelectionModel().select(0);
+                        sortCriteria.getSelectionModel().select(indexOfSort);
 
                     } else if (c.wasRemoved()) {
 
@@ -209,18 +214,18 @@ public class SongTabController implements Initializable {
                             songs.clear();
                             songsList.getChildren().clear();
                         } else {
+                            requestParentForIndex.set(false);
                             for (Song song : c.getRemoved()) {
                                 songs.removeIf(songPane -> songPane.getSongTitle().equals(song.getTitle()));
                                 songsList.getChildren().removeIf(node -> ((SongPane) node).getSongTitle().equals(song.getTitle()));
                             }
-
-                            sortCriteria.getSelectionModel().select(sortCriteria.getSelectionModel().getSelectedIndex());
-                            genreList.getSelectionModel().select(genreList.getSelectionModel().getSelectedIndex());
+                            requestParentForIndex.set(true);
                         }
+
                     }
                 });
-            } catch (NullPointerException | IllegalStateException | UnsupportedOperationException | IllegalArgumentException e) {
-                LOGGER.log(Level.ERROR, "Failed to load song node! " + e.getLocalizedMessage(), e);
+            } catch (NullPointerException | IllegalStateException | UnsupportedOperationException | IllegalArgumentException ex) {
+                LOGGER.log(Level.ERROR, "Failed to load song node! " + ex.getLocalizedMessage(), ex);
             }
         }
     }
@@ -231,8 +236,13 @@ public class SongTabController implements Initializable {
     }
 
     @FXML
+    private void handleShowAddLibraryDialog(MouseEvent mouseEvent) {
+        AddMusicDialogController.getInstance().showDialog();
+    }
+
+    @FXML
     private void handleClosePopup(ActionEvent actionEvent) {
-        tab_song.getChildren().remove(4);
+        tab_song.getChildren().remove(addLibraryReminderPane);
     }
 
     public IntegerProperty songNameFieldWidthProperty() {
@@ -290,4 +300,21 @@ public class SongTabController implements Initializable {
             genreFieldWidth.set(width);
         }
     }
+
+    public int getSortByIndex() {
+        return sortByIndex;
+    }
+
+    public String getSelectedGenre() {
+        return selectedGenre;
+    }
+
+    public BooleanProperty requestParentForIndexProperty() {
+        return requestParentForIndex;
+    }
+
+    public void refreshList() {
+        sortCriteria.getSelectionModel().select(sortCriteria.getSelectionModel().getSelectedIndex());
+    }
+
 }

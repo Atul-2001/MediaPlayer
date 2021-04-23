@@ -26,6 +26,7 @@ import org.signature.dataModel.audioPlayer.Song;
 import org.signature.ui.audioPlayer.BaseController;
 import org.signature.ui.audioPlayer.ConsoleController;
 import org.signature.ui.audioPlayer.Inventory;
+import org.signature.ui.audioPlayer.dialogs.AddToListDialogController;
 import org.signature.ui.audioPlayer.model.AlbumPane;
 import org.signature.ui.audioPlayer.model.ArtistPane;
 import org.signature.ui.audioPlayer.model.SongPane;
@@ -74,6 +75,7 @@ public class ArtistViewTabController implements Initializable {
 
     private boolean isViewRequestedByAlbum = false;
     private Album requesterAlbum = null;
+    private boolean isViewRequestedBySong = false;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -94,7 +96,7 @@ public class ArtistViewTabController implements Initializable {
                     albumsList.getChildren().add(new AlbumPane(album));
                     albumSongsList.getChildren().add(new MiniAlbumPane(album));
                     for (Song song : Inventory.getSongs(album)) {
-                        albumSongsList.getChildren().add(new SongPane(song));
+                        albumSongsList.getChildren().add(new SongPane(song, artist));
                     }
                 }
             }
@@ -127,7 +129,7 @@ public class ArtistViewTabController implements Initializable {
 
         albumSongsList.setOnScroll(albumsList.getOnScroll());
 
-        LOGGER.log(Level.INFO, "Tab Artist View Loaded!");
+//        LOGGER.log(Level.INFO, "Tab Artist View Loaded!");
     }
 
     public static ArtistViewTabController getInstance() {
@@ -148,6 +150,9 @@ public class ArtistViewTabController implements Initializable {
                     BaseController.getInstance().handleShowAlbumView();
                 }
             }
+        } else if (isViewRequestedBySong) {
+            this.isViewRequestedBySong = false;
+            BaseController.getInstance().getBtnSongs().fire();
         } else {
             BaseController.getInstance().getBtnArtists().fire();
         }
@@ -156,10 +161,12 @@ public class ArtistViewTabController implements Initializable {
     @FXML
     private void handlePlayAllSongs(ActionEvent actionEvent) {
         ConsoleController.getInstance().load(this.artist);
+        RecentlyPlayedTabController.getInstance().addRecentlyPlayed(this.artist);
     }
 
     @FXML
     private void handleAddTo(ActionEvent actionEvent) {
+        AddToListDialogController.getInstance().load(this.artist);
     }
 
     @FXML
@@ -207,18 +214,21 @@ public class ArtistViewTabController implements Initializable {
             this.artistArtView.setFill(new ImagePattern(ArtistPane.getDefaultArtistProfile()));
             this.artistName.setText(this.artist.getName());
             if (albums.size() > 0) {
-                this.artistGenre.setText(Inventory.getGenreDescription(this.albums.get(0).getGenre()));
+                this.artistGenre.setText(this.albums.get(0).getGenre());
             } else {
-                this.artistGenre.setText(Inventory.getGenreDescription(0));
+                this.artistGenre.setText(Inventory.getCachedGenres().get(Inventory.getCachedGenres().size()-1));
             }
 
             handleShowAlbumsView(null);
             return true;
         } catch (Exception ex) {
             LOGGER.log(Level.TRACE, ex);
-            ex.printStackTrace();
             return false;
         }
+    }
+
+    public void setViewRequestedBySong(boolean value) {
+        this.isViewRequestedBySong = value;
     }
 
     private static class MiniAlbumPane extends HBox {
@@ -233,7 +243,6 @@ public class ArtistViewTabController implements Initializable {
         private final Label albumReleaseYear = new Label();
 
         private final String genre;
-        private final String creationTime; // creation time of song file (in millis)
 
         public MiniAlbumPane(Album album) {
             assert album != null;
@@ -258,6 +267,19 @@ public class ArtistViewTabController implements Initializable {
                 }
             }
 
+            album.albumImageMimeTypeProperty().addListener((observable, oldValue, newValue) -> {
+                byte[] albumArt1 = album.getAlbumImage();
+                if (albumArt1 == null || albumArt1.length == 0) {
+                    this.albumArtView.setImage(AlbumPane.getDefaultAlbumArt());
+                } else {
+                    try {
+                        this.albumArtView.setImage(SwingFXUtils.toFXImage(ImageIO.read(new ByteArrayInputStream(albumArt1)), null));
+                    } catch (NullPointerException | IOException ex) {
+                        this.albumArtView.setImage(AlbumPane.getDefaultAlbumArt());
+                    }
+                }
+            });
+
             this.albumName.setAlignment(Pos.TOP_LEFT);
             this.albumName.setText(album.getAlbumName() == null || album.getAlbumName().isEmpty() ? "Unknown Album" : album.getAlbumName());
             VBox.setVgrow(this.albumName, Priority.NEVER);
@@ -277,9 +299,7 @@ public class ArtistViewTabController implements Initializable {
 
             getChildren().addAll(this.albumArtView, this.albumDetailBox);
 
-            String genre = Inventory.getGenreDescription(album.getGenre());
-            this.genre = genre == null || genre.isEmpty() ? "Unknown Genre" : genre;
-            this.creationTime = album.getCreationTime() == null ? "" : album.getCreationTime();
+            this.genre = album.getGenre();
         }
 
         public Album getAlbum() {
@@ -302,8 +322,8 @@ public class ArtistViewTabController implements Initializable {
             return this.albumReleaseYear.getText();
         }
 
-        public String getCreationTime() {
-            return creationTime;
+        public long getDateCreated() {
+            return album.getDateCreated();
         }
     }
 }

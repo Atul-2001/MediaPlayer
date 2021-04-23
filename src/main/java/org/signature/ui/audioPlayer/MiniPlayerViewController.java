@@ -5,8 +5,10 @@ import com.jfoenix.controls.JFXProgressBar;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.effect.GaussianBlur;
+import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -14,6 +16,8 @@ import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import org.signature.App;
 import org.signature.util.Utils;
 
 import java.net.URL;
@@ -23,6 +27,7 @@ public class MiniPlayerViewController implements Initializable {
 
     private static MiniPlayerViewController instance = null;
 
+    private final String APP_ICON = "Media-player-icon-circle.png";
     private final String PAUSE_ICON = "M12 38h8V10h-8v28zm16-28v28h8V10h-8z";
     private final String PLAY_ICON = "M16 10v28l22-14z";
 
@@ -41,7 +46,7 @@ public class MiniPlayerViewController implements Initializable {
     @FXML
     private JFXProgressBar songSeek;
 
-    private Stage parentStage, currentStage;
+    private Stage stage;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -83,6 +88,24 @@ public class MiniPlayerViewController implements Initializable {
         ConsoleController.getInstance().currentTimeProperty().addListener((observable, oldValue, newValue) -> songSeek.setProgress(newValue.doubleValue()/ConsoleController.getInstance().getSongLength()));
 
         ConsoleController.getInstance().activeProperty().addListener((observable, oldValue, newValue) -> Utils.flipStackPane(contentStack));
+
+        stage = new Stage(StageStyle.UNDECORATED);
+        stage.setScene(new Scene(root));
+        stage.getIcons().add(new Image(App.class.getResourceAsStream(APP_ICON)));
+        stage.setMinWidth(168.0);
+        stage.setMinHeight(160.0);
+        stage.setWidth(300.0);
+        stage.setHeight(300.0);
+        stage.setMaxWidth(500.0);
+        stage.setMaxHeight(386.0);
+        stage.setAlwaysOnTop(true);
+        stage.setX(App.getScreenWidth() - 320.0);
+        stage.setY(20.0);
+
+        topBar.setOnMousePressed(pressEvent -> topBar.setOnMouseDragged(dragEvent -> {
+            stage.setX(dragEvent.getScreenX() - pressEvent.getSceneX());
+            stage.setY(dragEvent.getScreenY() - pressEvent.getSceneY());
+        }));
     }
 
     public static MiniPlayerViewController getInstance() {
@@ -93,16 +116,9 @@ public class MiniPlayerViewController implements Initializable {
         return root;
     }
 
-    public void load(Stage parentStage, Stage currentStage) {
-        this.parentStage = parentStage;
-        this.currentStage = currentStage;
-
-        topBar.setOnMousePressed(pressEvent -> {
-            topBar.setOnMouseDragged(dragEvent -> {
-                currentStage.setX(dragEvent.getScreenX() - pressEvent.getSceneX());
-                currentStage.setY(dragEvent.getScreenY() - pressEvent.getSceneY());
-            });
-        });
+    public void showStage() {
+        this.stage.show();
+        App.getStage().close();
     }
 
     @FXML
@@ -112,17 +128,13 @@ public class MiniPlayerViewController implements Initializable {
 
     @FXML
     private void handleLeaveMiniView(ActionEvent actionEvent) {
-        if (currentStage != null && parentStage != null) {
-            currentStage.close();
-            parentStage.show();
-        }
+        this.stage.close();
+        App.getStage().show();
     }
 
     @FXML
     private void handleCloseOperation(ActionEvent actionEvent) {
-        if (currentStage != null && parentStage != null) {
-            currentStage.close();
-            parentStage.close();
-        }
+        this.stage.close();
+        App.getStage().close();
     }
 }

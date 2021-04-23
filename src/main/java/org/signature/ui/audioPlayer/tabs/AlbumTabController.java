@@ -16,7 +16,7 @@ import javafx.scene.layout.VBox;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.signature.WelcomeScreenController;
+import org.signature.App;
 import org.signature.dataModel.audioPlayer.Album;
 import org.signature.ui.audioPlayer.BaseController;
 import org.signature.ui.audioPlayer.ConsoleController;
@@ -25,6 +25,7 @@ import org.signature.ui.audioPlayer.model.AlbumPane;
 import org.signature.util.Utils;
 
 import java.net.URL;
+import java.nio.file.attribute.FileTime;
 import java.util.ResourceBundle;
 
 public class AlbumTabController implements Initializable {
@@ -56,6 +57,19 @@ public class AlbumTabController implements Initializable {
             instance = this;
         }
 
+        albums.addListener((ListChangeListener<AlbumPane>) c -> {
+            c.next();
+            if (c.wasAdded()) {
+                for (AlbumPane albumPane : c.getAddedSubList()) {
+                    albumsList.getChildren().add(albumPane);
+                }
+            } else if (c.wasRemoved()) {
+                for (AlbumPane albumPane : c.getRemoved()) {
+                    albumsList.getChildren().remove(albumPane);
+                }
+            }
+        });
+
         albumsList.getChildren().addListener((ListChangeListener<Node>) c -> {
             if (albumsList.getChildren().size() == 0 && !contentStack.getChildren().get(1).toString().contains("Label")) {
                 Utils.flipStackPane(contentStack);
@@ -69,24 +83,25 @@ public class AlbumTabController implements Initializable {
 
         btn_artist.setOnMouseClicked(event -> BaseController.getInstance().getBtnArtists().fire());
 
-        genreList.getItems().addAll(Inventory.getCachedGenres().values());
+        genreList.setItems(Inventory.getCachedGenres());
+        genreList.getSelectionModel().select(0);
+        genreList.getTooltip().setText(genreList.getSelectionModel().getSelectedItem());
 
         sortCriteria.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
             albumsList.getChildren().clear();
-            albums.sort((o1, o2) -> {
+            albumsList.getChildren().setAll(albums.sorted((node1, node2) -> {
                 if (newValue.intValue() == 0) {
-                    return o1.getCreationTime().compareToIgnoreCase(o2.getCreationTime());
+                    return Integer.compare(0, FileTime.fromMillis(node1.getDateCreated()).compareTo(FileTime.fromMillis(node2.getDateCreated())));
                 } else if (newValue.intValue() == 1) {
-                    return o1.getAlbumName().compareToIgnoreCase(o2.getAlbumName());
+                    return node1.getAlbumName().compareToIgnoreCase(node2.getAlbumName());
                 } else if (newValue.intValue() == 2) {
-                    return o1.getReleaseYear().compareToIgnoreCase(o2.getReleaseYear());
+                    return node1.getReleaseYear().compareToIgnoreCase(node2.getReleaseYear());
                 } else if (newValue.intValue() == 3) {
-                    return o1.getArtist().compareToIgnoreCase(o2.getArtist());
+                    return node1.getArtist().compareToIgnoreCase(node2.getArtist());
                 } else {
                     return 1;
                 }
-            });
-            albumsList.getChildren().setAll(albums);
+            }));
             sortCriteria.getTooltip().setText(sortCriteria.getItems().get(newValue.intValue()));
         });
 
@@ -104,8 +119,10 @@ public class AlbumTabController implements Initializable {
 
         loadAlbums();
         albumsList.getChildren().setAll(albums);
+        sortCriteria.getSelectionModel().select(0);
+        genreList.getSelectionModel().select(0);
 
-        LOGGER.log(Level.INFO, "Album Tab Loaded !!");
+//        LOGGER.log(Level.INFO, "Album Tab Loaded !!");
     }
 
     public static AlbumTabController getInstance() {
@@ -132,11 +149,15 @@ public class AlbumTabController implements Initializable {
 
                     AlbumPane albumPane = new AlbumPane(album);
                     albums.add(albumPane);
-                    WelcomeScreenController.updateProgress(10.0 / listSize);
+                    App.updateProgress(10.0 / listSize);
                 }
 
-                sortCriteria.getSelectionModel().select(0);
-                genreList.getSelectionModel().select(0);
+                if (listSize == 0) {
+                    App.updateProgress(10.0);
+                }
+                albumsList.getChildren().setAll(albums.sorted((node1, node2) -> Integer.compare(0, FileTime.fromMillis(node1.getDateCreated()).compareTo(FileTime.fromMillis(node2.getDateCreated())))));
+
+
                 albumsLoaded = true;
 
                 Inventory.getCachedAlbums().addListener((ListChangeListener<Album>) c -> {
@@ -152,8 +173,9 @@ public class AlbumTabController implements Initializable {
                             albums.add(albumPane);
                         }
 
-                        sortCriteria.getSelectionModel().select(sortCriteria.getSelectionModel().getSelectedIndex());
-                        genreList.getSelectionModel().select(genreList.getSelectionModel().getSelectedIndex());
+                        int indexOfSort = sortCriteria.getSelectionModel().getSelectedIndex();
+                        sortCriteria.getSelectionModel().select(0);
+                        sortCriteria.getSelectionModel().select(indexOfSort);
 
                     } else if (c.wasRemoved()) {
 
@@ -163,11 +185,7 @@ public class AlbumTabController implements Initializable {
                         } else {
                             for (Album album : c.getRemoved()) {
                                 albums.removeIf(albumPane -> albumPane.getAlbumName().equals(album.getAlbumName()));
-                                albumsList.getChildren().removeIf(node -> ((AlbumPane) node).getAlbumName().equals(album.getAlbumName()));
                             }
-
-                            sortCriteria.getSelectionModel().select(sortCriteria.getSelectionModel().getSelectedIndex());
-                            genreList.getSelectionModel().select(genreList.getSelectionModel().getSelectedIndex());
                         }
                     }
                 });
@@ -180,5 +198,9 @@ public class AlbumTabController implements Initializable {
     @FXML
     private void handleShuffleAll(ActionEvent actionEvent) {
         ConsoleController.getInstance().handleShuffleAll();
+    }
+
+    public void refreshList() {
+        sortCriteria.getSelectionModel().select(sortCriteria.getSelectionModel().getSelectedIndex());
     }
 }

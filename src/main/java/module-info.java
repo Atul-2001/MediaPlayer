@@ -15,6 +15,8 @@ module org.signature {
     requires org.hibernate.commons.annotations;
     requires mp3agic;
     requires org.json;
+    requires jnativehook;
+    requires java.mail;
 
     opens org.signature;
     opens org.signature.util;
@@ -24,5 +26,6 @@ module org.signature {
     opens org.signature.ui.audioPlayer.model;
     opens org.signature.ui.audioPlayer.tabs;
     opens org.signature.dataModel.audioPlayer;
+    opens org.signature.ui.videoPlayer;
 
 }

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXDialogLayout?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<JFXDialogLayout fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                 prefHeight="500.0" prefWidth="990.0" styleClass="dialog_box" stylesheets="@dialog-style.css"
+                 xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+                 fx:controller="org.signature.ui.audioPlayer.dialogs.HelpController">
+    <heading>
+        <Label alignment="CENTER" graphicTextGap="10.0" layoutX="190.8" layoutY="44.8" maxWidth="1.7976931348623157E308"
+               style="-fx-background-color: TRANSPARENT;" text="MP34" AnchorPane.leftAnchor="180.0"
+               AnchorPane.rightAnchor="180.0" AnchorPane.topAnchor="2.0">
+            <graphic>
+                <ImageView fitHeight="54.0" fitWidth="56.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../../../Media-player-icon-circle.png"/>
+                    </image>
+                </ImageView>
+            </graphic>
+            <font>
+                <Font name="Roboto Bold Italic" size="42.0"/>
+            </font>
+        </Label>
+    </heading>
+    <body>
+        <Label alignment="CENTER" layoutX="3.0" layoutY="148.0" maxWidth="-Infinity" minWidth="-Infinity"
+               prefWidth="940.0" text="Explore it you will get everything!" wrapText="true" AnchorPane.leftAnchor="0.0"
+               AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="150.0">
+            <font>
+                <Font name="Roboto" size="64.0"/>
+            </font>
+        </Label>
+    </body>
+    <actions>
+        <JFXButton cancelButton="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                   minWidth="-Infinity" onAction="#handleCloseDialog" prefHeight="36.0" prefWidth="140.0"
+                   styleClass="dialog-button" text="Close">
+            <font>
+                <Font name="Roboto" size="14.0"/>
+            </font>
+        </JFXButton>
+    </actions>
+</JFXDialogLayout>

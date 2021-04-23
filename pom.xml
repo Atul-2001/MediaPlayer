@@ -1,5 +1,5 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.signature</groupId>
     <artifactId>mediaplayer</artifactId>
@@ -37,7 +37,7 @@
         <dependency>
             <groupId>com.jfoenix</groupId>
             <artifactId>jfoenix</artifactId>
-            <version>9.0.10</version>
+            <version>9.0.9</version>
         </dependency>
 
         <dependency>
@@ -81,6 +81,24 @@
             <artifactId>json</artifactId>
             <version>20201115</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.1stleg</groupId>
+            <artifactId>jnativehook</artifactId>
+            <version>2.1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>javax.mail</artifactId>
+            <version>1.6.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sun.activation</groupId>
+            <artifactId>jakarta.activation</artifactId>
+            <version>1.2.2</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -115,9 +133,71 @@
                     </options>
                     <release>${maven.compiler.target}</release>
                     <jlinkImageName>MediaPlayer</jlinkImageName>
-                    <launcher>MediaPlayer</launcher>
+                    <launcher>MP34</launcher>
                     <mainClass>org.signature.App</mainClass>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.moditect</groupId>
+                <artifactId>moditect-maven-plugin</artifactId>
+                <version>1.0.0.Beta2</version>
+                <executions>
+                    <execution>
+                        <id>add-module-info</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>add-module-info</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>
+                                ${project.build.directory}/modules
+                            </outputDirectory>
+                            <modules>
+                                <module>
+                                    <artifact>
+                                        <groupId>com.h2database</groupId>
+                                        <artifactId>h2</artifactId>
+                                    </artifact>
+                                    <moduleInfo>
+                                        <name>org.h2</name>
+                                    </moduleInfo>
+                                </module>
+                                <module>
+                                    <artifact>
+                                        <groupId>org.apache.logging.log4j</groupId>
+                                        <artifactId>log4j-api</artifactId>
+                                    </artifact>
+                                    <moduleInfo>
+                                        <name>org.apache.logging.log4j</name>
+                                    </moduleInfo>
+                                </module>
+                                <module>
+                                    <artifact>
+                                        <groupId>org.apache.logging.log4j</groupId>
+                                        <artifactId>log4j-core</artifactId>
+                                    </artifact>
+                                    <moduleInfo>
+                                        <name>org.apache.logging.log4j.core</name>
+                                    </moduleInfo>
+                                </module>
+                                <module>
+                                    <artifact>
+                                        <groupId>org.hibernate</groupId>
+                                        <artifactId>hibernate-core</artifactId>
+                                    </artifact>
+                                    <moduleInfo>
+                                        <name>org.hibernate</name>
+                                    </moduleInfo>
+                                </module>
+                            </modules>
+                            <jdepsExtraArgs>
+                                <arg>--multi-release</arg>
+                                <extraArg>9</extraArg>
+                            </jdepsExtraArgs>
+                            <overwriteExistingFiles>true</overwriteExistingFiles>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

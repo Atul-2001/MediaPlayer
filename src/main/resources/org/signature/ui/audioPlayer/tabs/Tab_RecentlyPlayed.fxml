@@ -8,10 +8,10 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.SVGPath?>
 <?import javafx.scene.text.*?>
-<VBox xmlns:fx="http://javafx.com/fxml/1" fx:id="tab_recentlyPlayed" maxHeight="1.7976931348623157E308"
-      maxWidth="1.7976931348623157E308"
+
+<VBox fx:id="tab_recentlyPlayed" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
       prefHeight="630.0" prefWidth="960.0" stylesheets="@../audio-player-style.css"
-      xmlns="http://javafx.com/javafx/11.0.1"
+      xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="org.signature.ui.audioPlayer.tabs.RecentlyPlayedTabController">
     <padding>
         <Insets bottom="2.0" left="20.0" right="10.0"/>
@@ -40,7 +40,7 @@
                             maxWidth="1.7976931348623157E308" pannable="true" vbarPolicy="ALWAYS" visible="false">
                     <content>
                         <FlowPane fx:id="list_played_albums" maxHeight="1.7976931348623157E308"
-                                  maxWidth="1.7976931348623157E308" hgap="12" vgap="6" />
+                                  maxWidth="1.7976931348623157E308" hgap="12" vgap="6"/>
                     </content>
                     <padding>
                         <Insets right="10.0"/>

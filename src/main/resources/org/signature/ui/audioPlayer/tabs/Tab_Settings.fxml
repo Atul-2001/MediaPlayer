@@ -80,7 +80,7 @@
                                 </Label>
                                 <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
                                        prefHeight="20.0" styleClass="link-btn" text="Equalizer" textFill="#4885ed"
-                                       VBox.vgrow="NEVER">
+                                       VBox.vgrow="NEVER" onMouseClicked="#handleOpenEqualizer">
                                     <font>
                                         <Font name="Roboto" size="14.0"/>
                                     </font>
@@ -212,14 +212,15 @@
                         <VBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="439.0" maxHeight="-Infinity"
                               minHeight="-Infinity" prefHeight="100.0" spacing="2.0">
                             <children>
-                                <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+                                <Label maxHeight="-Infinity" minHeight="-Infinity"
                                        prefHeight="30.0" text="App" VBox.vgrow="NEVER">
                                     <font>
                                         <Font name="Roboto" size="22.0"/>
                                     </font>
                                 </Label>
-                                <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
-                                       prefHeight="20.0" styleClass="link-btn" text="Help" textFill="#4885ed">
+                                <Label maxHeight="-Infinity" minHeight="-Infinity"
+                                       prefHeight="20.0" styleClass="link-btn" text="Help" textFill="#4885ed"
+                                       onMouseClicked="#handleShowHelp">
                                     <font>
                                         <Font name="Roboto" size="14.0"/>
                                     </font>
@@ -228,8 +229,9 @@
                                     </cursor>
                                 </Label>
                                 <Label layoutX="10.0" layoutY="56.0" maxHeight="-Infinity"
-                                       maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="20.0"
-                                       styleClass="link-btn" text="Feedback" textFill="#4885ed">
+                                       minHeight="-Infinity" prefHeight="20.0"
+                                       styleClass="link-btn" text="Feedback" textFill="#4885ed"
+                                       onMouseClicked="#handleShowFeedbackForm">
                                     <font>
                                         <Font name="Roboto" size="14.0"/>
                                     </font>
@@ -238,8 +240,9 @@
                                     </cursor>
                                 </Label>
                                 <Label layoutX="10.0" layoutY="67.0" maxHeight="-Infinity"
-                                       maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="20.0"
-                                       styleClass="link-btn" text="About" textFill="#4885ed">
+                                       minHeight="-Infinity" prefHeight="20.0"
+                                       styleClass="link-btn" text="About" textFill="#4885ed"
+                                       onMouseClicked="#handleShowAbout">
                                     <font>
                                         <Font name="Roboto" size="14.0"/>
                                     </font>

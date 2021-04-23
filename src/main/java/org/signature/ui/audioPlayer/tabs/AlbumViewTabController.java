@@ -24,6 +24,7 @@ import org.signature.dataModel.audioPlayer.Song;
 import org.signature.ui.audioPlayer.BaseController;
 import org.signature.ui.audioPlayer.ConsoleController;
 import org.signature.ui.audioPlayer.Inventory;
+import org.signature.ui.audioPlayer.dialogs.EditAlbumInfoDialogController;
 import org.signature.ui.audioPlayer.model.AlbumPane;
 import org.signature.ui.audioPlayer.model.SongPane;
 import org.signature.util.Utils;
@@ -78,6 +79,7 @@ public class AlbumViewTabController implements Initializable {
 
     private boolean isViewRequestedFromArtist = false;
     private Artist requesterArtist = null;
+    private boolean isViewRequestedFromSong = false;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -95,7 +97,7 @@ public class AlbumViewTabController implements Initializable {
                         continue;
                     }
 
-                    SongPane songPane = new SongPane(song);
+                    SongPane songPane = new SongPane(song, album);
                     if (i%2 == 0) {
                         songPane.getStyleClass().add("songNodeEVEN");
                     } else {
@@ -130,7 +132,7 @@ public class AlbumViewTabController implements Initializable {
             }
         });
 
-        LOGGER.log(Level.INFO, "Tab Album View Loaded!");
+//        LOGGER.log(Level.INFO, "Tab Album View Loaded!");
     }
 
     public static AlbumViewTabController getInstance() {
@@ -151,6 +153,9 @@ public class AlbumViewTabController implements Initializable {
                     BaseController.getInstance().handleShowArtistView();
                 }
             }
+        } else if (isViewRequestedFromSong) {
+            this.isViewRequestedFromSong = false;
+            BaseController.getInstance().getBtnSongs().fire();
         } else {
             BaseController.getInstance().getBtnAlbums().fire();
         }
@@ -159,6 +164,7 @@ public class AlbumViewTabController implements Initializable {
     @FXML
     private void handlePlayAllSongs(ActionEvent actionEvent) {
         ConsoleController.getInstance().load(this.album);
+        RecentlyPlayedTabController.getInstance().addRecentlyPlayed(this.album);
     }
 
     @FXML
@@ -174,6 +180,7 @@ public class AlbumViewTabController implements Initializable {
 
     @FXML
     private void handleEditAlbumInfo(ActionEvent actionEvent) {
+        EditAlbumInfoDialogController.getInstance().load(this.album);
     }
 
     @FXML
@@ -190,7 +197,7 @@ public class AlbumViewTabController implements Initializable {
         dialog.getDialogPane().setHeader(header);
 
         Label content = new Label();
-        content.setText("If you delete \"" + album.getAlbumName() + "\" it won't be on this device any more.");
+        content.setText("If you delete \"" + album.getAlbumName() + "\", it won't be on this device any more.");
         content.setWrapText(true);
         content.setMaxWidth(480.0);
         content.setMaxHeight(Double.MAX_VALUE);
@@ -240,16 +247,32 @@ public class AlbumViewTabController implements Initializable {
                 }
             }
 
+            album.albumImageMimeTypeProperty().addListener((observable, oldValue, newValue) -> {
+                byte[] albumArt1 = album.getAlbumImage();
+                if (albumArt1 == null || albumArt1.length == 0) {
+                    this.albumArtView.setImage(AlbumPane.getDefaultAlbumArt());
+                } else {
+                    try {
+                        this.albumArtView.setImage(SwingFXUtils.toFXImage(ImageIO.read(new ByteArrayInputStream(albumArt1)), null));
+                    } catch (NullPointerException | IOException ex) {
+                        this.albumArtView.setImage(AlbumPane.getDefaultAlbumArt());
+                    }
+                }
+            });
+
             albumName.setText(album.getAlbumName());
             artistName.setText(album.getArtist());
             albumReleaseYear.setText(album.getReleaseYear());
-            albumCategory.setText(Inventory.getGenreDescription(album.getGenre()));
+            albumCategory.setText(album.getGenre());
 
             return true;
         } catch (Exception ex) {
             LOGGER.log(Level.TRACE, ex);
-            ex.printStackTrace();
             return false;
         }
+    }
+
+    public void setViewRequestedFromSong(boolean value) {
+        this.isViewRequestedFromSong = value;
     }
 }

@@ -10,35 +10,44 @@
 <?import javafx.scene.shape.SVGPath?>
 <?import javafx.scene.text.Font?>
 
-<VBox id="dialog-base" fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="560.0" prefWidth="960.0" stylesheets="@dialog-style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.signature.ui.audioPlayer.dialogs.PlayingListDialogController">
-   <children>
-      <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="40.0" VBox.vgrow="NEVER">
-         <children>
-            <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Now Playing List" HBox.hgrow="ALWAYS">
-               <font>
-                  <Font name="Roboto" size="18.0" />
-               </font>
-               <padding>
-                  <Insets left="10.0" />
-               </padding>
-            </Label>
-            <JFXButton id="btn_close" fx:id="btn_close" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="44.0" ripplerFill="BROWN" HBox.hgrow="NEVER">
-               <graphic>
-                  <SVGPath content="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z" />
-               </graphic>
-               <tooltip>
-                  <Tooltip text="Close" />
-               </tooltip>
-               <HBox.margin>
-                  <Insets bottom="0.5" right="0.5" top="0.5" />
-               </HBox.margin>
-            </JFXButton>
-         </children>
-      </HBox>
-      <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
-         <content>
-            <VBox fx:id="songsList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
-         </content>
-      </ScrollPane>
-   </children>
+<VBox fx:id="root" styleClass="dialog_box" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+      minWidth="-Infinity" prefHeight="680.0" prefWidth="1280.0" stylesheets="@dialog-style.css"
+      xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.signature.ui.audioPlayer.dialogs.PlayingListDialogController">
+    <children>
+        <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+              prefHeight="40.0" VBox.vgrow="NEVER">
+            <children>
+                <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Now Playing List"
+                       HBox.hgrow="ALWAYS">
+                    <font>
+                        <Font name="Roboto" size="18.0"/>
+                    </font>
+                    <padding>
+                        <Insets left="10.0"/>
+                    </padding>
+                </Label>
+                <JFXButton id="btn_close" alignment="CENTER" contentDisplay="GRAPHIC_ONLY"
+                           maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                           prefHeight="30.0" prefWidth="44.0" ripplerFill="BROWN" HBox.hgrow="NEVER" onAction="#handleCloseDialog">
+                    <graphic>
+                        <SVGPath
+                                content="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z"/>
+                    </graphic>
+                    <tooltip>
+                        <Tooltip text="Close"/>
+                    </tooltip>
+                    <HBox.margin>
+                        <Insets bottom="0.5" right="0.5" top="0.5"/>
+                    </HBox.margin>
+                </JFXButton>
+            </children>
+        </HBox>
+        <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308"
+                    maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+            <content>
+                <VBox fx:id="songsList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"/>
+            </content>
+        </ScrollPane>
+    </children>
 </VBox>

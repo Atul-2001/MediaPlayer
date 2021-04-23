@@ -10,12 +10,12 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.signature.dataModel.audioPlayer.Album;
 import org.signature.dataModel.audioPlayer.Artist;
 import org.signature.dataModel.audioPlayer.OnlineSong;
+import org.signature.dataModel.audioPlayer.Playlist;
 import org.signature.ui.audioPlayer.BaseController;
 import org.signature.ui.audioPlayer.ConsoleController;
 import org.signature.ui.audioPlayer.Inventory;
@@ -60,6 +60,23 @@ public class RecentlyPlayedTabController implements Initializable {
                         Inventory.addRecentlyPlayed(object);
                     }
                 }
+            } else if (c.wasRemoved()) {
+                for (Object object : c.getRemoved()) {
+                    if (isCachedListLoaded) {
+                        list_played_albums.getChildren().removeIf(node -> {
+                            if (object instanceof Playlist) {
+                                return ((RecentPane) node).getName().equals(((Playlist) object).getPlaylistName());
+                            } else if (object instanceof Album) {
+                                return ((RecentPane) node).getName().equals(((Album) object).getAlbumName()) && ((RecentPane) node).getCategory().equals("Album by ".concat(((Album) object).getArtist()));
+                            } else if (object instanceof Artist) {
+                                return ((RecentPane) node).getName().equals(((Artist) object).getName());
+                            } else {
+                                return false;
+                            }
+                        });
+                        Inventory.removeRecentlyPlayed(object);
+                    }
+                }
             }
 
             if (list_played_albums.getChildren().size() == 0 && !contentStack.getChildren().get(1).toString().contains("VBox")) {
@@ -77,7 +94,7 @@ public class RecentlyPlayedTabController implements Initializable {
             isCachedListLoaded = true;
         }
 
-        LOGGER.log(Level.INFO, "'Recently Played' Tab Loaded !!");
+//        LOGGER.log(Level.INFO, "'Recently Played' Tab Loaded !!");
     }
 
     public static RecentlyPlayedTabController getInstance() {
@@ -104,9 +121,14 @@ public class RecentlyPlayedTabController implements Initializable {
     }
 
     public void addRecentlyPlayed(Object recentPlayed) {
-        assert recentPlayed instanceof Album || recentPlayed instanceof Artist || recentPlayed instanceof OnlineSong;
+        assert recentPlayed instanceof Album || recentPlayed instanceof Artist || recentPlayed instanceof OnlineSong || recentPlayed instanceof Playlist;
         if (!recentlyPlayed.contains(recentPlayed)) {
             recentlyPlayed.add(recentPlayed);
         }
+    }
+
+    public boolean removeRecentlyPlayed(Object recentPlayed) {
+        assert recentPlayed instanceof Album || recentPlayed instanceof Artist || recentPlayed instanceof OnlineSong || recentPlayed instanceof Playlist;
+        return recentlyPlayed.remove(recentPlayed);
     }
 }

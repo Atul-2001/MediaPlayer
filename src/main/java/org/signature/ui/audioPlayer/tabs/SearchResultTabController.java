@@ -12,7 +12,6 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.signature.dataModel.audioPlayer.Album;
@@ -85,7 +84,7 @@ public class SearchResultTabController implements Initializable {
                         continue;
                     }
 
-                    SongPane songPane = new SongPane(song);
+                    SongPane songPane = new SongPane(song, "Search Result List");
                     if (i.intValue() %2 == 0) {
                         songPane.getStyleClass().add("songNodeEVEN");
                     } else {
@@ -93,7 +92,7 @@ public class SearchResultTabController implements Initializable {
                     }
                     list_songs.getChildren().add(songPane);
 
-                    songPane = new SongPane(song);
+                    songPane = new SongPane(song, "Search Result List");
                     if (i.intValue() %2 == 0) {
                         songPane.getStyleClass().add("songNodeEVEN");
                     } else {
@@ -189,7 +188,7 @@ public class SearchResultTabController implements Initializable {
             }
         });
 
-        LOGGER.log(Level.INFO, "'Search Result' Tab Loaded !!");
+//        LOGGER.log(Level.INFO, "'Search Result' Tab Loaded !!");
     }
 
     public static SearchResultTabController getInstance() {
@@ -230,6 +229,10 @@ public class SearchResultTabController implements Initializable {
         }
     }
 
+    public ObservableList<Song> getSongs() {
+        return songs;
+    }
+
     public void setSongs(List<Song> songs) {
         try {
             list_songs.getChildren().clear();
@@ -254,6 +257,10 @@ public class SearchResultTabController implements Initializable {
         } catch (NullPointerException | IndexOutOfBoundsException ignored) {}
     }
 
+    public ObservableList<Album> getAlbums() {
+        return albums;
+    }
+
     public void setAlbums(List<Album> albums) {
         try {
             list_albums.getChildren().clear();
@@ -276,6 +283,10 @@ public class SearchResultTabController implements Initializable {
             mirror_list_albums.getChildren().remove(albums.indexOf(album));
             albums.remove(album);
         } catch (NullPointerException | IndexOutOfBoundsException ignored) {}
+    }
+
+    public ObservableList<Artist> getArtists() {
+        return artists;
     }
 
     public void setArtists(List<Artist> artists) {

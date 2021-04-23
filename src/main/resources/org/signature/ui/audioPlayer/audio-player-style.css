@@ -7,38 +7,25 @@
     -fx-background-fill: linear-gradient(to right, #badbf9 0%, #E0C3FC 42%, #f8fbc0 100%);
 }
 
-#audio-player-base {
-    -fx-background-color: -fx-background-fill;
+/********** Basic *************************************************************************/
+StackPane {
+    -fx-background-color: TRANSPARENT;
 }
 
-#sideMenuBar {
-    -fx-background-color: rgba(218, 224, 226, 0.6);
-    /* top | right | bottom | left */
-    -fx-border-width: 0 1px 0 0;
-    /* top | right | bottom | left */
-    -fx-border-color: TRANSPARENT #DAE0E2 TRANSPARENT TRANSPARENT;
+VBox {
+    -fx-background-color: TRANSPARENT;
 }
 
-#sideMenuDrawer {
-    -fx-background-color: rgba(218, 224, 226, 1.0);
+HBox {
+    -fx-background-color: TRANSPARENT;
+}
+
+FlowPane {
+    -fx-background-color: TRANSPARENT;
 }
 
 .jfx-button:hover {
     -fx-background-color: -fx-focus-color;
-}
-
-#search-box {
-    -fx-background-color: #ced4da;
-    -fx-background-radius: 8%;
-    -fx-border-color: #adb5bd;
-    -fx-border-radius: 2%;
-}
-
-#search-box > .text-field {
-    -fx-background-color: TRANSPARENT;
-    -fx-background-radius: 8%;
-    -fx-text-fill: BLACK;
-    -fx-prompt-text-fill: #747474;
 }
 
 .toggle-button {
@@ -56,14 +43,6 @@
     -fx-border-color: #0A79DF;
 }
 
-#btn-search {
-    -fx-background-color: TRANSPARENT;
-}
-
-#btn-search:hover {
-    -fx-background-color: #0adfb4;
-}
-
 .scroll-pane {
     -fx-background-color: TRANSPARENT;
     -fx-border-width: 0 0 0 0;
@@ -74,29 +53,57 @@
     -fx-background-color: TRANSPARENT;
 }
 
-StackPane {
-    -fx-background-color: TRANSPARENT;
-}
-
-VBox {
-    -fx-background-color: TRANSPARENT;
-}
-
-HBox {
-    -fx-background-color: TRANSPARENT;
-}
-
-FlowPane {
-    -fx-background-color: TRANSPARENT;
-}
-
 .separator {
     -fx-background-color:  DARKGRAY;
 }
 
+/****************** Main *******************************************************************/
+#audio-player-base {
+    -fx-background-color: -fx-background-fill;
+}
+
+#sideMenuBar {
+    -fx-background-color: rgba(218, 224, 226, 0.6);
+    /* top | right | bottom | left */
+    -fx-border-width: 0 1px 0 0;
+    /* top | right | bottom | left */
+    -fx-border-color: TRANSPARENT #DAE0E2 TRANSPARENT TRANSPARENT;
+}
+
+#sideMenuDrawer {
+    -fx-background-color: rgba(218, 224, 226, 1.0);
+}
+
+#btn-search {
+    -fx-background-color: TRANSPARENT;
+}
+
+#btn-search:hover {
+    -fx-background-color: #0adfb4;
+}
+
+#search-box {
+    -fx-background-color: #ced4da;
+    -fx-background-radius: 8%;
+    -fx-border-color: #adb5bd;
+    -fx-border-radius: 2%;
+}
+
+#search-box > .text-field {
+    -fx-background-color: TRANSPARENT;
+    -fx-background-radius: 8%;
+    -fx-text-fill: BLACK;
+    -fx-prompt-text-fill: #747474;
+}
+
+/****************** Tabs ***************************************************************/
 .jfx-radio-button {
     -jfx-selected-color: #0A79DF;
     -jfx-unselected-color: #5A5A5A;
+}
+
+.jfx-autocomplete-popup .list-cell {
+    -fx-font-family : "Roboto Regular";
 }
 
 .link-btn:hover {
@@ -116,25 +123,40 @@ FlowPane {
     -fx-effect: dropshadow(two-pass-box, DARKGRAY, 10, 0, 0, 0);
 }
 
-#addMusicDialog {
-    -fx-background-color: -fx-background-fill;
+.jfx-combo-box .list-view {
+    -fx-background-color: linear-gradient(to top, #FFDEE9 0%, #B5FFFC 100%);
 }
 
-#addPlaylistDialog {
+.jfx-combo-box .list-view .list-cell:hover {
     -fx-background-color: -fx-background-fill;
+    -fx-text-fill: BLACK;
 }
 
-#aboutSongDialog {
+.jfx-combo-box .list-view .list-cell:focused {
+    -fx-background-color: -fx-google-blue;
+}
+
+/************* Tab_BrowseOnline ***********************************************************/
+.list-cell {
+    -fx-background-color: TRANSPARENT;
+}
+
+.list-view {
+    -fx-background-color: TRANSPARENT;
+}
+
+/**************** Dialog ****************************************************/
+.dialog_box {
     -fx-background-color: -fx-background-fill;
     -fx-border-color: #20ee20;
     -fx-border-width: 2px;
 }
 
-.dialog-buttons {
+.dialog-button {
     -fx-background-color: #b4b4b4;
 }
 
-.dialog-buttons:hover {
+.dialog-button:hover {
     -fx-background-color: #8c8c8c;
 }
 
@@ -148,7 +170,17 @@ FlowPane {
     -fx-highlight-fill: #20ee20;
 }
 
-/****************************************************************************/
+.dialog-text-area {
+    -fx-background-color: TRANSPARENT;
+    -fx-border-color: GRAY;
+}
+
+.dialog-text-area:focused {
+    -fx-background-color: WHITE;
+    -fx-highlight-fill: #20ee20;
+}
+
+/************ Console Slider **********************************************************/
 .jfx-slider {
     -jfx-default-thumb: #0F9D58;
     -jfx-default-track: #CCCCCC;
@@ -202,7 +234,7 @@ FlowPane {
     -fx-background-insets: 0;
 }
 
-/**********************************************************************************************************************/
+/******************* Console **************************************************************/
 .btn-player-control:hover {
     -fx-border-radius: 5em;
     -fx-border-color: #00fffd;
@@ -241,7 +273,7 @@ FlowPane {
     -fx-background-color: #92faf8;
 }
 
-/**********************************************************************************************************************/
+/********************** Mini Player *********************************************************/
 .btn-mini-player-control:hover {
     -fx-border-color: DARKGRAY;
     -fx-background-color: rgba(180, 250, 248, 0.2);
@@ -274,13 +306,4 @@ FlowPane {
 .jfx-progress-bar > .bar {
     -fx-background-radius: 0;
     -fx-background-insets: 0;
-}
-
-/*************Tab_BrowseOnline**************************************************************************************************/
-.list-cell {
-    -fx-background-color: TRANSPARENT;
-}
-
-.list-view {
-    -fx-background-color: TRANSPARENT;
 }

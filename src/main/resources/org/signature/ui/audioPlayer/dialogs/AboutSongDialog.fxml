@@ -2,19 +2,33 @@
 
 <?import com.jfoenix.controls.JFXButton?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
-<BorderPane id="aboutSongDialog" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-            prefHeight="498.0" prefWidth="748.0" stylesheets="@../audio-player-style.css"
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane fx:id="root" styleClass="dialog_box" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+            minWidth="-Infinity" prefHeight="498.0" prefWidth="748.0" stylesheets="@../audio-player-style.css"
             xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="org.signature.ui.audioPlayer.dialogs.AboutSongDialogController">
     <bottom>
         <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-              minWidth="-Infinity" prefHeight="60.0" prefWidth="748.0" BorderPane.alignment="CENTER">
+              minWidth="-Infinity" prefHeight="60.0" prefWidth="748.0"
+              spacing="10.0" BorderPane.alignment="CENTER">
             <children>
                 <JFXButton maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-                           onAction="#handleCloseDialog" prefHeight="30.0" prefWidth="140.0" styleClass="dialog-buttons"
+                           onAction="#handleEditSongDetail" prefHeight="30.0" prefWidth="140.0"
+                           styleClass="dialog-button" text="Edit">
+                    <font>
+                        <Font size="14.0"/>
+                    </font>
+                </JFXButton>
+                <JFXButton maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                           onAction="#handleCloseDialog" prefHeight="30.0" prefWidth="140.0" styleClass="dialog-button"
                            text="Close">
                     <font>
                         <Font name="Roboto" size="14.0"/>

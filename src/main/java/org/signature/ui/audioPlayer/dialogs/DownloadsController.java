@@ -12,7 +12,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.CacheHint;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.image.Image;
@@ -21,24 +23,31 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import javafx.stage.Screen;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.controlsfx.control.Notifications;
+import org.signature.App;
 import org.signature.dataModel.audioPlayer.OnlineSong;
+import org.signature.ui.audioPlayer.AudioPlayer;
 import org.signature.ui.audioPlayer.Inventory;
-import org.signature.ui.audioPlayer.tabs.SettingsTabController;
 import org.signature.util.Alerts;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class DownloadsController implements Initializable {
 
@@ -56,6 +65,17 @@ public class DownloadsController implements Initializable {
     private String youtubeExec = "youtube-dl.exe";
     private boolean isUnix = false;
 
+    private static final ExecutorService downloadServicePool = Executors.newCachedThreadPool(new ThreadFactory() {
+        final AtomicInteger counter = new AtomicInteger();
+
+        @Override
+        public Thread newThread(Runnable runnable) {
+            return new Thread(runnable, "Download Service Pool--Thread-" + counter.incrementAndGet());
+        }
+    });
+
+    private Stage stage;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         if (location != null && instance == null) {
@@ -67,6 +87,25 @@ public class DownloadsController implements Initializable {
             isUnix = true;
 
         if (isUnix) youtubeExec = "./youtube-dl";
+
+        this.stage = new Stage();
+        this.stage.setScene(new Scene(downloads_dialog));
+        this.stage.setTitle("Downloads");
+
+        Screen screen = Screen.getPrimary();
+        Rectangle2D bounds = screen.getVisualBounds();
+        this.stage.setX(bounds.getMinX());
+        this.stage.setY(bounds.getMinY());
+        this.stage.setMinWidth(bounds.getWidth() * 0.75);
+        this.stage.setMinHeight(bounds.getHeight() * 0.75);
+        this.stage.setWidth(bounds.getWidth() * 0.75);
+        this.stage.setHeight(bounds.getHeight() * 0.75);
+
+        App.getStage().setOnCloseRequest(event -> {
+            if (this.stage.isShowing()) {
+                this.stage.close();
+            }
+        });
     }
 
     public static DownloadsController getInstance() {
@@ -77,15 +116,36 @@ public class DownloadsController implements Initializable {
         return this.downloads_dialog;
     }
 
+    public static ExecutorService getDownloadServicePool() {
+        return downloadServicePool;
+    }
+
+    public boolean isShowing() {
+        return this.stage.isShowing();
+    }
+
+    public void showDownloads() {
+        if (!this.stage.isShowing()) {
+            this.stage.show();
+        }
+        this.stage.toFront();
+    }
+
     public void addToDownloads(OnlineSong onlineSong, JFXButton button) {
-        new Thread(new Task<Void>() {
+        downloadServicePool.submit(new Task<Void>() {
             @Override
             protected Void call() throws Exception {
                 String refinedTitle = onlineSong.getTitle().replace("|", "&").replace("\\", "&").replace("/", "&").replace(":", "-");
 
                 Platform.runLater(() -> button.setDisable(true));
 
-                ImageView thumbnailImageView = new ImageView(onlineSong.getThumbnailURL());
+
+                ImageView thumbnailImageView = new ImageView();
+                if (onlineSong.getThumbnailURL() != null) {
+                    thumbnailImageView.setImage(new Image(onlineSong.getThumbnailURL()));
+                } else if (onlineSong.getThumbnail() != null) {
+                    thumbnailImageView.setImage(SwingFXUtils.toFXImage(ImageIO.read(new ByteArrayInputStream(onlineSong.getThumbnail())), null));
+                }
                 thumbnailImageView.setFitHeight(90);
                 thumbnailImageView.setFitWidth(120);
 
@@ -125,8 +185,8 @@ public class DownloadsController implements Initializable {
 
                 Platform.runLater(() -> downloadsList.getChildren().add(downloadNode));
 
-                if (SettingsTabController.getInstance().isStageShowing()) {
-                    SettingsTabController.getInstance().showDownloads();
+                if (stage.isShowing()) {
+                    showDownloads();
                 } else {
                     Notifications notificationsBuilder = Notifications.create()
                             .title("Download Started")
@@ -134,7 +194,7 @@ public class DownloadsController implements Initializable {
                             .graphic(null)
                             .hideAfter(Duration.seconds(20))
                             .position(Pos.TOP_RIGHT)
-                            .onAction(event -> SettingsTabController.getInstance().showDownloads());
+                            .onAction(event -> showDownloads());
                     Platform.runLater(notificationsBuilder::showInformation);
                 }
 
@@ -158,7 +218,8 @@ public class DownloadsController implements Initializable {
                                 try {
                                     double d = Double.parseDouble(progressStr);
                                     Platform.runLater(() -> progressBar.setProgress(d / 100));
-                                } catch (NumberFormatException ignored) {}
+                                } catch (NumberFormatException ignored) {
+                                }
                             }
                         } else if (newLine.startsWith("[ffmpeg]")) {
                             Platform.runLater(() -> statusLabel.setText("Converting ..."));
@@ -176,27 +237,27 @@ public class DownloadsController implements Initializable {
                     Mp3File mp3File = new Mp3File(tmpAudioFile);
                     mp3File.setId3v2Tag(id3v2Tag);
 
-                    Image img = new Image(onlineSong.getThumbnailURL());
-                    BufferedImage bufferedImage = SwingFXUtils.fromFXImage(img, null);
-                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                    ImageIO.write(bufferedImage, "png", byteArrayOutputStream);
-
                     id3v2Tag.setTitle(onlineSong.getTitle());
                     id3v2Tag.setArtist(onlineSong.getChannelName());
                     id3v2Tag.setAlbum("Youtube");
                     id3v2Tag.setAlbumArtist(onlineSong.getChannelName());
+                    id3v2Tag.setGenreDescription("youtube.com");
                     id3v2Tag.setComment("Downloaded via github.com/atul-2001/media_player. Made with Love by Atul. Youtube video url : " + onlineSong.getURL());
-                    id3v2Tag.setAlbumImage(byteArrayOutputStream.toByteArray(), "YTMusic");
+
+                    if (onlineSong.getThumbnailURL() != null) {
+                        Image img = new Image(onlineSong.getThumbnailURL());
+                        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(img, null);
+                        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                        ImageIO.write(bufferedImage, "png", byteArrayOutputStream);
+                        id3v2Tag.setAlbumImage(byteArrayOutputStream.toByteArray(), "YTMusic");
+                    } else if (onlineSong.getThumbnail() != null) {
+                        id3v2Tag.setAlbumImage(onlineSong.getThumbnail(), "YTMusic");
+                    }
 
                     String outputFile = Inventory.getDefaultMusicFolder() + File.separator + refinedTitle + ".mp3";
                     mp3File.save(outputFile);
 
                     tmpAudioFile.delete();
-
-                    Platform.runLater(() -> {
-                        progressBar.setProgress(1);
-                        statusLabel.setText("Downloaded!");
-                    });
 
                     Notifications notificationsBuilder = Notifications.create()
                             .title("Download Completed")
@@ -204,11 +265,25 @@ public class DownloadsController implements Initializable {
                             .graphic(null)
                             .hideAfter(Duration.seconds(15))
                             .position(Pos.TOP_RIGHT);
-                    Platform.runLater(notificationsBuilder::showInformation);
+                    
+                    Platform.runLater(() -> {
+                        progressBar.setProgress(1);
+                        statusLabel.setText("Downloaded!");
+                        notificationsBuilder.showInformation();
+                        
+                        try {
+                            Path path = Path.of(new File(outputFile).toURI());
+                            int libraryID = Inventory.getLibraryId(path.getParent().toString());
+                            if (libraryID != 0) {
+                                BasicFileAttributes attrs = Files.readAttributes(path, BasicFileAttributes.class);
+                                AudioPlayer.getInstance().addSong(path, attrs, libraryID, Inventory.getCachedAlbums().get(0), Inventory.getCachedArtists().get(0));
+                            }
+                        } catch (IOException ex) {
+                            LOGGER.log(Level.ERROR, "Error while adding downloaded song to the list! ", ex);
+                        }
+                    });
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-
+                } catch (Exception ex) {
                     Notifications notificationsBuilder = Notifications.create()
                             .title("Download Failed")
                             .text("Unable to download! Check Stacktrace!")
@@ -223,7 +298,7 @@ public class DownloadsController implements Initializable {
                         Alerts.showErrorAlert("Error!", "Unable to download! Check Stacktrace!");
                     });
 
-                    LOGGER.log(Level.ERROR, e.getLocalizedMessage());
+                    LOGGER.log(Level.ERROR, "Download Failed Error! ", ex);
                     noOfDownloads--;
                 } finally {
                     new File(refinedTitle + "_pass_.mp3").delete();
@@ -232,7 +307,7 @@ public class DownloadsController implements Initializable {
 
                 return null;
             }
-        }).start();
+        });
 
         noOfDownloads++;
     }

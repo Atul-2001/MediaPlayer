@@ -19,6 +19,7 @@ import javafx.scene.text.TextAlignment;
 import org.signature.dataModel.audioPlayer.Artist;
 import org.signature.ui.audioPlayer.BaseController;
 import org.signature.ui.audioPlayer.ConsoleController;
+import org.signature.ui.audioPlayer.dialogs.AddToListDialogController;
 import org.signature.ui.audioPlayer.tabs.ArtistViewTabController;
 import org.signature.ui.audioPlayer.tabs.RecentlyPlayedTabController;
 import org.signature.util.Utils;
@@ -134,7 +135,7 @@ public class ArtistPane extends VBox {
             RecentlyPlayedTabController.getInstance().addRecentlyPlayed(artist);
         });
 
-        this.btn_addToPlaylist.setOnAction(event -> ConsoleController.getInstance().addToNowPlaying(artist));
+        this.btn_addToPlaylist.setOnAction(event -> AddToListDialogController.getInstance().load(artist));
     }
 
     public Artist getArtist() {

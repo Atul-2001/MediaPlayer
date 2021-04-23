@@ -12,17 +12,19 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Font;
-import org.signature.dataModel.audioPlayer.Album;
-import org.signature.dataModel.audioPlayer.Artist;
-import org.signature.dataModel.audioPlayer.OnlineSong;
+import org.signature.dataModel.audioPlayer.*;
 import org.signature.ui.audioPlayer.BaseController;
 import org.signature.ui.audioPlayer.ConsoleController;
+import org.signature.ui.audioPlayer.dialogs.AddToListDialogController;
 import org.signature.ui.audioPlayer.tabs.AlbumViewTabController;
+import org.signature.ui.audioPlayer.tabs.ArtistViewTabController;
+import org.signature.ui.audioPlayer.tabs.PlaylistViewTabController;
 import org.signature.util.Utils;
 
 import javax.imageio.ImageIO;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Objects;
 
 public class RecentPane extends VBox {
 
@@ -37,15 +39,18 @@ public class RecentPane extends VBox {
 
     private Album album = null;
     private Artist artist = null;
+    private Playlist playlist = null;
     private OnlineSong onlineSong = null;
 
     public RecentPane(Object recent) {
-        assert recent instanceof Album || recent instanceof Artist || recent instanceof OnlineSong;
+        assert recent instanceof Album || recent instanceof Artist || recent instanceof OnlineSong || recent instanceof Playlist;
 
         if (recent instanceof Album) {
             this.album = (Album) recent;
         } else if (recent instanceof Artist) {
             this.artist = (Artist) recent;
+        } else if (recent instanceof Playlist) {
+            this.playlist = (Playlist) recent;
         } else {
             this.onlineSong = (OnlineSong) recent;
         }
@@ -56,7 +61,7 @@ public class RecentPane extends VBox {
         setAlignment(Pos.TOP_CENTER);
         setSpacing(4.0);
         setFocusTraversable(true);
-        getStylesheets().add(AlbumPane.class.getResource(DEFAULT_STYLESHEET).toString());
+        getStylesheets().add(Objects.requireNonNull(AlbumPane.class.getResource(DEFAULT_STYLESHEET)).toString());
 
         artPane.setMinSize(160.0, 160.0);
         artPane.setPrefSize(160.0, 160.0);
@@ -77,8 +82,23 @@ public class RecentPane extends VBox {
                     this.artView.setImage(AlbumPane.getDefaultAlbumArt());
                 }
             }
+
+            album.albumImageMimeTypeProperty().addListener((observable, oldValue, newValue) -> {
+                byte[] albumArt1 = album.getAlbumImage();
+                if (albumArt1 == null || albumArt1.length == 0) {
+                    this.artView.setImage(AlbumPane.getDefaultAlbumArt());
+                } else {
+                    try {
+                        this.artView.setImage(SwingFXUtils.toFXImage(ImageIO.read(new ByteArrayInputStream(albumArt1)), null));
+                    } catch (NullPointerException | IOException ex) {
+                        this.artView.setImage(AlbumPane.getDefaultAlbumArt());
+                    }
+                }
+            });
         } else if (recent instanceof Artist) {
             this.artView.setImage(ArtistPane.getDefaultArtistProfile());
+        } else if (recent instanceof Playlist) {
+            this.artView.setImage(PlaylistPane.getDefaultPlaylistArt());
         } else {
             this.artView.setImage(new Image(onlineSong.getThumbnailURL()));
         }
@@ -123,10 +143,13 @@ public class RecentPane extends VBox {
 
         this.name.setAlignment(Pos.TOP_LEFT);
         this.name.setMaxWidth(Double.MAX_VALUE);
+        this.name.textProperty().unbind();
         if (recent instanceof Album) {
-            this.name.setText(album.getAlbumName() == null || album.getAlbumName().isEmpty() ? "Unknown Album" : album.getAlbumName());
+            this.name.textProperty().bind(album.albumNameProperty());
         } else if (recent instanceof Artist) {
-            this.name.setText(artist.getName() == null || artist.getName().isEmpty() ? "Unknown Artist" : artist.getName());
+            this.name.setText(artist.getName());
+        } else if (recent instanceof Playlist) {
+            this.name.setText(playlist.getPlaylistName());
         } else {
             this.name.setText(onlineSong.getTitle());
         }
@@ -138,17 +161,12 @@ public class RecentPane extends VBox {
         this.category.setMinHeight(40.0);
         this.category.setMaxWidth(Double.MAX_VALUE);
         if (recent instanceof Album) {
-            String albumArtist = "Album by ";
-            if (album.getAlbumArtist() == null) {
-                albumArtist += album.getArtist();
-            } else if (album.getAlbumArtist().isEmpty()) {
-                albumArtist += album.getArtist();
-            } else {
-                albumArtist += album.getAlbumArtist();
-            }
-            this.category.setText(albumArtist);
+            this.category.setText("Album by " + ((Album) recent).getArtist());
+            album.artistProperty().addListener((observable, oldValue, newValue) -> this.category.setText("Album by " + newValue));
         } else if (recent instanceof Artist) {
             this.category.setText("Artist");
+        } else if (recent instanceof Playlist) {
+            this.category.setText("Playlist");
         } else {
             this.category.setText(onlineSong.getChannelName());
         }
@@ -179,6 +197,15 @@ public class RecentPane extends VBox {
                     BaseController.getInstance().handleShowAlbumView();
                 }
             } else if (artist != null) {
+                if (ArtistViewTabController.getInstance().loadArtist(artist, false, null)) {
+                    BaseController.getInstance().handleShowArtistView();
+                }
+            } else if (playlist != null) {
+                if (PlaylistViewTabController.getInstance().loadPlaylist(playlist)) {
+                    BaseController.getInstance().handleShowPlaylistView();
+                    PlaylistViewTabController.getInstance().setViewCalledByRecentTab(true);
+                    PlaylistViewTabController.getInstance().setViewCalledByPlaylistTab(false);
+                }
             }
         });
 
@@ -189,7 +216,29 @@ public class RecentPane extends VBox {
                 ConsoleController.getInstance().load(artist);
             } else if (onlineSong != null) {
                 ConsoleController.getInstance().addToNowPlaying(onlineSong);
+            } else if (playlist != null) {
+                ConsoleController.getInstance().load(playlist);
             }
         });
+
+        this.btn_addToPlaylist.setOnAction(event -> {
+            if (album != null) {
+                AddToListDialogController.getInstance().load(album);
+            } else if (artist != null) {
+                AddToListDialogController.getInstance().load(artist);
+            } else if (onlineSong != null) {
+                AddToListDialogController.getInstance().load(onlineSong);
+            } else if (playlist != null) {
+                AddToListDialogController.getInstance().load(playlist);
+            }
+        });
+    }
+
+    public String getName() {
+        return this.name.getText();
+    }
+
+    public String getCategory() {
+        return this.category.getText();
     }
 }

@@ -8,27 +8,11 @@
 <?import javafx.scene.shape.SVGPath?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.control.Tooltip?>
-<BorderPane xmlns:fx="http://javafx.com/fxml/1" id="addMusicDialog" fx:id="root" maxWidth="-Infinity"
-            minHeight="-Infinity"
-            minWidth="-Infinity" prefHeight="260.0" prefWidth="460.0"
+
+<BorderPane fx:id="root" styleClass="dialog_box" maxWidth="-Infinity" minHeight="-Infinity"
+            minWidth="-Infinity" prefHeight="260.0" prefWidth="460.0" xmlns:fx="http://javafx.com/fxml/1"
             stylesheets="@../audio-player-style.css" xmlns="http://javafx.com/javafx/11.0.1"
             fx:controller="org.signature.ui.audioPlayer.dialogs.AddMusicDialogController">
-    <bottom>
-        <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-              minWidth="-Infinity" prefHeight="60.0" prefWidth="460.0" BorderPane.alignment="CENTER">
-            <children>
-                <JFXButton maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-                           prefHeight="30.0" prefWidth="200.0" styleClass="dialog-buttons" text="Done">
-                    <font>
-                        <Font name="Roboto" size="14.0"/>
-                    </font>
-                    <HBox.margin>
-                        <Insets right="14.0"/>
-                    </HBox.margin>
-                </JFXButton>
-            </children>
-        </HBox>
-    </bottom>
     <top>
         <VBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
               minWidth="-Infinity" prefHeight="80.0" prefWidth="460.0" spacing="10.0" BorderPane.alignment="CENTER">
@@ -49,9 +33,6 @@
                     </padding>
                 </Label>
             </children>
-            <BorderPane.margin>
-                <Insets/>
-            </BorderPane.margin>
             <padding>
                 <Insets left="10.0" right="10.0" top="10.0"/>
             </padding>
@@ -66,10 +47,10 @@
                         <Insets left="2.0" top="10.0"/>
                     </padding>
                     <children>
-                        <JFXButton alignment="CENTER" contentDisplay="GRAPHIC_ONLY" maxHeight="-Infinity"
+                        <JFXButton fx:id="btn_AddLibrary" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" maxHeight="-Infinity"
                                    maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
                                    onAction="#handleAddLocalMusicLibrary" prefHeight="68.0" prefWidth="286.0"
-                                   styleClass="dialog-buttons" VBox.vgrow="NEVER">
+                                   styleClass="dialog-button" VBox.vgrow="NEVER">
                             <graphic>
                                 <SVGPath content="M38 26H26v12h-4V26H10v-4h12V10h4v12h12v4z"/>
                             </graphic>
@@ -82,4 +63,21 @@
             </content>
         </ScrollPane>
     </center>
+    <bottom>
+        <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+              minWidth="-Infinity" prefHeight="60.0" prefWidth="460.0" BorderPane.alignment="CENTER">
+            <children>
+                <JFXButton maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                           prefHeight="30.0" prefWidth="200.0" styleClass="dialog-button" text="Done"
+                           onAction="#handleCloseDialog">
+                    <font>
+                        <Font name="Roboto" size="14.0"/>
+                    </font>
+                    <HBox.margin>
+                        <Insets right="14.0"/>
+                    </HBox.margin>
+                </JFXButton>
+            </children>
+        </HBox>
+    </bottom>
 </BorderPane>

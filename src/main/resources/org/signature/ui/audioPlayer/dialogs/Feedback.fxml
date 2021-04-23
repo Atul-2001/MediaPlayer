@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXDialogLayout?>
+<?import com.jfoenix.controls.JFXTextArea?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
+<?import org.controlsfx.control.Rating?>
+
+<JFXDialogLayout fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                 prefHeight="615.0" prefWidth="700.0" styleClass="dialog_box" stylesheets="@dialog-style.css"
+                 xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+                 fx:controller="org.signature.ui.audioPlayer.dialogs.FeedbackController">
+    <heading>
+        <Label alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="60.0" text="Submit your review">
+            <font>
+                <Font name="Roboto Bold Italic" size="40.0"/>
+            </font>
+        </Label>
+    </heading>
+    <body>
+        <GridPane alignment="TOP_CENTER" hgap="10.0" prefHeight="340.0" prefWidth="600.0" vgap="20.0">
+            <columnConstraints>
+                <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" maxWidth="80.0" minWidth="10.0" prefWidth="75.0"/>
+                <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" maxWidth="526.0" minWidth="10.0" prefWidth="526.0"/>
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="-Infinity" prefHeight="40.0" vgrow="NEVER"/>
+                <RowConstraints minHeight="-Infinity" prefHeight="40.0" vgrow="NEVER"/>
+                <RowConstraints minHeight="-Infinity" prefHeight="40.0" vgrow="NEVER"/>
+                <RowConstraints minHeight="10.0" prefHeight="180.0"/>
+            </rowConstraints>
+            <children>
+                <Label maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                       prefHeight="40.0" prefWidth="64.0" text="Name :" GridPane.halignment="RIGHT"
+                       GridPane.valignment="CENTER">
+                    <font>
+                        <Font name="Roboto Bold" size="20.0"/>
+                    </font>
+                </Label>
+                <TextField fx:id="nameField" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                           minWidth="-Infinity" prefHeight="40.0" prefWidth="525.0" styleClass="dialog-text-field"
+                           GridPane.columnIndex="1">
+                    <font>
+                        <Font name="Roboto" size="16.0"/>
+                    </font>
+                </TextField>
+                <Label maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                       prefHeight="40.0" prefWidth="72.0" text=" E-mail :" GridPane.halignment="RIGHT"
+                       GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                    <font>
+                        <Font name="Roboto Bold" size="20.0"/>
+                    </font>
+                </Label>
+                <TextField fx:id="emailField" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                           minWidth="-Infinity" prefHeight="40.0" prefWidth="525.0" styleClass="dialog-text-field"
+                           GridPane.columnIndex="1" GridPane.rowIndex="1">
+                    <font>
+                        <Font name="Roboto" size="16.0"/>
+                    </font>
+                </TextField>
+                <Label maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                       prefHeight="40.0" prefWidth="68.0" text="Rating :" GridPane.halignment="RIGHT"
+                       GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                    <font>
+                        <Font name="Roboto Bold" size="20.0"/>
+                    </font>
+                </Label>
+                <Rating fx:id="rating" partialRating="true" rating="0.0" GridPane.columnIndex="1"
+                        GridPane.rowIndex="2"/>
+                <Label maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                       prefHeight="40.0" prefWidth="79.0" text=" Review :" GridPane.halignment="RIGHT"
+                       GridPane.rowIndex="3" GridPane.valignment="TOP">
+                    <font>
+                        <Font name="Roboto Bold" size="20.0"/>
+                    </font>
+                    <GridPane.margin>
+                        <Insets top="2.0"/>
+                    </GridPane.margin>
+                </Label>
+                <JFXTextArea fx:id="reviewField" promptText="Write your review..." styleClass="dialog-text-area"
+                             GridPane.columnIndex="1" GridPane.rowIndex="3">
+                    <font>
+                        <Font name="Roboto" size="16.0"/>
+                    </font>
+                </JFXTextArea>
+            </children>
+            <padding>
+                <Insets top="6.0"/>
+            </padding>
+        </GridPane>
+    </body>
+    <actions>
+        <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+              minWidth="-Infinity" prefHeight="60.0" prefWidth="680.0" spacing="10.0">
+            <children>
+                <JFXButton fx:id="submit" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                           minWidth="-Infinity" onAction="#handleSubmit" prefHeight="30.0" prefWidth="140.0"
+                           styleClass="dialog-button" text="Submit">
+                    <font>
+                        <Font name="Roboto" size="14.0"/>
+                    </font>
+                    <HBox.margin>
+                        <Insets/>
+                    </HBox.margin>
+                </JFXButton>
+                <JFXButton maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                           onAction="#handleCloseDialog" prefHeight="30.0" prefWidth="140.0" styleClass="dialog-button"
+                           text="Cancel">
+                    <font>
+                        <Font name="Roboto" size="14.0"/>
+                    </font>
+                    <HBox.margin>
+                        <Insets/>
+                    </HBox.margin>
+                </JFXButton>
+            </children>
+            <padding>
+                <Insets right="30.0"/>
+            </padding>
+        </HBox>
+    </actions>
+</JFXDialogLayout>

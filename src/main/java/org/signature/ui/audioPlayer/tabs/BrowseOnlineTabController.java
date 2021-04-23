@@ -1,19 +1,20 @@
 package org.signature.ui.audioPlayer.tabs;
 
-import com.jfoenix.controls.JFXAutoCompletePopup;
-import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXListView;
-import com.jfoenix.controls.JFXProgressBar;
+import com.jfoenix.controls.*;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.CacheHint;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
@@ -25,14 +26,18 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.signature.dataModel.audioPlayer.Album;
-import org.signature.dataModel.audioPlayer.Artist;
-import org.signature.dataModel.audioPlayer.OnlineSong;
-import org.signature.dataModel.audioPlayer.Song;
+import org.signature.dataModel.audioPlayer.*;
+import org.signature.ui.MainWindowController;
+import org.signature.ui.audioPlayer.AudioPlayer;
+import org.signature.ui.audioPlayer.BaseController;
 import org.signature.ui.audioPlayer.Inventory;
+import org.signature.ui.audioPlayer.dialogs.AddToListDialogController;
 import org.signature.ui.audioPlayer.model.OnlineSongPane;
 import org.signature.util.Alerts;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -42,6 +47,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class BrowseOnlineTabController implements Initializable {
 
@@ -62,7 +71,7 @@ public class BrowseOnlineTabController implements Initializable {
     @FXML
     private JFXButton searchButton;
     @FXML
-    private JFXListView<HBox> searchResultList;
+    private ListView<HBox> searchResultList;
 
     JFXAutoCompletePopup<String> youtubeAutoComplete = new JFXAutoCompletePopup<>();
 
@@ -74,6 +83,15 @@ public class BrowseOnlineTabController implements Initializable {
     private String youtubeQueryURLStr;
     private String youtubeNextPageToken;
     private String oldSearchQuery = "";
+
+    private static final ExecutorService browseOnlineServicePool = Executors.newCachedThreadPool(new ThreadFactory() {
+        final AtomicInteger counter = new AtomicInteger();
+
+        @Override
+        public Thread newThread(Runnable runnable) {
+            return new Thread(runnable, "Browse online service pool--Thread-" + counter.incrementAndGet());
+        }
+    });
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -90,7 +108,7 @@ public class BrowseOnlineTabController implements Initializable {
 
             if (isYouTubeSearching) return;
 
-            Thread tx = new Thread(new Task<Void>() {
+            browseOnlineServicePool.submit(new Task<Void>() {
                 @Override
                 protected Void call() {
                     try {
@@ -117,8 +135,6 @@ public class BrowseOnlineTabController implements Initializable {
                     return null;
                 }
             });
-            //tx.setPriority(1);
-            tx.start();
         });
 
     }
@@ -141,6 +157,10 @@ public class BrowseOnlineTabController implements Initializable {
 
     public ObservableList<OnlineSong> getOnlineSongSearchResultList() {
         return this.ONLINE_SONG_SEARCH_RESULT;
+    }
+
+    public static ExecutorService getBrowseOnlineServicePool() {
+        return browseOnlineServicePool;
     }
 
     private String[] getYoutubeSuggestions(String searchTerm) throws Exception {
@@ -179,9 +199,11 @@ public class BrowseOnlineTabController implements Initializable {
     }
 
     private void searchYouTube() {
-        new Thread(new Task<Void>() {
+        browseOnlineServicePool.submit(new Task<Void>() {
             @Override
             protected Void call() {
+                ExecutorService mediaPool = AudioPlayer.getInstance().getMediaPool();
+
                 isYouTubeSearching = true;
                 Platform.runLater(() -> {
                     searchProgressBar.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
@@ -191,7 +213,11 @@ public class BrowseOnlineTabController implements Initializable {
                 });
 
                 try {
-                    String youtubeSearchQuery = URLEncoder.encode(query_field.getText(), StandardCharsets.UTF_8);
+                    String query = query_field.getText();
+                    if (query == null || query.isEmpty()) {
+                        query = "bollywood songs";
+                    }
+                    String youtubeSearchQuery = URLEncoder.encode(query, StandardCharsets.UTF_8);
 
                     if (!oldSearchQuery.equals(youtubeSearchQuery)) {
                         oldSearchQuery = youtubeSearchQuery;
@@ -247,14 +273,35 @@ public class BrowseOnlineTabController implements Initializable {
                             OnlineSongPane onlineSongPane = null;
 
                             if (isSongPresent(title, channelTitle)) {
-                                onlineSong = new OnlineSong(false, localSongLocation, thumbnailURL, title, channelTitle, 0);
-                                onlineSongPane = new OnlineSongPane(onlineSong);
+                                onlineSong = new OnlineSong(false, title, channelTitle, 0, localSongLocation, thumbnailURL);
+                                onlineSong.setLocalSourceAvailable(true);
+
+                                OnlineSong finalOnlineSong = onlineSong;
+                                mediaPool.submit(() -> {
+                                    Media media = new Media(localSongLocation);
+                                    MediaPlayer mediaPlayer = new MediaPlayer(media);
+                                    mediaPlayer.setOnReady(() -> {
+                                        finalOnlineSong.setLength(media.getDuration().toMillis());
+                                        mediaPlayer.dispose();
+                                    });
+                                });
+
+                                onlineSongPane = new OnlineSongPane(finalOnlineSong);
                                 onlineSongPane.setDownloadDisable(true);
-
                             } else {
-                                onlineSong = new OnlineSong(false, videoURL, thumbnailURL, title, channelTitle, 0);
-                                onlineSongPane = new OnlineSongPane(onlineSong);
+                                onlineSong = new OnlineSong(false, title, channelTitle, 0, videoURL, thumbnailURL);
 
+                                OnlineSong finalOnlineSong = onlineSong;
+                                mediaPool.submit(() -> {
+                                    Media media = new Media(videoURL);
+                                    MediaPlayer mediaPlayer = new MediaPlayer(media);
+                                    mediaPlayer.setOnReady(() -> {
+                                        finalOnlineSong.setLength(media.getDuration().toMillis());
+                                        mediaPlayer.dispose();
+                                    });
+                                });
+
+                                onlineSongPane = new OnlineSongPane(finalOnlineSong);
                             }
                             ONLINE_SONG_SEARCH_RESULT.add(onlineSong);
 
@@ -277,7 +324,7 @@ public class BrowseOnlineTabController implements Initializable {
                                 JSONObject thumbnail = snippet.getJSONObject("thumbnails");
                                 String thumbnailURL = thumbnail.getJSONObject("high").getString("url");
 
-                                OnlineSong onlineSong = new OnlineSong(true, playlistID, thumbnailURL, "Playlist : " + title, channelTitle, 0);
+                                OnlineSong onlineSong = new OnlineSong(true, "Playlist : " + title, channelTitle, 0.0, playlistID, thumbnailURL);
                                 OnlineSongPane onlineSongPane = new OnlineSongPane(onlineSong);
 
                                 Platform.runLater(() -> searchResultList.getItems().add(onlineSongPane));
@@ -301,12 +348,11 @@ public class BrowseOnlineTabController implements Initializable {
                     Platform.runLater(() -> searchResultList.setVisible(true));
                 } catch (Exception e) {
                     if (e.getLocalizedMessage().contains("403 for URL")) {
-                        Alerts.showErrorAlert("Error 403", "It seems Gramophy was unable to connect to YouTube with your given API Key.\n\nThis was probably caused due to exceeded limit!\n\n\nGo to the following link for more info : \n" + e.getLocalizedMessage().replace("Server returned HTTP response code: 403 for URL: ", ""));
+                        Alerts.showErrorAlert("Error 403", "It seems Media Player was unable to connect to YouTube with your given API Key.\n\nThis was probably caused due to exceeded limit!\n\n\nGo to the following link for more info : \n" + e.getLocalizedMessage().replace("Server returned HTTP response code: 403 for URL: ", ""));
                     } else {
                         Alerts.showErrorAlert("Uh Oh!", "Unable to connect to YouTube. Make sure you're connected to the internet. For more info, check stacktrace");
                     }
-                    LOGGER.log(Level.ERROR, e.getLocalizedMessage());
-                    e.printStackTrace();
+                    LOGGER.log(Level.ERROR, "", e);
                 } finally {
                     Platform.runLater(() -> {
                         searchResultList.setDisable(false);
@@ -321,7 +367,7 @@ public class BrowseOnlineTabController implements Initializable {
                 Platform.runLater(() -> searchProgressBar.setProgress(0.0));
                 return null;
             }
-        }).start();
+        });
     }
 
     public String returnHTTPRawResponse(String urlPassed) throws Exception {
@@ -418,21 +464,20 @@ public class BrowseOnlineTabController implements Initializable {
                     String videoURL = YOUTUBE_VIDEO_URL.concat(videoId);
 
                     OnlineSong onlineSong = new OnlineSong();
-                    Media media = new Media(videoURL);
-                    MediaPlayer mediaPlayer = new MediaPlayer(media);
-                    mediaPlayer.setOnReady(() -> {
-                        onlineSong.setPlaylist(false);
-                        onlineSong.setURL(videoURL);
-                        onlineSong.setThumbnailURL(defaultThumbnailURL);
-                        onlineSong.setSongTitle(title);
-                        onlineSong.setChannelName(channelTitle);
-                        onlineSong.setSongLength(media.getDuration().toMillis());
-                        mediaPlayer.dispose();
-                    });
+                    onlineSong.setPlaylist(false);
+                    onlineSong.setURL(videoURL);
+                    onlineSong.setThumbnailURL(defaultThumbnailURL);
+                    onlineSong.setTitle(title);
+                    onlineSong.setChannelName(channelTitle);
 
-                    while (!onlineSong.getTitle().equals(title)) {
-                        wait(10);
-                    }
+                    AudioPlayer.getInstance().getMediaPool().submit(() -> {
+                        Media media = new Media(videoURL);
+                        MediaPlayer mediaPlayer = new MediaPlayer(media);
+                        mediaPlayer.setOnReady(() -> {
+                            onlineSong.setLength(media.getDuration().toMillis());
+                            mediaPlayer.dispose();
+                        });
+                    });
 
                     playlistOnlineSongs.add(onlineSong);
                 }
@@ -442,113 +487,151 @@ public class BrowseOnlineTabController implements Initializable {
         return playlistOnlineSongs;
     }
 
-    public void saveYouTubePlaylistSongsToLocalPlaylist(String playlistID) {
-        /*VBox vb = new VBox();
-        vb.setSpacing(10);
+    public void saveYouTubePlaylistSongsToLocalPlaylist(String playlistID, Playlist playlist) {
+        if (playlistID == null || playlistID.isEmpty()) {
 
-        int s = cachedPlaylist.size() - 2;
-        if(cachedPlaylist.containsKey("YouTube")) s--;
+            JFXDialogLayout dialogLayout = new JFXDialogLayout();
+            dialogLayout.getStylesheets().add(BaseController.class.getResource("audio-player-style.css").toString());
+            dialogLayout.getStyleClass().add("import-song-dialog");
 
-        for(String eachPlaylistName : cachedPlaylist.keySet())
-        {
-            if(eachPlaylistName.endsWith("_youtube_playlist")) s--;
-        }
+            Label headingLabel = new Label("Import Music from YouTube Playlist");
+            headingLabel.setFont(Font.font("Roboto", 26.0));
+            dialogLayout.setHeading(headingLabel);
 
-        if(s==0)
-        {
-            Alerts.showErrorAlert("No Local Playlists found","Create one to save to!");
-        }
-        else
-        {
-            JFXDialogLayout l = new JFXDialogLayout();
-            l.getStyleClass().add("dialog_style");
-            Label headingLabel = new Label("Select a Playlist to save to");
-            headingLabel.setTextFill(WHITE_PAINT);
-            headingLabel.setFont(Font.font("Roboto Regular",25));
-            l.setHeading(headingLabel);
+            Label msgLabel = new Label("Enter YouTube Playlist ID below (Must be PUBLIC)");
+            msgLabel.setFont(Font.font("Roboto", 16.0));
+            msgLabel.setWrapText(true);
 
+            TextField playlistIdField = new TextField();
+            playlistIdField.setPromptText("Playlist ID");
+            playlistIdField.setFont(Font.font("Roboto", 16.0));
+            playlistIdField.getStyleClass().add("dialog-text-field");
 
-            JFXDialog popupDialog = new JFXDialog(importSongsFromYouTubePopupStackPane,l, JFXDialog.DialogTransition.CENTER);
+            VBox root = new VBox(msgLabel, playlistIdField);
+
+            dialogLayout.setBody(root);
+
+            JFXSpinner progressSpinner = new JFXSpinner();
+            progressSpinner.setProgress(-1);
+            progressSpinner.setCache(true);
+            progressSpinner.setCacheHint(CacheHint.SPEED);
+            progressSpinner.setPrefSize(24, 24);
+            progressSpinner.setVisible(false);
+
+            JFXButton btnImport = new JFXButton("IMPORT");
+            btnImport.setFont(Font.font("Roboto", 16.0));
+            btnImport.setPrefSize(140.0, 30.0);
+            btnImport.getStyleClass().add("dialog-button");
+
+            JFXButton btnCancel = new JFXButton("CANCEL");
+            btnCancel.setFont(Font.font("Roboto", 16.0));
+            btnCancel.setPrefSize(140.0, 30.0);
+            btnCancel.getStyleClass().add("dialog-button");
+
+            dialogLayout.setActions(progressSpinner, btnImport, btnCancel);
+
+            JFXDialog popupDialog = new JFXDialog(MainWindowController.getInstance().getRoot(), dialogLayout, JFXDialog.DialogTransition.CENTER);
             popupDialog.setOverlayClose(false);
-            popupDialog.getStyleClass().add("dialog_box");
+            btnCancel.setOnMouseClicked(event -> popupDialog.close());
 
-            for(String playlistName : cachedPlaylist.keySet())
-            {
-                if(playlistName.endsWith("_youtube_playlist") || playlistName.equals("YouTube") || playlistName.equals("Recents") || playlistName.equals("My Music")) continue;
-
-                JFXButton playlistToSaveToButton = new JFXButton(playlistName);
-
-                playlistToSaveToButton.setTextFill(WHITE_PAINT);
-                playlistToSaveToButton.setId(playlistID);
-                Platform.runLater(()->vb.getChildren().add(playlistToSaveToButton));
-
-
-                playlistToSaveToButton.setOnMouseClicked(event -> {
-                    new Thread(new Task<Void>() {
+            btnImport.setOnAction(event -> {
+                if (playlistIdField.getText().length() == 0) {
+                    Alerts.showErrorAlert("Uh Oh!", "Please enter a valid YouTube Playlist ID!");
+                } else {
+                    browseOnlineServicePool.submit(new Task<Void>() {
                         @Override
-                        protected Void call()
-                        {
-                            try
-                            {
-                                JFXButton b = (JFXButton) event.getSource();
-                                String playlistID = b.getId();
-                                String playlistToSaveTo = b.getText();
+                        protected Void call() {
+                            try {
+                                Platform.runLater(() -> {
+                                    playlistIdField.setDisable(true);
+                                    btnImport.setDisable(true);
+                                    btnCancel.setDisable(true);
 
-                                ArrayList<HashMap<String,Object>> songs = getSongsInYouTubePublicPlaylist(playlistID);
-
-                                int songsImported = 0;
-                                for(HashMap<String,Object> eachSong : songs)
-                                {
-                                    if(!isSongPresent(eachSong,playlistToSaveTo))
-                                    {
-                                        cachedPlaylist.get(playlistToSaveTo).add(eachSong);
-                                        songsImported++;
-                                    }
-                                    else
-                                        System.out.println("Song already present. Skipping ...");
-                                }
-
-                                updatePlaylistsFiles();
-                                refreshPlaylistsUI();
-
-                                Platform.runLater(()->{
-                                    popupDialog.close();
-                                    importSongsFromYouTubePopupStackPane.toBack();
+                                    progressSpinner.setVisible(true);
                                 });
 
-                                Alerts.showErrorAlert("Done!","Successfully imported "+songsImported+" songs to "+playlistName);
-                            }
-                            catch (Exception e)
-                            {
-                                e.printStackTrace();
+                                List<OnlineSong> onlineSongList = FXCollections.observableArrayList();
+                                for (OnlineSong onlineSong : getSongsInYouTubePublicPlaylist(playlistIdField.getText())) {
+                                    if (!isSongPresent(onlineSong.getTitle(), onlineSong.getChannelName())) {
+                                        onlineSongList.add(onlineSong);
+                                    }
+                                }
+
+                                if (playlist != null) {
+                                    List<PlaylistSong> playlistSongs = new ArrayList<>();
+                                    for (OnlineSong onlineSong : onlineSongList) {
+                                        Image img = new Image(onlineSong.getThumbnailURL());
+                                        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(img, null);
+                                        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                                        ImageIO.write(bufferedImage, "png", byteArrayOutputStream);
+
+                                        playlistSongs.add(new PlaylistSong(byteArrayOutputStream.toByteArray(), onlineSong.getTitle(),
+                                                                        onlineSong.getChannelName(), "Youtube", null,
+                                                                        "youtube.com", onlineSong.getLength(), onlineSong.getURL()));
+                                    }
+                                    playlist.addSongs(playlistSongs);
+                                } else {
+                                    Platform.runLater(() -> AddToListDialogController.getInstance().load(null, onlineSongList.toArray(OnlineSong[]::new)));
+                                }
+                            } catch (Exception ex) {
+                                Platform.runLater(() -> Alerts.showErrorAlert("Error!", "Unable to import!\n" +
+                                        "Reasons:-\n" +
+                                        "1) It may be due to no internet connection!\n" +
+                                        "2) OR it may be due to invalid Playlist Id!\n" +
+                                        "Check Log\n"));
+                                LOGGER.log(Level.TRACE, "", ex);
+                            } finally {
+                                Platform.runLater(() -> {
+                                    progressSpinner.setVisible(false);
+                                    popupDialog.close();
+                                });
                             }
                             return null;
                         }
-                    }).start();
-                });
-            }
-
-            l.setBody(vb);
-
-            JFXButton cancelButton = new JFXButton("CANCEL");
-            cancelButton.setFont(robotoRegular15);
-            cancelButton.setTextFill(Color.RED);
-
-            l.setActions(cancelButton);
-
-            Platform.runLater(() -> importSongsFromYouTubePopupStackPane.getChildren().clear());
-
-
-            cancelButton.setOnMouseClicked(event->{
-                popupDialog.close();
-                popupDialog.setOnDialogClosed(event1 -> importSongsFromYouTubePopupStackPane.toBack());
+                    });
+                }
             });
 
-            Platform.runLater(()->{
-                importSongsFromYouTubePopupStackPane.toFront();
-                popupDialog.show();
+            Platform.runLater(popupDialog::show);
+        } else {
+            browseOnlineServicePool.submit(new Task<Void>() {
+                @Override
+                protected Void call() {
+                    try {
+                        List<OnlineSong> onlineSongList = FXCollections.observableArrayList();
+                        for (OnlineSong onlineSong : getSongsInYouTubePublicPlaylist(playlistID)) {
+                            if (!isSongPresent(onlineSong.getTitle(), onlineSong.getChannelName())) {
+                                onlineSongList.add(onlineSong);
+                            }
+                        }
+
+                        if (playlist != null) {
+                            List<PlaylistSong> playlistSongs = new ArrayList<>();
+                            for (OnlineSong onlineSong : onlineSongList) {
+                                Image img = new Image(onlineSong.getThumbnailURL());
+                                BufferedImage bufferedImage = SwingFXUtils.fromFXImage(img, null);
+                                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                                ImageIO.write(bufferedImage, "png", byteArrayOutputStream);
+
+                                playlistSongs.add(new PlaylistSong(byteArrayOutputStream.toByteArray(), onlineSong.getTitle(),
+                                        onlineSong.getChannelName(), "Youtube", null,
+                                        "youtube.com", onlineSong.getLength(), onlineSong.getURL()));
+                            }
+                            playlist.addSongs(playlistSongs);
+                        } else {
+                            Platform.runLater(() -> AddToListDialogController.getInstance().load(null, onlineSongList.toArray(OnlineSong[]::new)));
+                        }
+                    } catch (Exception ex) {
+                        Platform.runLater(() -> Alerts.showErrorAlert("Error!", "Unable to import!\n" +
+                                "Reasons:-\n" +
+                                "1) It may be due to no internet connection!\n" +
+                                "2) OR it may be due to invalid Playlist Id!\n" +
+                                "Check Log"));
+                        LOGGER.log(Level.TRACE, "", ex);
+                    }
+                    return null;
+                }
             });
-        }*/
+        }
     }
-
 }

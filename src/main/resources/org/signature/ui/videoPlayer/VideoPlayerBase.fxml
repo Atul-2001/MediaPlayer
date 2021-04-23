@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane id="video-player-base" fx:id="playerBase" minHeight="430.0" minWidth="640.0" prefHeight="670.0"
+            prefWidth="1280.0" stylesheets="@video-player-style.css" xmlns="http://javafx.com/javafx/11.0.1"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.signature.ui.videoPlayer.BaseController">
+    <center>
+        <Label text="Coming Soon!" textFill="#db3236">
+            <font>
+                <Font name="Roboto Bold" size="96.0"/>
+            </font>
+        </Label>
+    </center>
+</BorderPane>

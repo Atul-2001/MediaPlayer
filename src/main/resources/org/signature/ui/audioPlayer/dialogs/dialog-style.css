@@ -1,5 +1,45 @@
-#dialog-base {
+VBox {
+    -fx-background-color: TRANSPARENT;
+}
+
+.dialog_box {
     -fx-background-color: linear-gradient(to right, #badbf9 0%, #E0C3FC 42%, #f8fbc0 100%);
+    -fx-border-color: #f4c20d;
+    -fx-border-width: 2px;
+}
+
+.error_dialog_box {
+    -fx-background-color: linear-gradient(to right, #badbf9 0%, #E0C3FC 42%, #f8fbc0 100%);
+    -fx-border-color: #db3236;
+    -fx-border-width: 2px;
+}
+
+.dialog-button {
+    -fx-background-color: #b4b4b4;
+}
+
+.dialog-button:hover {
+    -fx-background-color: #8c8c8c;
+}
+
+.dialog-text-field {
+    -fx-background-color: TRANSPARENT;
+    -fx-border-color: GRAY;
+}
+
+.dialog-text-field:focused {
+    -fx-background-color: WHITE;
+    -fx-highlight-fill: #20ee20;
+}
+
+.dialog-text-area {
+    -fx-background-color: TRANSPARENT;
+    -fx-border-color: GRAY;
+}
+
+.dialog-text-area:focused {
+    -fx-background-color: WHITE;
+    -fx-highlight-fill: #20ee20;
 }
 
 #btn-close {
@@ -20,10 +60,6 @@
     -fx-background-color: TRANSPARENT;
 }
 
-VBox {
-    -fx-background-color: TRANSPARENT;
-}
-
 .card {
     -fx-background-color : linear-gradient(to top, #FFDEE9 0%, #B5FFFC 100%);
     -fx-background-radius: 10;
@@ -31,6 +67,23 @@ VBox {
     -fx-effect: dropshadow(three-pass-box, #383838, 10, 0, 0, 0);
 }
 
-.dialog_style {
+.slider .track {
+    -fx-background-color: #9e9e9e;;
+}
+
+.slider .thumb {
+    -fx-background-color:  #0F9D58;
+}
+
+.jfx-combo-box .list-view {
+    -fx-background-color: linear-gradient(to top, #FFDEE9 0%, #B5FFFC 100%);
+}
+
+.jfx-combo-box .list-view .list-cell:hover {
     -fx-background-color: linear-gradient(to right, #badbf9 0%, #E0C3FC 42%, #f8fbc0 100%);
+    -fx-text-fill: BLACK;
+}
+
+.jfx-combo-box .list-view .list-cell:focused {
+    -fx-background-color: #4885ed;
 }

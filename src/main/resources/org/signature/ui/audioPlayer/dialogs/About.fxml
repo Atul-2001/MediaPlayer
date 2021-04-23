@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXDialogLayout?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Font?>
+
+<JFXDialogLayout fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                 prefHeight="640.0" prefWidth="720.0" styleClass="dialog_box" stylesheets="@dialog-style.css"
+                 xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+                 fx:controller="org.signature.ui.audioPlayer.dialogs.AboutController">
+    <heading>
+        <Label alignment="CENTER" graphicTextGap="12.0" layoutX="183.0" layoutY="22.0" maxWidth="1.7976931348623157E308"
+               prefHeight="94.0" style="-fx-background-color: TRANSPARENT;" text="MP34">
+            <font>
+                <Font name="Roboto Bold Italic" size="52.0"/>
+            </font>
+            <graphic>
+                <ImageView fitHeight="94.0" fitWidth="108.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../../../Media-player-icon-circle.png"/>
+                    </image>
+                </ImageView>
+            </graphic>
+        </Label>
+    </heading>
+    <body>
+        <Label alignment="TOP_LEFT" layoutY="137.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+               minWidth="-Infinity" prefHeight="310.0" prefWidth="670.0"
+               text="MP34 is a media player software which provides both audio player and video player under a single application. Audio Player of MP34 is a simple music player. It has multiple features essential for music player like Recent played, Songs, Albums, Artists, Playlists, Search Song, Equalizer etc. In this you can create playlists and browse and play songs online through youtube and also add them to your playlist and also download them if you want. It uses youtube-dl software to download songs from youtube.                                                                                                  This application has been created in Java and for the user interface it uses JavaFX library along with Jfoenix for material design components and ControlFX for advance components. It uses mp3agic library to read meta-data of audio and video files."
+               textAlignment="JUSTIFY" wrapText="true" AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="2.0"
+               AnchorPane.rightAnchor="2.0" AnchorPane.topAnchor="124.0">
+            <font>
+                <Font name="Roboto" size="18.0"/>
+            </font>
+            <padding>
+                <Insets top="6.0"/>
+            </padding>
+        </Label>
+    </body>
+    <actions>
+        <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+              minWidth="-Infinity" prefHeight="60.0" prefWidth="700.0" spacing="10.0">
+            <children>
+                <JFXButton cancelButton="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                           minWidth="-Infinity" onAction="#handleCloseDialog" prefHeight="30.0" prefWidth="140.0"
+                           styleClass="dialog-button" text="Close">
+                    <font>
+                        <Font name="Roboto" size="14.0"/>
+                    </font>
+                </JFXButton>
+            </children>
+            <padding>
+                <Insets right="20.0"/>
+            </padding>
+        </HBox>
+    </actions>
+</JFXDialogLayout>

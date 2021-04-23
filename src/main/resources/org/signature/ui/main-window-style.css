@@ -1,11 +1,11 @@
-VBox {
-    -fx-background-color: WHITE;
+StackPane {
+    /*-fx-background-color: WHITE;*/
 }
 
 .jfx-tab-pane {
     -fx-tab-min-width: 640;
     -fx-tab-min-height: 40;
-    -fx-background-color: TRANSPARENT;
+    -fx-background-color: WHITE;
 }
 
 .jfx-tab-pane .depth-container {

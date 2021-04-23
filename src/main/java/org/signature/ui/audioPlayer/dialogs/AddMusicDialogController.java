@@ -1,5 +1,7 @@
 package org.signature.ui.audioPlayer.dialogs;
 
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXDialog;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -15,11 +17,12 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.stage.DirectoryChooser;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.signature.App;
 import org.signature.dataModel.audioPlayer.MusicLibrary;
+import org.signature.ui.MainWindowController;
+import org.signature.ui.audioPlayer.AudioPlayer;
 import org.signature.ui.audioPlayer.Inventory;
 
 import java.io.File;
@@ -37,6 +40,10 @@ public class AddMusicDialogController implements Initializable {
     private BorderPane root;
     @FXML
     private VBox libraryList;
+    @FXML
+    private JFXButton btn_AddLibrary;
+
+    private JFXDialog dialog = null;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -56,9 +63,12 @@ public class AddMusicDialogController implements Initializable {
 
         libraryList.heightProperty().addListener((observable, oldValue, newValue) -> ((VBox) root.getTop()).getChildren().get(1).setVisible(libraryList.getChildren().size() != 1));
 
-        loadExistingLibraries();
+        dialog = new JFXDialog(MainWindowController.getInstance().getRoot(), root, JFXDialog.DialogTransition.CENTER);
+        dialog.setOverlayClose(false);
+        dialog.setMinSize(460, 260);
+        dialog.prefHeightProperty().bind(root.heightProperty());
 
-        LOGGER.log(Level.INFO, "Add Music Dialog Loaded !!");
+//        LOGGER.log(Level.INFO, "Add Music Dialog Loaded !!");
     }
 
     public static AddMusicDialogController getInstance() {
@@ -70,6 +80,8 @@ public class AddMusicDialogController implements Initializable {
     }
 
     private void loadExistingLibraries() {
+        libraryList.getChildren().clear();
+        libraryList.getChildren().add(btn_AddLibrary);
         for (MusicLibrary library : Inventory.getLibraries()) {
             libraryList.getChildren().add(createNode(library.getFolderName(), library.getFolderLocation()));
         }
@@ -84,8 +96,14 @@ public class AddMusicDialogController implements Initializable {
         if (result != null) {
             if (Inventory.addLibrary(new MusicLibrary(result.getName(), result.getAbsolutePath()))) {
                 libraryList.getChildren().add(createNode(result.getName(), result.getAbsolutePath()));
+                AudioPlayer.getInstance().musicLoader(Inventory.getCachedAlbums().get(0), Inventory.getCachedArtists().get(0));
             }
         }
+    }
+
+    @FXML
+    private void handleCloseDialog(ActionEvent actionEvent) {
+        this.dialog.close();
     }
 
     private AnchorPane createNode(String name, String location) {
@@ -131,15 +149,21 @@ public class AddMusicDialogController implements Initializable {
             if (result.isPresent() && result.get().equals(btn_remove)) {
                 int index = libraryList.getChildren().indexOf(btn_close.getParent());
                 libraryList.getChildren().remove(index);
-                Inventory.removeLibrary(index);
+                Inventory.removeLibrary(index - 1);
             }
         });
         AnchorPane.setTopAnchor(btn_close, 10.0);
         AnchorPane.setRightAnchor(btn_close, 10.0);
 
         anchorPane.getChildren().addAll(folderName, folderLocation, btn_close);
-        anchorPane.getStyleClass().add("dialog-buttons");
+        anchorPane.getStyleClass().add("dialog-button");
 
         return anchorPane;
     }
+
+    public void showDialog() {
+        loadExistingLibraries();
+        this.dialog.show();
+    }
+
 }

@@ -6,7 +6,9 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
-<BorderPane id="aboutSongDialog" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+
+<BorderPane fx:id="root" styleClass="dialog_box" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+            minWidth="-Infinity"
             prefHeight="498.0" prefWidth="748.0" stylesheets="@../audio-player-style.css"
             xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="org.signature.ui.audioPlayer.dialogs.EditSongInfoDialogController">
@@ -28,7 +30,7 @@
                 <Insets bottom="10.0" left="20.0" right="20.0"/>
             </BorderPane.margin>
             <content>
-                <GridPane alignment="CENTER" hgap="40.0" maxHeight="1.7976931348623157E308"
+                <GridPane fx:id="componentGrid" alignment="CENTER" hgap="40.0" maxHeight="1.7976931348623157E308"
                           maxWidth="1.7976931348623157E308">
                     <columnConstraints>
                         <ColumnConstraints hgrow="ALWAYS" maxWidth="-Infinity" minWidth="10.0" prefWidth="352.0"/>
@@ -191,7 +193,8 @@
                                 </TextField>
                             </children>
                         </VBox>
-                        <VBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="1.7976931348623157E308"
+                        <VBox fx:id="sortTitleBox" alignment="CENTER_LEFT" maxHeight="-Infinity"
+                              maxWidth="1.7976931348623157E308"
                               minHeight="-Infinity" prefHeight="68.0" spacing="4.0" GridPane.rowIndex="4">
                             <children>
                                 <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
@@ -209,7 +212,8 @@
                                 </TextField>
                             </children>
                         </VBox>
-                        <VBox maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+                        <VBox fx:id="showAdvanceOptionButtonBox" maxHeight="-Infinity" maxWidth="1.7976931348623157E308"
+                              minHeight="-Infinity"
                               prefHeight="68.0" GridPane.rowIndex="5">
                             <children>
                                 <Label maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
@@ -231,7 +235,8 @@
                                 </JFXToggleButton>
                             </children>
                         </VBox>
-                        <VBox maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+                        <VBox fx:id="fileLocationBox" maxHeight="-Infinity" maxWidth="1.7976931348623157E308"
+                              minHeight="-Infinity"
                               prefHeight="80.0" spacing="4.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="6"
                               GridPane.rowSpan="2147483647">
                             <children>
@@ -260,7 +265,7 @@
             <children>
                 <JFXButton fx:id="btn_save" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
                            minWidth="-Infinity" onAction="#handleSaveInfo" prefHeight="30.0" prefWidth="140.0"
-                           styleClass="dialog-buttons" text="Save" HBox.hgrow="NEVER">
+                           styleClass="dialog-button" text="Save" HBox.hgrow="NEVER">
                     <font>
                         <Font name="Roboto" size="14.0"/>
                     </font>
@@ -270,7 +275,7 @@
                 </JFXButton>
                 <JFXButton layoutX="598.0" layoutY="25.0" maxHeight="-Infinity" maxWidth="-Infinity"
                            minHeight="-Infinity" minWidth="-Infinity" onAction="#handleCloseDialog" prefHeight="30.0"
-                           prefWidth="140.0" styleClass="dialog-buttons" text="Cancel" HBox.hgrow="NEVER">
+                           prefWidth="140.0" styleClass="dialog-button" text="Cancel" HBox.hgrow="NEVER">
                     <font>
                         <Font name="Roboto" size="14.0"/>
                     </font>

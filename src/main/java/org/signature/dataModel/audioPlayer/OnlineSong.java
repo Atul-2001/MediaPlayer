@@ -1,6 +1,7 @@
 package org.signature.dataModel.audioPlayer;
 
-import org.signature.util.Utils;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -11,36 +12,59 @@ import javax.persistence.Transient;
 @Table(name = "ONLINE_SONG")
 public class OnlineSong {
 
-    @Id
-    private int S_NO;
-
     // Y = 89 & T = 84 & S = 83
     // y = 121 & t = 116 & s = 115
     @Transient
     private static int id = 8984830;
 
+    @Id
+    private int S_NO;
     private boolean isPlaylist;
-    private String songURL;
-    private String thumbnailURL;
-    private String songTitle;
+    private String title;
     private String channelName;
-    private double songLength;
-    @Transient
-    private boolean isPlaying;
+    private double length;
+    private String URL;
+    private String thumbnailURL;
     private boolean isLocalSourceAvailable;
+    @Transient
+    private byte[] thumbnail;
+    @Transient
+    private final BooleanProperty playing;
 
     public OnlineSong() {
+        this.thumbnail = null;
+        this.playing = new SimpleBooleanProperty(false);
+        this.isLocalSourceAvailable = false;
     }
 
-    public OnlineSong(boolean isPlaylist, String songURL, String thumbnailURL, String songTitle, String channelName, double songLength) {
+    public OnlineSong(boolean isPlaylist, String title, String channelName, double length, String url, String thumbnailURL) {
         id++;
         this.isPlaylist = isPlaylist;
-        this.songURL = songURL;
-        this.thumbnailURL = thumbnailURL;
-        this.songTitle = songTitle;
+        this.title = title;
         this.channelName = channelName;
-        this.songLength = songLength;
+        this.length = length;
+        this.URL = url;
+        this.thumbnailURL = thumbnailURL;
+        this.thumbnail = null;
+        this.playing = new SimpleBooleanProperty(false);
         this.isLocalSourceAvailable = false;
+    }
+
+    public OnlineSong(boolean isPlaylist, String title, String channelName, double length, String url, byte[] thumbnail) {
+        id++;
+        this.isPlaylist = isPlaylist;
+        this.title = title;
+        this.channelName = channelName;
+        this.length = length;
+        this.URL = url;
+        this.thumbnailURL = null;
+        this.thumbnail = thumbnail;
+        this.playing = new SimpleBooleanProperty(false);
+        this.isLocalSourceAvailable = false;
+    }
+
+    public static int getId() {
+        return id;
     }
 
     public int getSNO() {
@@ -51,10 +75,6 @@ public class OnlineSong {
         this.S_NO = sno;
     }
 
-    public int getId() {
-        return id;
-    }
-
     public boolean isPlaylist() {
         return isPlaylist;
     }
@@ -63,28 +83,12 @@ public class OnlineSong {
         isPlaylist = playlist;
     }
 
-    public String getURL() {
-        return this.songURL;
-    }
-
-    public void setURL(String url) {
-        this.songURL = url;
-    }
-
-    public String getThumbnailURL() {
-        return thumbnailURL;
-    }
-
-    public void setThumbnailURL(String thumbnailURL) {
-        this.thumbnailURL = thumbnailURL;
-    }
-
     public String getTitle() {
-        return songTitle;
+        return title;
     }
 
-    public void setSongTitle(String songTitle) {
-        this.songTitle = songTitle;
+    public void setTitle(String songTitle) {
+        this.title = songTitle;
     }
 
     public String getChannelName() {
@@ -95,41 +99,68 @@ public class OnlineSong {
         this.channelName = channelName;
     }
 
-    public String getDuration() {
-        return Utils.getDuration((long) songLength);
+    public double getLength() {
+        return length;
     }
 
-    public double getSongLength() {
-        return this.songLength;
+    public void setLength(double songLength) {
+        this.length = songLength;
     }
 
-    public void setSongLength(double songLength) {
-        this.songLength = songLength;
+    public String getURL() {
+        return URL;
     }
 
-    public boolean isPlaying() {
-        return isPlaying;
+    public void setURL(String url) {
+        this.URL = url;
     }
 
-    public void setPlaying(boolean playing) {
-        isPlaying = playing;
+    public String getThumbnailURL() {
+        return thumbnailURL;
+    }
+
+    public void setThumbnailURL(String thumbnailURL) {
+        this.thumbnailURL = thumbnailURL;
     }
 
     public boolean isLocalSourceAvailable() {
-        return this.isLocalSourceAvailable;
+        return isLocalSourceAvailable;
     }
 
-    public void setLocalSourceAvailable(boolean value) {
-        this.isLocalSourceAvailable = value;
+    public void setLocalSourceAvailable(boolean localSourceAvailable) {
+        isLocalSourceAvailable = localSourceAvailable;
+    }
+
+    public byte[] getThumbnail() {
+        return thumbnail;
+    }
+
+    public void setThumbnail(byte[] thumbnail) {
+        this.thumbnail = thumbnail;
+    }
+
+    public boolean isPlaying() {
+        return playing.get();
+    }
+
+    public BooleanProperty playingProperty() {
+        return playing;
+    }
+
+    public void setPlaying(boolean playing) {
+        this.playing.set(playing);
     }
 
     @Override
     public String toString() {
-        return "Song{" +
-                "songURL='" + songURL + '\'' +
-                ", thumbnailURL='" + thumbnailURL + '\'' +
-                ", songTitle='" + songTitle + '\'' +
+        return "OnlineSong{" +
+                "S_NO=" + S_NO +
+                ", title='" + title + '\'' +
                 ", channelName='" + channelName + '\'' +
+                ", songLength=" + length +
+                ", URL='" + URL + '\'' +
+                ", thumbnailURL='" + thumbnailURL + '\'' +
+                ", isLocalSourceAvailable=" + isLocalSourceAvailable +
                 '}';
     }
 }

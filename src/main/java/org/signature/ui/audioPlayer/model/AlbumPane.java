@@ -1,6 +1,8 @@
 package org.signature.ui.audioPlayer.model;
 
 import com.jfoenix.controls.JFXButton;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Pos;
 import javafx.scene.control.ContentDisplay;
@@ -13,9 +15,12 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Font;
 import org.signature.dataModel.audioPlayer.Album;
+import org.signature.dataModel.audioPlayer.Artist;
 import org.signature.ui.audioPlayer.BaseController;
 import org.signature.ui.audioPlayer.ConsoleController;
 import org.signature.ui.audioPlayer.Inventory;
+import org.signature.ui.audioPlayer.dialogs.AddToListDialogController;
+import org.signature.ui.audioPlayer.tabs.AlbumTabController;
 import org.signature.ui.audioPlayer.tabs.AlbumViewTabController;
 import org.signature.ui.audioPlayer.tabs.RecentlyPlayedTabController;
 import org.signature.util.Utils;
@@ -23,10 +28,12 @@ import org.signature.util.Utils;
 import javax.imageio.ImageIO;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Objects;
 
 public class AlbumPane extends VBox {
 
     private final Album album;
+    private final Artist artist;
     private static final String DEFAULT_STYLESHEET = "model-node-style.css";
     private static final String DEFAULT_ALBUM_ART = "album_white.png";
 
@@ -37,13 +44,13 @@ public class AlbumPane extends VBox {
     private final Label albumName = new Label();
     private final Label albumArtist = new Label();
 
-    private final String genre;
-    private final String releaseYear;
-    private final String creationTime; // creation time of song file (in millis)
+    private final StringProperty genre = new SimpleStringProperty();
+    private final StringProperty releaseYear = new SimpleStringProperty();
 
     public AlbumPane(Album album) {
         assert album != null;
         this.album = album;
+        this.artist = Inventory.getArtist(album.getArtist());
 
         setPrefSize(160.0, 260.0);
         setMinSize(160.0, 260.0);
@@ -71,6 +78,18 @@ public class AlbumPane extends VBox {
                 this.albumArtView.setImage(new Image(AlbumPane.class.getResourceAsStream(DEFAULT_ALBUM_ART)));
             }
         }
+        album.albumImageMimeTypeProperty().addListener((observable, oldValue, newValue) -> {
+            byte[] albumArt1 = album.getAlbumImage();
+            if (albumArt1 == null || albumArt1.length == 0) {
+                this.albumArtView.setImage(new Image(AlbumPane.class.getResourceAsStream(DEFAULT_ALBUM_ART)));
+            } else {
+                try {
+                    this.albumArtView.setImage(SwingFXUtils.toFXImage(ImageIO.read(new ByteArrayInputStream(albumArt1)), null));
+                } catch (NullPointerException | IOException ex) {
+                    this.albumArtView.setImage(new Image(AlbumPane.class.getResourceAsStream(DEFAULT_ALBUM_ART)));
+                }
+            }
+        });
         AnchorPane.setTopAnchor(this.albumArtView, 0.0);
         AnchorPane.setBottomAnchor(this.albumArtView, 0.0);
         AnchorPane.setLeftAnchor(this.albumArtView, 0.0);
@@ -112,7 +131,7 @@ public class AlbumPane extends VBox {
 
         this.albumName.setAlignment(Pos.TOP_LEFT);
         this.albumName.setMaxWidth(Double.MAX_VALUE);
-        this.albumName.setText(album.getAlbumName() == null || album.getAlbumName().isEmpty() ? "Unknown Album" : album.getAlbumName());
+        this.albumName.textProperty().bind(album.albumNameProperty());
         this.albumName.setWrapText(true);
         AlbumPane.setVgrow(this.albumName, Priority.ALWAYS);
         this.albumName.setFont(Font.font("Roboto", 16.0));
@@ -120,25 +139,17 @@ public class AlbumPane extends VBox {
         this.albumArtist.setAlignment(Pos.TOP_LEFT);
         this.albumArtist.setMinHeight(40.0);
         this.albumArtist.setMaxWidth(Double.MAX_VALUE);
-        String albumArtist;
-        if (album.getAlbumArtist() == null) {
-            albumArtist = album.getArtist();
-        } else if (album.getAlbumArtist().isEmpty()) {
-            albumArtist = album.getArtist();
-        } else {
-            albumArtist = album.getAlbumArtist();
-        }
-        this.albumArtist.setText(albumArtist == null || albumArtist.isEmpty() ? "Unknown Artist" : albumArtist);
+        this.albumArtist.textProperty().bind(album.albumArtistProperty());
         this.albumArtist.setWrapText(true);
         AlbumPane.setVgrow(this.albumArtist, Priority.ALWAYS);
         this.albumArtist.setFont(Font.font("Roboto Light", 14.0));
 
         getChildren().addAll(this.albumArtPane, this.albumName, this.albumArtist);
 
-        String genre = Inventory.getGenreDescription(album.getGenre());
-        this.genre = genre == null || genre.isEmpty() ? "Unknown Genre" : genre;
-        this.releaseYear = album.getReleaseYear() == null ? "" : album.getReleaseYear();
-        this.creationTime = album.getCreationTime() == null ? "" : album.getCreationTime();
+        this.genre.bind(album.genreProperty());
+        this.releaseYear.bind(album.releaseYearProperty());
+
+        album.dateCreatedProperty().addListener((observable, oldValue, newValue) -> AlbumTabController.getInstance().refreshList());
         init();
     }
 
@@ -172,7 +183,7 @@ public class AlbumPane extends VBox {
             RecentlyPlayedTabController.getInstance().addRecentlyPlayed(album);
         });
 
-        this.btn_addToPlaylist.setOnAction(event -> ConsoleController.getInstance().addToNowPlaying(album));
+        this.btn_addToPlaylist.setOnAction(event -> AddToListDialogController.getInstance().load(album));
     }
 
     public Album getAlbum() {
@@ -192,18 +203,18 @@ public class AlbumPane extends VBox {
     }
 
     public static Image getDefaultAlbumArt() {
-        return new Image(AlbumPane.class.getResourceAsStream(DEFAULT_ALBUM_ART));
+        return new Image(Objects.requireNonNull(AlbumPane.class.getResourceAsStream(DEFAULT_ALBUM_ART)));
     }
 
     public String getGenre() {
-        return genre;
+        return genre.get();
     }
 
     public String getReleaseYear() {
-        return releaseYear;
+        return releaseYear.get();
     }
 
-    public String getCreationTime() {
-        return creationTime;
+    public long getDateCreated() {
+        return album.getDateCreated();
     }
 }

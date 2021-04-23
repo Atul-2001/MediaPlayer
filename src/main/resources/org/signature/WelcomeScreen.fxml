@@ -16,7 +16,7 @@
         <DropShadow blurType="GAUSSIAN" height="50.0" radius="24.5" width="50.0"/>
     </effect>
     <ImageView fitHeight="400.0" fitWidth="640.0" pickOnBounds="true">
-        <Image url="@IMG_Media1.jpeg"/>
+        <Image url="@SplashScreenArt.jpeg"/>
     </ImageView>
     <JFXProgressBar fx:id="appLoadProgress" layoutY="396.0" maxHeight="-Infinity" maxWidth="-Infinity"
                     minHeight="-Infinity" minWidth="-Infinity" prefHeight="4.0" prefWidth="640.0" progress="0.0"/>

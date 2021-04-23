@@ -12,16 +12,22 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane id="addPlaylistDialog" fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" stylesheets="@../audio-player-style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.signature.ui.audioPlayer.dialogs.AddPlaylistDialogController">
+<BorderPane fx:id="root" styleClass="dialog_box" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+            minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" stylesheets="@../audio-player-style.css"
+            xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.signature.ui.audioPlayer.dialogs.AddPlaylistDialogController">
     <bottom>
-        <HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="60.0" prefWidth="400.0" BorderPane.alignment="CENTER">
+        <HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+              prefHeight="60.0" prefWidth="400.0" BorderPane.alignment="CENTER">
             <children>
-                <JFXButton fx:id="cancelButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="200.0" ripplerFill="#01b5f2" style="-fx-background-color: TRANSPARENT;" text="Cancel">
+                <JFXButton fx:id="cancelButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                           minWidth="-Infinity" prefHeight="30.0" prefWidth="200.0" ripplerFill="#01b5f2"
+                           style="-fx-background-color: TRANSPARENT;" text="Cancel">
                     <font>
-                        <Font name="Roboto" size="14.0" />
+                        <Font name="Roboto" size="14.0"/>
                     </font>
                     <HBox.margin>
-                        <Insets />
+                        <Insets/>
                     </HBox.margin>
                 </JFXButton>
             </children>
@@ -30,34 +36,44 @@
     <center>
         <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="16.0" BorderPane.alignment="CENTER">
             <children>
-                <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="140.0" prefWidth="140.0" style="-fx-background-color: #04CBF5; -fx-background-radius: 4%;" VBox.vgrow="NEVER">
+                <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                            prefHeight="140.0" prefWidth="140.0"
+                            style="-fx-background-color: #04CBF5; -fx-background-radius: 4%;" VBox.vgrow="NEVER">
                     <children>
-                        <ImageView fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="40.0">
+                        <ImageView fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true"
+                                   AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="40.0"
+                                   AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="40.0">
                             <image>
-                                <Image url="@ic_playlist_play_white_48dp.png" />
+                                <Image url="@ic_playlist_play_white_48dp.png"/>
                             </image>
                         </ImageView>
                     </children>
                     <VBox.margin>
-                        <Insets top="40.0" />
+                        <Insets top="40.0"/>
                     </VBox.margin>
                 </AnchorPane>
-                <TextField fx:id="playlistName" promptText="Name this playlist" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="46.0" prefWidth="360.0" style="-fx-background-color: WHITE;" VBox.vgrow="NEVER">
+                <TextField fx:id="playlistName" promptText="Name this playlist" maxHeight="-Infinity"
+                           maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="46.0"
+                           prefWidth="360.0" style="-fx-background-color: WHITE;" VBox.vgrow="NEVER"
+                           onAction="#handleAddPlaylist">
                     <font>
-                        <Font name="Roboto" size="20.0" />
+                        <Font name="Roboto" size="20.0"/>
                     </font>
                 </TextField>
-                <Label alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="96.0" text="Created by you">
+                <Label alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                       minWidth="-Infinity" prefHeight="20.0" prefWidth="96.0" text="Created by you">
                     <font>
-                        <Font name="Roboto" size="14.0" />
+                        <Font name="Roboto" size="14.0"/>
                     </font>
                     <VBox.margin>
-                        <Insets top="-6.0" />
+                        <Insets top="-6.0"/>
                     </VBox.margin>
                 </Label>
-                <JFXButton fx:id="createPlaylistButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#handleAddPlaylist" prefHeight="34.0" prefWidth="220.0" ripplerFill="BLUE" style="-fx-background-color: #04CBF5;" text="Create playlist">
+                <JFXButton fx:id="createPlaylistButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                           minWidth="-Infinity" onAction="#handleAddPlaylist" prefHeight="34.0" prefWidth="220.0"
+                           ripplerFill="BLUE" style="-fx-background-color: #04CBF5;" text="Create playlist">
                     <font>
-                        <Font name="Roboto Medium" size="15.0" />
+                        <Font name="Roboto Medium" size="15.0"/>
                     </font>
                 </JFXButton>
             </children>

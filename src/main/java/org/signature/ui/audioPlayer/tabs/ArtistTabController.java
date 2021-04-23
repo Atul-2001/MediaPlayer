@@ -15,7 +15,7 @@ import javafx.scene.layout.VBox;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.signature.WelcomeScreenController;
+import org.signature.App;
 import org.signature.dataModel.audioPlayer.Artist;
 import org.signature.ui.audioPlayer.BaseController;
 import org.signature.ui.audioPlayer.ConsoleController;
@@ -69,7 +69,7 @@ public class ArtistTabController implements Initializable {
 
         loadArtists();
         artistsList.getChildren().setAll(artists);
-        LOGGER.log(Level.INFO, "Artist Tab Loaded !!");
+//        LOGGER.log(Level.INFO, "Artist Tab Loaded !!");
     }
 
     public static ArtistTabController getInstance() {
@@ -96,7 +96,11 @@ public class ArtistTabController implements Initializable {
 
                     ArtistPane artistPane = new ArtistPane(artist);
                     artists.add(artistPane);
-                    WelcomeScreenController.updateProgress(10.0 /listSize);
+                    App.updateProgress(5.0/listSize);
+                }
+
+                if (listSize == 0) {
+                    App.updateProgress(5.0);
                 }
 
                 artists.sort((o1, o2) -> o1.getArtistName().compareToIgnoreCase(o2.getArtistName()));

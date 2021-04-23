@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXRadioButton?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.shape.SVGPath?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane fx:id="root" styleClass="dialog_box" maxHeight="450.0" maxWidth="-Infinity" minHeight="-Infinity"
+            minWidth="-Infinity" prefHeight="220.0" prefWidth="500.0" stylesheets="@../audio-player-style.css"
+            xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.signature.ui.audioPlayer.dialogs.AddToListDialogController">
+    <top>
+        <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Save To Playlist"
+               BorderPane.alignment="CENTER_LEFT">
+            <BorderPane.margin>
+                <Insets left="20.0" top="12.0"/>
+            </BorderPane.margin>
+            <font>
+                <Font name="Roboto Medium" size="24.0"/>
+            </font>
+        </Label>
+    </top>
+    <center>
+        <ScrollPane fx:id="contentPane" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" pannable="true" vbarPolicy="NEVER"
+                    BorderPane.alignment="CENTER">
+            <content>
+                <VBox fx:id="playlists" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                      spacing="10.0">
+                    <children>
+                        <JFXRadioButton graphicTextGap="8.0" text="Now playing" VBox.vgrow="NEVER" onAction="#handleOnButtonSelected">
+                            <selectedColor>
+                                <Color red="0.23529411852359772" green="0.729411780834198" blue="0.3294117748737335"/>
+                            </selectedColor>
+                            <font>
+                                <Font name="Roboto" size="16.0"/>
+                            </font>
+                            <graphic>
+                                <SVGPath content="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z"/>
+                            </graphic>
+                            <toggleGroup>
+                                <ToggleGroup fx:id="selectedPlaylist"/>
+                            </toggleGroup>
+                        </JFXRadioButton>
+                        <Separator maxHeight="-Infinity" minHeight="-Infinity" prefHeight="2.0" VBox.vgrow="NEVER"/>
+                        <JFXRadioButton fx:id="btn_newPlaylist" graphicTextGap="8.0" text="New playlist" onAction="#handleOnButtonSelected" toggleGroup="$selectedPlaylist" VBox.vgrow="NEVER">
+                            <selectedColor>
+                                <Color red="0.23529411852359772" green="0.729411780834198" blue="0.3294117748737335"/>
+                            </selectedColor>
+                            <font>
+                                <Font name="Roboto" size="16.0"/>
+                            </font>
+                            <graphic>
+                                <SVGPath content="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                            </graphic>
+                        </JFXRadioButton>
+                    </children>
+                    <padding>
+                        <Insets left="20.0" top="20.0"/>
+                    </padding>
+                </VBox>
+            </content>
+            <BorderPane.margin>
+                <Insets bottom="2.0" right="10.0"/>
+            </BorderPane.margin>
+        </ScrollPane>
+    </center>
+    <bottom>
+        <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+              minWidth="-Infinity" prefHeight="60.0" prefWidth="500.0" spacing="10.0" BorderPane.alignment="CENTER">
+            <children>
+                <JFXButton fx:id="btn_confirm" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                           minWidth="-Infinity" onAction="#handleConfirmToAdd" prefHeight="30.0" prefWidth="140.0"
+                           styleClass="dialog-button" text="Confirm" HBox.hgrow="NEVER">
+                    <font>
+                        <Font name="Roboto" size="14.0"/>
+                    </font>
+                    <HBox.margin>
+                        <Insets/>
+                    </HBox.margin>
+                </JFXButton>
+                <JFXButton layoutX="598.0" layoutY="25.0" maxHeight="-Infinity" maxWidth="-Infinity"
+                           minHeight="-Infinity" minWidth="-Infinity" onAction="#handleCloseDialog" prefHeight="30.0"
+                           prefWidth="140.0" styleClass="dialog-button" text="Cancel" HBox.hgrow="NEVER">
+                    <font>
+                        <Font name="Roboto" size="14.0"/>
+                    </font>
+                </JFXButton>
+            </children>
+            <padding>
+                <Insets right="20.0"/>
+            </padding>
+        </HBox>
+    </bottom>
+</BorderPane>
