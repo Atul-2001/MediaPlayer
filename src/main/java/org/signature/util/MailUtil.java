@@ -16,7 +16,7 @@ public class MailUtil {
 
     private static final Logger LOGGER = LogManager.getLogger(MailUtil.class);
 
-    private static final String sender_receiver = "atendra.suryvanshi@gmail.com";
+    private static final String sender_receiver = "******************@gmail.com"; //Enter your gmail ID to be used as mail server
 
     public static boolean sendMail(String user, String content) {
         try {
@@ -25,7 +25,7 @@ public class MailUtil {
             connection.connect();
 
             new Thread(() -> {
-                String password = "@useful$9090#";
+                String password = "*************"; // Enter you gmail password
                 String host = "smtp.gmail.com";
 
                 String subject = "Feedback from " + user;
